@@ -2,7 +2,6 @@ package dev.kason.bingo
 
 import javafx.geometry.Pos
 import javafx.scene.effect.Reflection
-import javafx.scene.paint.Color
 import tornadofx.*
 
 class LoadingView : View("Bingo Project > Loading") {
@@ -10,6 +9,9 @@ class LoadingView : View("Bingo Project > Loading") {
         button("Hello") {
             addClass(Styles.button)
             hover()
+            action {
+                replaceWith(BingoView::class)
+            }
         }
         label("Loading...") {
             addClass(Styles.titleLabel)
@@ -21,8 +23,22 @@ class LoadingView : View("Bingo Project > Loading") {
         minHeight = 300.0
         minWidth = 500.0
         alignment = Pos.CENTER
+        spacing = 10.0
         style {
             backgroundColor += c("f5faff")
+        }
+    }
+}
+
+class BingoView : View("Bingo Project > Bingo") {
+    override val root = gridpane {
+        for (row in 0 until 5) {
+            for (col in 0 until 5) {
+                add(button {
+                    addClass(Styles.button)
+                    hover()
+                }, row, col)
+            }
         }
     }
 }

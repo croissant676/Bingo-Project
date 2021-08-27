@@ -1,7 +1,5 @@
 package dev.kason.bingo
 
-import javafx.scene.effect.Reflection
-import java.util.AbstractList
 import javafx.scene.paint.Color
 import tornadofx.*
 
@@ -23,6 +21,7 @@ class Styles : Stylesheet() {
             borderColor += box(c("0076ea"))
             fontFamily = "dubai"
             fontSize = 17.px
+            and(hover){}
         }
         titleLabel {
             textFill = c("151554")
