@@ -25,7 +25,7 @@ private val eventLoopThread = object : Thread() {
                 }
                 index++
             }
-            sleep(20)
+            sleep(15)
         }
     }
 }
@@ -77,4 +77,11 @@ class EventBlock(private val block: EventBlock.() -> Unit) {
 
 fun runInsideLoop(block: EventBlock.() -> Unit) {
     eventLoopBlocks += EventBlock(block)
+}
+
+inline fun runOnceInsideLoop(crossinline block: () -> Unit) {
+    eventLoopBlocks += EventBlock {
+        block()
+        exitLoop()
+    }
 }

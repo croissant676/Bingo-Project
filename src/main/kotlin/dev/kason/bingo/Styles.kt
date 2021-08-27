@@ -31,7 +31,6 @@ class Styles : Stylesheet() {
         }
         progressIndicator {
             accentColor = c("0483ff")
-            effect = Reflection(15.0, 0.75, 0.5, 0.0)
         }
     }
 }

@@ -1,6 +1,8 @@
 package dev.kason.bingo
 
 import javafx.geometry.Pos
+import javafx.scene.effect.Reflection
+import javafx.scene.paint.Color
 import tornadofx.*
 
 class LoadingView : View("Bingo Project > Loading") {
@@ -8,21 +10,19 @@ class LoadingView : View("Bingo Project > Loading") {
         button("Hello") {
             addClass(Styles.button)
             hover()
-            action {
-                style (append = true) {
-                    backgroundColor += c("005cb7")
-                    borderColor += box(c("005cb7"))
-                }
-            }
         }
         label("Loading...") {
             addClass(Styles.titleLabel)
         }
         progressindicator {
+            effect = Reflection(15.0, 0.75, 0.5, 0.0)
             addClass(Styles.progressIndicator)
         }
-        minHeight = 200.0
-        minWidth = 400.0
+        minHeight = 300.0
+        minWidth = 500.0
         alignment = Pos.CENTER
+        style {
+            backgroundColor += c("f5faff")
+        }
     }
 }
