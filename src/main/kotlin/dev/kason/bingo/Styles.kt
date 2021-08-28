@@ -6,6 +6,7 @@ import tornadofx.*
 class Styles : Stylesheet() {
     companion object {
         val button by cssclass()
+        val lightButton by cssclass()
         val titleLabel by cssclass()
         val progressIndicator by cssclass()
     }
@@ -21,7 +22,17 @@ class Styles : Stylesheet() {
             borderColor += box(c("0076ea"))
             fontFamily = "dubai"
             fontSize = 17.px
-            and(hover){}
+        }
+        lightButton {
+            textFill = Color.WHITE
+            backgroundColor += c("8bc5ff")
+            padding = box(1.px, 12.px)
+            borderWidth += box(1.px, 3.px)
+            borderRadius += box(0.px)
+            backgroundRadius += box(0.px)
+            borderColor += box(c("8bbbff"))
+            fontFamily = "dubai"
+            fontSize = 17.px
         }
         titleLabel {
             textFill = c("151554")

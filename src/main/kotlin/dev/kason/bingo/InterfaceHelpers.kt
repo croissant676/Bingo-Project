@@ -3,6 +3,7 @@
 package dev.kason.bingo
 
 import javafx.scene.control.Button
+import javafx.scene.paint.Color
 import javafx.scene.paint.CycleMethod
 import javafx.scene.paint.RadialGradient
 import javafx.scene.paint.Stop
@@ -42,6 +43,7 @@ private val eventLoopThread = object : Thread() {
                         index++
                     }
                 }.toInt()
+//                println("Optimizations finished in time = $executionTime.")
             }
             sleep((16 - executionTime).toLong())
         }
@@ -52,31 +54,31 @@ fun initializeLoop() {
     eventLoopThread.start()
 }
 
-val gradients = List(30) { ratio ->
-    RadialGradient(
+private fun radialGradient(index: Int, newColor: Color, mainColor: Color): RadialGradient {
+    return RadialGradient(
         0.0, 0.0, 0.5, -0.4,
-        2.0, true, CycleMethod.NO_CYCLE,
-        Stop(0.01, c("0076ea")), Stop(ratio / 30.0, c("0076ea")),
-        Stop(ratio / 30.0 + 1 / 1000, c("0483ff")), Stop(1.0, c("0483ff"))
+        1.25, true, CycleMethod.NO_CYCLE,
+        Stop(0.01, newColor), Stop(index / 30.0, newColor),
+        Stop(index / 30.0 + 1 / 1000, mainColor), Stop(1.0, mainColor)
     )
 }
 
-fun Button.hover() {
-    var count = 0
+fun Button.addHoverEffect(newColor: Color = c("0076ea"), originalColor: Color = c("0483ff")) {
+    var state = 0
     runInsideLoop {
-        if (isHover && count <= 35) {
-            count++
+        if (isHover && state <= 35) {
+            state++
         } else {
-            if (count > 0) {
-                count -= 2
+            if (state > 0) {
+                state -= 2
             }
         }
         runLater {
             style {
-                backgroundColor += when (count) {
-                    in 1 until 30 -> gradients[count]
-                    in 30..40 ->  c("0076ea")
-                    else -> c("0483ff")
+                if (state in 1 until 30) {
+                    backgroundColor += radialGradient(state, newColor, originalColor)
+                } else if (state >= 30) {
+                    backgroundColor += newColor
                 }
             }
         }
@@ -102,11 +104,4 @@ class EventBlock(private val block: EventBlock.() -> Unit) {
 
 fun runInsideLoop(block: EventBlock.() -> Unit) {
     eventLoopBlocks += EventBlock(block)
-}
-
-inline fun runOnceInsideLoop(crossinline block: () -> Unit) {
-    eventLoopBlocks += EventBlock {
-        block()
-        exitLoop()
-    }
 }
