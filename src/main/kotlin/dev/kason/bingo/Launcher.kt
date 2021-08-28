@@ -11,7 +11,7 @@ fun main(args: Array<String>) {
     launch<BingoApp>(args)
 }
 
-class BingoApp: App(LoadingView::class, Styles::class) {
+class BingoApp : App(LoadingView::class, Styles::class) {
     init {
         reloadViewsOnFocus()
         reloadStylesheetsOnFocus()
