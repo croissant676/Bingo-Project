@@ -28,6 +28,15 @@ dependencies {
     testImplementation(kotlin("test-junit"))
 }
 
+@Suppress("spellcheckinginspection")
+sourceSets {
+    main {
+        java {
+            exclude("org.bouncycastle/mail.smime.*")
+        }
+    }
+}
+
 tasks {
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
