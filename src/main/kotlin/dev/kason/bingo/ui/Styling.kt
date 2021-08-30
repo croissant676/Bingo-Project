@@ -1,7 +1,22 @@
 package dev.kason.bingo.ui
 
-import javafx.geometry.Pos
+import dev.kason.bingo.control.Appearance
+import dev.kason.bingo.util.restartLoop
+import javafx.scene.paint.Color
 import tornadofx.*
+
+fun registerTheme(theme: Appearance) {
+    with(Styles.Companion) {
+        themeColor = c(theme.themeColor)
+        secondaryThemeColor = c(theme.secondaryThemeColor)
+        tertiaryThemeColor = c(theme.tertiaryThemeColor)
+        darkTextFill = c(theme.darkTextFill)
+        lightTextColor = c(theme.lightTextFill)
+        themeBackgroundColor = c(theme.themeBackgroundColor)
+    }
+    removeStylesheet<Styles>()
+    importStylesheet<Styles>()
+}
 
 class Styles : Stylesheet() {
 
@@ -12,6 +27,10 @@ class Styles : Stylesheet() {
         val regularLabel by cssclass()
         val progressIndicator by cssclass()
         val defaultBackground by cssclass()
+        val tab by cssclass()
+        val tabPane by cssclass()
+        val redButton by cssclass()
+        val themeButton by cssclass()
 
         // Changeable Colors
         @JvmStatic
@@ -20,6 +39,10 @@ class Styles : Stylesheet() {
 
         @JvmStatic
         var secondaryThemeColor = c("0076ea")
+            internal set
+
+        @JvmStatic
+        var tertiaryThemeColor = c("0069d1")
             internal set
 
         @JvmStatic
@@ -49,7 +72,7 @@ class Styles : Stylesheet() {
             borderWidth += box(1.px, 3.px)
             borderRadius += box(0.px)
             backgroundRadius += box(0.px)
-            borderColor += box(secondaryThemeColor)
+            borderColor += box(Color.TRANSPARENT)
             fontFamily = "dubai"
             fontSize = sizeOfText
         }
@@ -70,6 +93,44 @@ class Styles : Stylesheet() {
         }
         defaultBackground {
             backgroundColor += themeBackgroundColor
+        }
+        tab {
+            borderWidth += box(1.px, 3.px)
+            borderRadius += box(0.px)
+            focusIndicator {
+                borderColor += box(Color.TRANSPARENT)
+            }
+            backgroundRadius += box(0.px)
+            backgroundColor += themeColor
+            padding = box(5.px, 8.px)
+            tabLabel {
+                textFill = lightTextColor
+                padding = box((-5).px, 10.px)
+                fontFamily = "dubai"
+                fontSize = sizeOfText
+            }
+            and(hover) {
+                backgroundColor += secondaryThemeColor
+            }
+            and(selected) {
+                backgroundColor += tertiaryThemeColor
+            }
+        }
+        redButton {
+            textFill = lightTextColor
+            backgroundColor += c("ff4e6c")
+            padding = box((-1).px, 12.px)
+            borderWidth += box(1.px, 1.px)
+            borderRadius += box(0.px)
+            backgroundRadius += box(0.px)
+            fontFamily = "dubai"
+            fontSize = sizeOfText
+        }
+        tabPane {
+            backgroundColor += themeBackgroundColor
+            tabHeaderBackground {
+                opacity = 0.0
+            }
         }
     }
 }

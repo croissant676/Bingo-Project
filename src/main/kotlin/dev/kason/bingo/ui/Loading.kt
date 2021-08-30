@@ -1,7 +1,9 @@
 package dev.kason.bingo.ui
 
+import dev.kason.bingo.control.Appearance
 import dev.kason.bingo.control.BingoState
 import dev.kason.bingo.control.currentState
+import dev.kason.bingo.control.moveToNextState
 import javafx.geometry.Pos
 import javafx.scene.effect.Reflection
 import tornadofx.*
@@ -32,11 +34,11 @@ class LoadingView : View("Bingo Project > Loading") {
             effect = Reflection(15.0, 0.75, 0.5, 0.0)
             addClass(Styles.progressIndicator)
         }
-        addClass(Styles.defaultBackground)
         style {
             alignment = Pos.CENTER
             spacing = 10.px
         }
+        addClass(Styles.defaultBackground)
         minHeight = 300.0
         minWidth = 500.0
     }
@@ -45,6 +47,7 @@ class LoadingView : View("Bingo Project > Loading") {
         isCurrentlyLoading = true
         currentLoadingView = this
         if (currentState == BingoState.LOADING) {
+            moveToNextState() // Bingo Menu
             setViewFromLoading(BingoMenu)
         }
     }

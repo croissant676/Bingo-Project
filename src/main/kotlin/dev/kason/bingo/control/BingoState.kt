@@ -2,7 +2,8 @@ package dev.kason.bingo.control
 
 enum class BingoState {
     LOADING,
-    MENU;
+    MENU,
+    SETTINGS;
 
     operator fun plus(state: Int): BingoState {
         if (state !in indices) {
@@ -42,12 +43,15 @@ enum class BingoState {
         }
 
         override fun indexOf(element: BingoState): Int {
+            return element.ordinal
+            /*
             for (index in indices) {
                 if (element == values[index]) {
                     return index
                 }
             }
             return -1
+            */
         }
 
         override fun isEmpty(): Boolean {
@@ -70,12 +74,15 @@ enum class BingoState {
         }
 
         override fun lastIndexOf(element: BingoState): Int {
+            return element.ordinal
+            /*
             for (index in indices.reversed()) {
                 if (element == values[index]) {
                     return index
                 }
             }
             return -1
+             */
         }
 
         override fun listIterator(): ListIterator<BingoState> {
@@ -192,8 +199,21 @@ private fun checkMatching() {
     }
 }
 
+fun moveToState(index: Int): BingoState {
+    checkMatching()
+    if (index !in BingoState.indices) {
+        throw IndexOutOfBoundsException("Index: ${index}, indices: ${BingoState.indices}")
+    }
+    currentState = BingoState[index]
+    indexOfCurrentState = index
+    return currentState
+}
+
 fun moveToNextState(): BingoState {
     checkMatching()
+    if (indexOfCurrentState + 1 !in BingoState.indices) {
+        throw IndexOutOfBoundsException("Index: ${indexOfCurrentState + 1}, indices: ${BingoState.indices}")
+    }
     indexOfCurrentState++
     currentState = BingoState[indexOfCurrentState]
     return currentState
@@ -201,6 +221,9 @@ fun moveToNextState(): BingoState {
 
 fun moveToPreviousState(): BingoState {
     checkMatching()
+    if (indexOfCurrentState - 1 !in BingoState.indices) {
+        throw IndexOutOfBoundsException("Index: ${indexOfCurrentState - 1}, indices: ${BingoState.indices}")
+    }
     indexOfCurrentState--
     currentState = BingoState[indexOfCurrentState]
     return currentState

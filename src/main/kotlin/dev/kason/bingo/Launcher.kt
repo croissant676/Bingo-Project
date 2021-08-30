@@ -11,6 +11,8 @@ import tornadofx.*
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
+    println(Runtime.getRuntime().maxMemory())
+    println(Runtime.getRuntime().freeMemory())
     launch<BingoApp>(args)
 }
 
