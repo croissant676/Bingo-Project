@@ -4,8 +4,6 @@ package dev.kason.bingo.ui
 
 import dev.kason.bingo.control.*
 import dev.kason.bingo.util.addHoverEffect
-import javafx.beans.property.IntegerProperty
-import javafx.beans.property.Property
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.event.EventHandler
 import javafx.geometry.Pos
