@@ -2,9 +2,7 @@
 
 package dev.kason.bingo.ui
 
-import dev.kason.bingo.control.Appearance
-import dev.kason.bingo.control.moveToNextState
-import dev.kason.bingo.control.moveToPreviousState
+import dev.kason.bingo.control.*
 import dev.kason.bingo.util.addHoverEffect
 import javafx.geometry.Pos
 import tornadofx.*
@@ -31,10 +29,11 @@ object BingoMenu : View("Bingo > Bingo") {
                     addHoverEffect()
                     useMaxSize = true
                     action {
-                        moveToNextState()
+                        if (currentState == BingoState.MENU) {
+                            moveToNextState()
+                        }
                         replaceWith(SettingsView, ViewTransition.Fade(0.5.seconds))
                     }
-
                 }
                 button("How to use") {
                     addClass(Styles.button)
@@ -99,7 +98,7 @@ object SettingsView : View("Bingo > Settings") {
                 replaceWith(BingoMenu, ViewTransition.Fade(0.5.seconds))
                 BingoMenu.onDock()
             }
-            style {
+            style(append = true) {
                 paddingTop = 1
             }
         }

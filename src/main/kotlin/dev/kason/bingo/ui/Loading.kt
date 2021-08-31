@@ -1,6 +1,5 @@
 package dev.kason.bingo.ui
 
-import dev.kason.bingo.control.Appearance
 import dev.kason.bingo.control.BingoState
 import dev.kason.bingo.control.currentState
 import dev.kason.bingo.control.moveToNextState

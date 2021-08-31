@@ -238,3 +238,20 @@ fun moveBy(index: Int): BingoState {
     currentState = BingoState[indexOfCurrentState]
     return currentState
 }
+
+enum class Yes(val isYes: Boolean) {
+    YES(true), NO(false);
+    // public static final Yes YES = new Yes(true);
+    // public static final Yes NO = new Yes(false);
+}
+
+// private static Scene getStuff(String fileLocation) { /* Stuff */ }
+// boolean hasLoaded = false;
+// while(!hasLoaded) Thread.sleep(10);
+//
+
+fun main() {
+    Yes.YES.name
+    Yes.NO.name
+    Yes.values()
+}
