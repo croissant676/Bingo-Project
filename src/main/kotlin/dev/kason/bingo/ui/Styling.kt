@@ -1,7 +1,6 @@
 package dev.kason.bingo.ui
 
 import dev.kason.bingo.control.Appearance
-import dev.kason.bingo.util.restartLoop
 import javafx.scene.paint.Color
 import tornadofx.*
 
@@ -31,6 +30,7 @@ class Styles : Stylesheet() {
         val tabPane by cssclass()
         val redButton by cssclass()
         val themeButton by cssclass()
+        val defaultSpinner by cssclass()
 
         // Changeable Colors
         @JvmStatic
@@ -130,6 +130,33 @@ class Styles : Stylesheet() {
             backgroundColor += themeBackgroundColor
             tabHeaderBackground {
                 opacity = 0.0
+            }
+        }
+        defaultSpinner {
+            incrementArrowButton {
+                backgroundColor += themeColor
+                and(hover) {
+                    backgroundColor += secondaryThemeColor
+                }
+            }
+            incrementArrow {
+                backgroundColor += lightTextColor
+            }
+            decrementArrowButton {
+                backgroundColor += themeColor
+                and(hover) {
+                    backgroundColor += secondaryThemeColor
+                }
+            }
+            decrementArrow {
+                backgroundColor += lightTextColor
+            }
+            accentColor = themeColor
+            borderWidth += box(0.px)
+            borderRadius += box(0.px)
+            backgroundRadius += box(0.px)
+            and(selected) {
+
             }
         }
     }

@@ -4,6 +4,10 @@ package dev.kason.bingo.ui
 
 import dev.kason.bingo.control.*
 import dev.kason.bingo.util.addHoverEffect
+import javafx.beans.property.IntegerProperty
+import javafx.beans.property.Property
+import javafx.beans.property.SimpleIntegerProperty
+import javafx.event.EventHandler
 import javafx.geometry.Pos
 import tornadofx.*
 
@@ -20,7 +24,7 @@ object BingoMenu : View("Bingo > Bingo") {
                     addClass(Styles.button)
                     addHoverEffect()
                     action {
-                        println("Creating Bingo Game")
+                        replaceWith(CreationMenuView, ViewTransition.Fade(0.5.seconds))
                     }
                     useMaxSize = true
                 }
@@ -39,7 +43,7 @@ object BingoMenu : View("Bingo > Bingo") {
                     addClass(Styles.button)
                     addHoverEffect()
                     action {
-                        println("Pressed HTU")
+                        replaceWith(HowToUseView, ViewTransition.Fade(0.5.seconds))
                     }
                     useMaxSize = true
                 }
@@ -101,6 +105,58 @@ object SettingsView : View("Bingo > Settings") {
             style(append = true) {
                 paddingTop = 1
             }
+        }
+        addClass(Styles.defaultBackground)
+    }
+}
+
+object CreationMenuView : View("Bingo > Create Bingo Game") {
+
+    private var dayProperty = SimpleIntegerProperty(0)
+
+    override val root = form {
+        fieldset("Game mechanics") {
+            hbox {
+                field("Input the number of days to play the game:") {
+                    spinner<Number>(0, 100, 5, 1, false, dayProperty, true) {
+                        addClass(Styles.defaultSpinner)
+                        onKeyTyped = EventHandler {
+                            this.promptTextProperty().set("Hello")
+                        }
+                    }
+                    field("Or choose the day you want it to end.") {
+                        datepicker {
+
+                        }
+                        with(label) {
+                            addClass(Styles.regularLabel)
+                        }
+                    }
+                    with(label) {
+                        addClass(Styles.regularLabel)
+                    }
+                }
+            }
+        }
+        hbox {
+            button("< Back") {
+                addClass(Styles.button)
+                addHoverEffect()
+            }
+            button("Next > ") {
+                addClass(Styles.button)
+                addHoverEffect()
+            }
+            spacing = 10.0
+        }
+        addClass(Styles.defaultBackground)
+    }
+}
+
+object HowToUseView : View("Bingo > How To Use") {
+    override val root = vbox {
+        button {
+
         }
         addClass(Styles.defaultBackground)
     }
