@@ -220,14 +220,14 @@ object FileView : View("Bingo > Find File") {
     }
 
     private fun refAndHover() {
-        refresh(
+        refresh()
         setHover()
     }
 
     private fun setHover() {
-        for(item in nodes) {
+        for (item in nodes) {
             runInsideLoop {
-                if(item.isExpanded) {
+                if (item.isExpanded) {
                     refresh()
                 }
             }
