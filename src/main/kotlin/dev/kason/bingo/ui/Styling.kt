@@ -1,6 +1,10 @@
 package dev.kason.bingo.ui
 
 import dev.kason.bingo.control.Appearance
+import javafx.scene.Cursor
+import javafx.scene.control.Button
+import javafx.scene.effect.Effect
+import javafx.scene.effect.Reflection
 import javafx.scene.paint.Color
 import tornadofx.*
 
@@ -31,6 +35,7 @@ class Styles : Stylesheet() {
         val redButton by cssclass()
         val themeButton by cssclass()
         val defaultSpinner by cssclass()
+        val defaultPicker by cssclass()
 
         // Changeable Colors
         @JvmStatic
@@ -155,8 +160,74 @@ class Styles : Stylesheet() {
             borderWidth += box(0.px)
             borderRadius += box(0.px)
             backgroundRadius += box(0.px)
-            and(selected) {
-
+            effect = Reflection()
+        }
+        defaultPicker {
+            textInput {
+                backgroundColor += themeBackgroundColor
+                padding = box(3.0.px)
+                borderRadius += box(0.px)
+                padding = box(3.px, 9.px)
+                fontFamily = "dubai"
+                fontSize = sizeOfText
+                textFill = darkTextFill
+            }
+            arrowButton {
+                backgroundColor += themeColor
+                padding = box(1.px, 12.px)
+                borderRadius += box(0.px)
+                backgroundRadius += box(0.px)
+                borderColor += box(Color.TRANSPARENT)
+            }
+            datePickerPopup {
+                backgroundColor += themeColor
+                padding = box(3.0.px)
+                borderRadius += box(0.px)
+                backgroundRadius += box(0.px)
+                borderColor += box(Color.TRANSPARENT)
+                button {
+                    backgroundColor += themeColor
+                    and(hover){
+                        backgroundColor += secondaryThemeColor
+                    }
+                }
+                label {
+                    // Regular label
+                    textFill = lightTextColor
+                    padding = box(1.px)
+                    fontFamily = "dubai"
+                    fontSize = sizeOfText
+                }
+            }
+            monthYearPane {
+                backgroundColor += themeColor
+                padding = box(1.px, 12.px)
+                borderWidth += box(1.px, 3.px)
+                borderRadius += box(0.px)
+                backgroundRadius += box(0.px)
+                borderColor += box(Color.TRANSPARENT)
+            }
+            weekNumberCell {
+                textFill = darkTextFill
+                fontSize = sizeOfText
+                fontFamily = "dubai"
+                backgroundColor += themeBackgroundColor
+            }
+            dayCell {
+                textFill = darkTextFill
+                fontSize = sizeOfText
+                fontFamily = "dubai"
+                backgroundColor += themeBackgroundColor
+                and(hover) {
+                    backgroundColor += themeColor
+                    textFill = lightTextColor
+                }
+            }
+            dayNameCell {
+                textFill = darkTextFill
+                fontSize = sizeOfText
+                fontFamily = "dubai"
+                backgroundColor += themeBackgroundColor
             }
         }
     }

@@ -2,12 +2,20 @@
 
 package dev.kason.bingo.ui
 
-import dev.kason.bingo.control.*
+import dev.kason.bingo.control.Appearance
+import dev.kason.bingo.control.BingoState
+import dev.kason.bingo.control.currentState
 import dev.kason.bingo.util.addHoverEffect
+import dev.kason.bingo.util.runInsideLoop
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.event.EventHandler
 import javafx.geometry.Pos
+import javafx.scene.control.TextField
+import javafx.scene.control.TreeItem
+import javafx.scene.control.TreeView
+import javafx.scene.control.skin.TextFieldSkin
 import tornadofx.*
+import java.io.File
 
 object BingoMenu : View("Bingo > Bingo") {
     override val root = borderpane {
@@ -22,6 +30,7 @@ object BingoMenu : View("Bingo > Bingo") {
                     addClass(Styles.button)
                     addHoverEffect()
                     action {
+                        currentState = BingoState.CREATION_MENU
                         replaceWith(CreationMenuView, ViewTransition.Fade(0.5.seconds))
                     }
                     useMaxSize = true
@@ -31,9 +40,7 @@ object BingoMenu : View("Bingo > Bingo") {
                     addHoverEffect()
                     useMaxSize = true
                     action {
-                        if (currentState == BingoState.MENU) {
-                            moveToNextState()
-                        }
+                        currentState = BingoState.SETTINGS
                         replaceWith(SettingsView, ViewTransition.Fade(0.5.seconds))
                     }
                 }
@@ -41,6 +48,7 @@ object BingoMenu : View("Bingo > Bingo") {
                     addClass(Styles.button)
                     addHoverEffect()
                     action {
+                        currentState = BingoState.HOW_TO_USE
                         replaceWith(HowToUseView, ViewTransition.Fade(0.5.seconds))
                     }
                     useMaxSize = true
@@ -96,7 +104,7 @@ object SettingsView : View("Bingo > Settings") {
             addHoverEffect(c("ff4e6c"), c("eb0028"))
             addClass(Styles.redButton)
             action {
-                moveToPreviousState()
+                currentState = BingoState.MENU
                 replaceWith(BingoMenu, ViewTransition.Fade(0.5.seconds))
                 BingoMenu.onDock()
             }
@@ -124,7 +132,11 @@ object CreationMenuView : View("Bingo > Create Bingo Game") {
                     }
                     field("Or choose the day you want it to end.") {
                         datepicker {
-
+                            addClass(Styles.defaultPicker)
+                            editor.skin = TextFieldSkin(editor).apply {
+                                scaleX = 0.7
+                                scaleY = 0.7
+                            }
                         }
                         with(label) {
                             addClass(Styles.regularLabel)
@@ -140,10 +152,23 @@ object CreationMenuView : View("Bingo > Create Bingo Game") {
             button("< Back") {
                 addClass(Styles.button)
                 addHoverEffect()
+                action {
+                    assert(currentState == BingoState.CREATION_MENU) {
+                        "State not linked"
+                    }
+                    currentState = BingoState.MENU
+                    replaceWith(BingoMenu, ViewTransition.Fade(0.5.seconds))
+                }
             }
             button("Next > ") {
                 addClass(Styles.button)
                 addHoverEffect()
+                action {
+                    assert(currentState == BingoState.CREATION_MENU) {
+                        "State not linked"
+                    }
+                    replaceWith(CreationMenu2, ViewTransition.Fade(0.5.seconds))
+                }
             }
             spacing = 10.0
         }
@@ -151,11 +176,89 @@ object CreationMenuView : View("Bingo > Create Bingo Game") {
     }
 }
 
-object HowToUseView : View("Bingo > How To Use") {
+object CreationMenu2 : View("Bingo > Create Bingo Game") {
+
+    var stringFileLocation = ""
+
     override val root = vbox {
-        button {
+        button("Test") {
+            action {
+                replaceWith(FileView, ViewTransition.Fade(0.5.seconds))
+            }
+        }
+    }
+}
+
+object FileView : View("Bingo > Find File") {
+
+    private var nodeFile = File("C:\\Users")
+    private val nodes = arrayListOf<TreeItem<String>>()
+    private val node = TreeItem(nodeFile.absolutePath)
+    private var treeView = TreeView<String>()
+    private lateinit var breadCrumbs: TextField
+
+    override val root = vbox {
+        breadCrumbs = textfield(nodeFile.name) {
+            isEditable = false
 
         }
+        treeView = treeview(node)
+    }
+
+    private fun refresh() {
+        node.children.clear()
+        val files = nodeFile.list()!!
+        for (child in files) {
+            val thing = TreeItem(child)
+            val file = File("${nodeFile.absolutePath}\\$child")
+            if (file.isDirectory) {
+                thing += TreeItem("You should never be able to see this")
+            }
+            nodes += thing
+            node += thing
+        }
+    }
+
+    private fun refAndHover() {
+        refresh(
+        setHover()
+    }
+
+    private fun setHover() {
+        for(item in nodes) {
+            runInsideLoop {
+                if(item.isExpanded) {
+                    refresh()
+                }
+            }
+        }
+    }
+
+    init {
+        refresh()
+        setHover()
+    }
+}
+
+object HowToUseView : View("Bingo > How To Use") {
+    override val root = vbox {
+        label("How to use") {
+            addClass(Styles.titleLabel)
+        }
+        label("First do stuff:") {
+            addClass(Styles.regularLabel)
+        }
+        label("Next do more stuff") {
+            addClass(Styles.regularLabel)
+        }
+        button("< Back") {
+            addHoverEffect()
+            action {
+                currentState = BingoState.MENU
+                replaceWith(BingoMenu)
+            }
+        }
+        alignment = Pos.CENTER
         addClass(Styles.defaultBackground)
     }
 }

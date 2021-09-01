@@ -22,6 +22,12 @@ fun setViewFromLoading(view: View, transition: ViewTransition? = ViewTransition.
     }
 }
 
+var immediateView: View? = null
+
+fun runImmediately(view: View) {
+    immediateView = view
+}
+
 @Suppress("MemberVisibilityCanBePrivate")
 class LoadingView : View("Bingo Project > Loading") {
 
@@ -45,6 +51,9 @@ class LoadingView : View("Bingo Project > Loading") {
     override fun onDock() {
         isCurrentlyLoading = true
         currentLoadingView = this
+        if(immediateView != null) {
+            setViewFromLoading(immediateView!!)
+        }
         if (currentState == BingoState.LOADING) {
             moveToNextState() // Bingo Menu
             setViewFromLoading(BingoMenu)

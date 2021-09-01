@@ -193,7 +193,6 @@ val BingoState.index: Int
 var indexOfCurrentState = 0
 
 var currentState = BingoState.LOADING
-    private set
 
 private fun checkMatching() {
     if (BingoState[indexOfCurrentState] != currentState) {
