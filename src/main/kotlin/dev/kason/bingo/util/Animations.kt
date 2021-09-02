@@ -6,7 +6,8 @@ import javafx.scene.paint.Color
 import javafx.scene.paint.CycleMethod
 import javafx.scene.paint.RadialGradient
 import javafx.scene.paint.Stop
-import tornadofx.*
+import tornadofx.runLater
+import tornadofx.style
 
 fun Button.addHoverEffect() {
     var stateOfHover = 0
@@ -39,6 +40,12 @@ fun Button.addHoverEffect() {
                         } else if (stateOfHover >= 30) {
                             backgroundColor += Styles.secondaryThemeColor
                         }
+                    }
+                }
+            } else {
+                runLater {
+                    style {
+                        backgroundColor += Styles.themeColor
                     }
                 }
             }

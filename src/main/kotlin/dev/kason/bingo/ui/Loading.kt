@@ -52,16 +52,20 @@ class LoadingView : View("Bingo Project > Loading") {
     override fun onDock() {
         isCurrentlyLoading = true
         currentLoadingView = this
-        if(immediateView != null) {
+        if (immediateView != null) {
             setViewFromLoading(immediateView!!)
+        }
+        thread {
+            FileView.indexFiles()
         }
         if (currentState == BingoState.LOADING) {
             moveToNextState() // Bingo Menu
             setViewFromLoading(BingoMenu)
-      }
+        }
     }
 
     override fun onUndock() {
         isCurrentlyLoading = false
     }
+
 }

@@ -58,6 +58,8 @@ private val eventLoopThread = object : Thread() {
     }
 }
 
+fun startEventLoop() = eventLoopThread.start()
+
 
 fun restartLoop() {
     runEventLoop = true

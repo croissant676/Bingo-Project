@@ -10,7 +10,7 @@ version = "1.0-SNAPSHOT"
 
 javafx {
     version = "14"
-    modules("javafx.controls", "javafx.fxml", "javafx.base", "javafx.graphics", "javafx.media", "javafx.web")
+    modules("javafx.controls", "javafx.fxml", "javafx.base", "javafx.graphics", "javafx.media", "javafx.swing")
 }
 repositories {
     mavenCentral()

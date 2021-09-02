@@ -9,7 +9,6 @@ import dev.kason.bingo.util.addHoverEffect
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.event.EventHandler
-import javafx.event.EventType
 import javafx.geometry.Pos
 import javafx.scene.control.TreeItem
 import javafx.scene.control.skin.TextFieldSkin
@@ -117,31 +116,33 @@ object CreationMenuView : View("Bingo > Create Bingo Game") {
 
     private var dayProperty = SimpleIntegerProperty(0)
 
-    override val root = form {
-        fieldset("Game mechanics") {
-            hbox {
-                field("Input the number of days to play the game:") {
-                    spinner<Number>(0, 100, 5, 1, false, dayProperty, true) {
-                        addClass(Styles.defaultSpinner)
-                        onKeyTyped = EventHandler {
-                            this.promptTextProperty().set("Hello")
-                        }
-                    }
-                    with(label) {
-                        addClass(Styles.regularLabel)
+    override val root = vbox {
+        label() {
+            addClass("")
+        }
+
+        hbox {
+            field("Input the number of days to play the game:") {
+                spinner<Number>(0, 100, 5, 1, false, dayProperty, true) {
+                    addClass(Styles.defaultSpinner)
+                    onKeyTyped = EventHandler {
+                        this.promptTextProperty().set("Hello")
                     }
                 }
-                field("Or choose the day you want it to end.") {
-                    datepicker {
-                        addClass(Styles.defaultPicker)
-                        editor.skin = TextFieldSkin(editor).apply {
-                            scaleX = 0.7
-                            scaleY = 0.7
-                        }
+                with(label) {
+                    addClass(Styles.regularLabel)
+                }
+            }
+            field("Or choose the day you want it to end.") {
+                datepicker {
+                    addClass(Styles.defaultPicker)
+                    editor.skin = TextFieldSkin(editor).apply {
+                        scaleX = 0.7
+                        scaleY = 0.7
                     }
-                    with(label) {
-                        addClass(Styles.regularLabel)
-                    }
+                }
+                with(label) {
+                    addClass(Styles.regularLabel)
                 }
             }
         }
@@ -167,6 +168,7 @@ object CreationMenuView : View("Bingo > Create Bingo Game") {
                     replaceWith(CreationMenu2, ViewTransition.Fade(0.5.seconds))
                 }
             }
+            alignment = Pos.CENTER
             spacing = 10.0
         }
         addClass(Styles.defaultBackground)
@@ -175,15 +177,29 @@ object CreationMenuView : View("Bingo > Create Bingo Game") {
 
 object CreationMenu2 : View("Bingo > Create Bingo Game") {
 
-    var stringFileLocation = ""
 
-    override val root = vbox {
-        button("Test") {
+    override val root = hbox {
+        button("< Back") {
+            addHoverEffect()
             action {
-                FileView.indexFiles()
+                assert(currentState == BingoState.CREATION_MENU) {
+                    "State not linked"
+                }
+                replaceWith(CreationMenuView, ViewTransition.Fade(0.5.seconds))
+            }
+        }
+        button("Next > ") {
+            addHoverEffect()
+            action {
+                assert(currentState == BingoState.CREATION_MENU) {
+                    "State not linked"
+                }
                 replaceWith(FileView, ViewTransition.Fade(0.5.seconds))
             }
         }
+        alignment = Pos.CENTER
+        addClass(Styles.defaultBackground)
+        spacing = 20.0
     }
 }
 
@@ -195,16 +211,30 @@ object FileView : View("Bingo > Find File") {
     val string: String get() = stringProperty.get()
 
     override val root = vbox {
+        label("Select the location that you want the result to be") {
+            addClass(Styles.titleLabel)
+        }
         textfield(stringProperty) {
             isEditable = false
+            stringProperty.value = "Hello world!!111!1!1!"
         }
         treeview(startingItem) {
 
         }
+        addClass(Styles.defaultBackground)
+        button("< Go Back") {
+            addHoverEffect()
+            action {
+                replaceWith(CreationMenu2, ViewTransition.Fade(0.5.seconds))
+            }
+        }
+        spacing = 10.0
     }
 
+    private var numberOfFiles = 0
+
     private fun recursivelyUpdateItem(item: TreeItem<String>): Boolean {
-        println(currentFile)
+        numberOfFiles++
         if (currentFile.isHidden) return false
         if (currentFile.name.startsWith('.')) return false
         val children = currentFile.listFiles()
@@ -215,7 +245,7 @@ object FileView : View("Bingo > Find File") {
                 if (recursivelyUpdateItem(newItem)) {
                     item += newItem
                 }
-                newItem.addEventHandler (MouseEvent.MOUSE_PRESSED) {
+                newItem.addEventHandler(MouseEvent.MOUSE_PRESSED) {
                     print("clock")
                 }
             }
@@ -226,6 +256,7 @@ object FileView : View("Bingo > Find File") {
 
     fun indexFiles() {
         recursivelyUpdateItem(startingItem)
+        println("Index of files done: Number of files indexed: $numberOfFiles")
     }
 
 }
@@ -245,7 +276,7 @@ object HowToUseView : View("Bingo > How To Use") {
             addHoverEffect()
             action {
                 currentState = BingoState.MENU
-                replaceWith(BingoMenu)
+                replaceWith(BingoMenu, ViewTransition.Fade(0.5.seconds))
             }
         }
         alignment = Pos.CENTER
