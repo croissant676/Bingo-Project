@@ -6,14 +6,14 @@ import dev.kason.bingo.control.Appearance
 import dev.kason.bingo.control.BingoState
 import dev.kason.bingo.control.currentState
 import dev.kason.bingo.util.addHoverEffect
-import dev.kason.bingo.util.runInsideLoop
 import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.SimpleStringProperty
 import javafx.event.EventHandler
+import javafx.event.EventType
 import javafx.geometry.Pos
-import javafx.scene.control.TextField
 import javafx.scene.control.TreeItem
-import javafx.scene.control.TreeView
 import javafx.scene.control.skin.TextFieldSkin
+import javafx.scene.input.MouseEvent
 import tornadofx.*
 import java.io.File
 
@@ -96,9 +96,6 @@ object SettingsView : View("Bingo > Settings") {
             }
             addClass(Styles.tabPane)
             useMaxWidth = true
-            style(append = true) {
-                paddingRight = 450.0
-            }
         }
         button("Exit") {
             addHoverEffect(c("ff4e6c"), c("eb0028"))
@@ -130,16 +127,16 @@ object CreationMenuView : View("Bingo > Create Bingo Game") {
                             this.promptTextProperty().set("Hello")
                         }
                     }
-                    field("Or choose the day you want it to end.") {
-                        datepicker {
-                            addClass(Styles.defaultPicker)
-                            editor.skin = TextFieldSkin(editor).apply {
-                                scaleX = 0.7
-                                scaleY = 0.7
-                            }
-                        }
-                        with(label) {
-                            addClass(Styles.regularLabel)
+                    with(label) {
+                        addClass(Styles.regularLabel)
+                    }
+                }
+                field("Or choose the day you want it to end.") {
+                    datepicker {
+                        addClass(Styles.defaultPicker)
+                        editor.skin = TextFieldSkin(editor).apply {
+                            scaleX = 0.7
+                            scaleY = 0.7
                         }
                     }
                     with(label) {
@@ -183,6 +180,7 @@ object CreationMenu2 : View("Bingo > Create Bingo Game") {
     override val root = vbox {
         button("Test") {
             action {
+                FileView.indexFiles()
                 replaceWith(FileView, ViewTransition.Fade(0.5.seconds))
             }
         }
@@ -191,53 +189,45 @@ object CreationMenu2 : View("Bingo > Create Bingo Game") {
 
 object FileView : View("Bingo > Find File") {
 
-    private var nodeFile = File("C:\\Users")
-    private val nodes = arrayListOf<TreeItem<String>>()
-    private val node = TreeItem(nodeFile.absolutePath)
-    private var treeView = TreeView<String>()
-    private lateinit var breadCrumbs: TextField
+    private val startingItem = TreeItem("C:\\Users")
+    private var currentFile = File(startingItem.value)
+    private val stringProperty = SimpleStringProperty("")
+    val string: String get() = stringProperty.get()
 
     override val root = vbox {
-        breadCrumbs = textfield(nodeFile.name) {
+        textfield(stringProperty) {
             isEditable = false
-
         }
-        treeView = treeview(node)
-    }
+        treeview(startingItem) {
 
-    private fun refresh() {
-        node.children.clear()
-        val files = nodeFile.list()!!
-        for (child in files) {
-            val thing = TreeItem(child)
-            val file = File("${nodeFile.absolutePath}\\$child")
-            if (file.isDirectory) {
-                thing += TreeItem("You should never be able to see this")
-            }
-            nodes += thing
-            node += thing
         }
     }
 
-    private fun refAndHover() {
-        refresh()
-        setHover()
-    }
-
-    private fun setHover() {
-        for (item in nodes) {
-            runInsideLoop {
-                if (item.isExpanded) {
-                    refresh()
+    private fun recursivelyUpdateItem(item: TreeItem<String>): Boolean {
+        println(currentFile)
+        if (currentFile.isHidden) return false
+        if (currentFile.name.startsWith('.')) return false
+        val children = currentFile.listFiles()
+        if (children != null) {
+            for (child in children) {
+                currentFile = child
+                val newItem = TreeItem(child.name)
+                if (recursivelyUpdateItem(newItem)) {
+                    item += newItem
+                }
+                newItem.addEventHandler (MouseEvent.MOUSE_PRESSED) {
+                    print("clock")
                 }
             }
+            return true
         }
+        return false
     }
 
-    init {
-        refresh()
-        setHover()
+    fun indexFiles() {
+        recursivelyUpdateItem(startingItem)
     }
+
 }
 
 object HowToUseView : View("Bingo > How To Use") {

@@ -1,5 +1,6 @@
 package dev.kason.bingo.util
 
+import tornadofx.c
 import kotlin.system.measureNanoTime
 import kotlin.system.measureTimeMillis
 
@@ -57,9 +58,6 @@ private val eventLoopThread = object : Thread() {
     }
 }
 
-fun initializeLoop() {
-    eventLoopThread.start()
-}
 
 fun restartLoop() {
     runEventLoop = true
@@ -88,6 +86,16 @@ class EventBlock(private val block: EventBlock.() -> Unit) {
     }
 }
 
-fun runInsideLoop(block: EventBlock.() -> Unit) {
-    eventLoopBlocks += EventBlock(block)
+fun runInsideLoop(count: Int = 1, block: EventBlock.() -> Unit) {
+    if(count == 1) {
+        eventLoopBlocks += EventBlock(block)
+        return
+    }
+    var number = -1
+    eventLoopBlocks += EventBlock {
+        number++
+        if(number % count == 0) {
+            block()
+        }
+    }
 }

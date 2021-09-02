@@ -6,6 +6,7 @@ import dev.kason.bingo.control.moveToNextState
 import javafx.geometry.Pos
 import javafx.scene.effect.Reflection
 import tornadofx.*
+import kotlin.concurrent.thread
 
 var isCurrentlyLoading = true
     private set
@@ -57,7 +58,7 @@ class LoadingView : View("Bingo Project > Loading") {
         if (currentState == BingoState.LOADING) {
             moveToNextState() // Bingo Menu
             setViewFromLoading(BingoMenu)
-        }
+      }
     }
 
     override fun onUndock() {

@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package dev.kason.bingo.control
 
 enum class BingoState {
@@ -186,9 +188,6 @@ enum class BingoState {
         }
     }
 }
-
-val BingoState.index: Int
-    get() = ordinal
 
 var indexOfCurrentState = 0
 
