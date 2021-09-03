@@ -10,14 +10,14 @@ version = "1.0-SNAPSHOT"
 
 javafx {
     version = "14"
-    modules("javafx.controls", "javafx.fxml", "javafx.base", "javafx.graphics", "javafx.media", "javafx.swing")
+    modules("javafx.controls", "javafx.base", "javafx.graphics", "javafx.swing")
 }
 repositories {
     mavenCentral()
 }
 
 application {
-    mainClassName = "com.example.MainKt"
+    mainClassName = "dev.kason.bingo.LauncherKt"
 }
 
 @Suppress("spellcheckinginspection")

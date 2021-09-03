@@ -122,27 +122,24 @@ object CreationMenuView : View("Bingo > Create Bingo Game") {
         }
 
         hbox {
-            field("Input the number of days to play the game:") {
-                spinner<Number>(0, 100, 5, 1, false, dayProperty, true) {
-                    addClass(Styles.defaultSpinner)
-                    onKeyTyped = EventHandler {
-                        this.promptTextProperty().set("Hello")
-                    }
-                }
-                with(label) {
-                    addClass(Styles.regularLabel)
+
+            label("Input the number of days to play the game:") {
+                addClass(Styles.regularLabel)
+            }
+            spinner<Number>(0, 100, 5, 1, false, dayProperty, true) {
+                addClass(Styles.defaultSpinner)
+                onKeyTyped = EventHandler {
+                    this.promptTextProperty().set("Hello")
                 }
             }
-            field("Or choose the day you want it to end.") {
-                datepicker {
-                    addClass(Styles.defaultPicker)
-                    editor.skin = TextFieldSkin(editor).apply {
-                        scaleX = 0.7
-                        scaleY = 0.7
-                    }
-                }
-                with(label) {
-                    addClass(Styles.regularLabel)
+            label("Or choose the day you want it to end.") {
+                addClass(Styles.regularLabel)
+            }
+            datepicker {
+                addClass(Styles.defaultPicker)
+                editor.skin = TextFieldSkin(editor).apply {
+                    scaleX = 0.7
+                    scaleY = 0.7
                 }
             }
         }
@@ -216,10 +213,10 @@ object FileView : View("Bingo > Find File") {
         }
         textfield(stringProperty) {
             isEditable = false
-            stringProperty.value = "Hello world!!111!1!1!"
+            stringProperty.value = "Hello"
         }
         treeview(startingItem) {
-
+            addClass(Styles.defaultTreeView)
         }
         addClass(Styles.defaultBackground)
         button("< Go Back") {

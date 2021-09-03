@@ -1,22 +1,33 @@
-import com.itextpdf.text.Document
-import com.itextpdf.text.Paragraph
-import com.itextpdf.text.pdf.PdfDocument
-import com.itextpdf.text.pdf.PdfWriter
-import java.io.FileOutputStream
-
+import dev.kason.bingo.control.currentAppearance
+import tornadofx.c
+import java.awt.image.BufferedImage
+import java.io.File
+import javax.imageio.ImageIO
+import javafx.scene.paint.Color as JFXColor
+import java.awt.Color as SwingColor
 
 fun main() {
+    generateImage()
+}
 
-    val dest = "C:\\Users\\crois\\Downloads\\jwxyz.docx"
+private fun generateImage() {
+    val image = BufferedImage(1000, 1000, 4)
+    val graphics = image.createGraphics()
+    graphics.color = generate(currentAppearance.themeColor)
+    graphics.fillRect(0, 0, 1000, 1000)
+    graphics.dispose()
+    val file = File("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.png")
+    ImageIO.write(image, file.extension, file)
+}
 
+private fun switchColors(color: SwingColor): JFXColor {
+    return JFXColor(color.red.toDouble(), color.green.toDouble(), color.blue.toDouble(), 1.0)
+}
 
-    /* // This is for iText
-    val file = Document()
-    val dest = "C:\\Users\\crois\\Downloads\\jwxyz.pdf"
-    val writer = PdfWriter.getInstance(file, FileOutputStream(dest))!!
-    file.open()
-    file.add(Paragraph("Hello World!"))
-    file.close()
+private fun switchColors(color: JFXColor): SwingColor {
+    return SwingColor(color.red.toFloat(), color.green.toFloat(), color.blue.toFloat())
+}
 
-     */
+private fun generate(string: String): SwingColor {
+    return switchColors(c(string))
 }

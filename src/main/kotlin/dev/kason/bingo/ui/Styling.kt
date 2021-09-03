@@ -1,9 +1,6 @@
 package dev.kason.bingo.ui
 
 import dev.kason.bingo.control.Appearance
-import javafx.scene.Cursor
-import javafx.scene.control.Button
-import javafx.scene.effect.Effect
 import javafx.scene.effect.Reflection
 import javafx.scene.paint.Color
 import tornadofx.*
@@ -36,6 +33,7 @@ class Styles : Stylesheet() {
         val themeButton by cssclass()
         val defaultSpinner by cssclass()
         val defaultPicker by cssclass()
+        val defaultTreeView by cssclass()
 
         // Changeable Colors
         @JvmStatic
@@ -228,6 +226,24 @@ class Styles : Stylesheet() {
                 fontSize = sizeOfText
                 fontFamily = "dubai"
                 backgroundColor += themeBackgroundColor
+            }
+        }
+        defaultTreeView {
+            backgroundColor += themeBackgroundColor
+            treeCell {
+                textFill = darkTextFill
+                padding = box(1.px)
+                fontFamily = "dubai"
+                fontSize = sizeOfText
+                backgroundColor += themeBackgroundColor
+                and(hover) {
+                    textFill = lightTextColor
+                    backgroundColor += tertiaryThemeColor
+                }
+                and(selected) {
+                    textFill = lightTextColor
+                    backgroundColor += tertiaryThemeColor
+                }
             }
         }
     }
