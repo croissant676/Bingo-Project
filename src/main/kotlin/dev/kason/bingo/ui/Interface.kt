@@ -217,12 +217,19 @@ object FileView : View("Bingo > Find File") {
         }
         treeview(startingItem) {
             addClass(Styles.defaultTreeView)
+
         }
         addClass(Styles.defaultBackground)
         button("< Go Back") {
             addHoverEffect()
             action {
                 replaceWith(CreationMenu2, ViewTransition.Fade(0.5.seconds))
+            }
+        }
+        button("Next >") {
+            addHoverEffect()
+            action {
+                println(string)
             }
         }
         spacing = 10.0
@@ -242,9 +249,7 @@ object FileView : View("Bingo > Find File") {
                 if (recursivelyUpdateItem(newItem)) {
                     item += newItem
                 }
-                newItem.addEventHandler(MouseEvent.MOUSE_PRESSED) {
-                    print("clock")
-                }
+
             }
             return true
         }

@@ -1,36 +1,40 @@
+import dev.kason.bingo.cards.generateImage
 import dev.kason.bingo.cards.generateNumbersWith
-import dev.kason.bingo.cards.outputNumbers
-import dev.kason.bingo.control.currentAppearance
-import tornadofx.c
-import java.awt.image.BufferedImage
+import javafx.scene.effect.Reflection
+import tornadofx.*
 import java.io.File
 import javax.imageio.ImageIO
 import javafx.scene.paint.Color as JFXColor
 import java.awt.Color as SwingColor
 
 fun main() {
-    outputNumbers(generateNumbersWith())
-    outputNumbers(generateNumbersWith())
-    outputNumbers(generateNumbersWith())
-    outputNumbers(generateNumbersWith())
-    /*
-    val pdfDocument = PdfDocument()
-    val document = Document()
-    document.addTitle("hello")
-    pdfDocument.open()
-    val writer = PdfWriter.getInstance(document, FileOutputStream("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.pdf"))
+    launch<DanApp>()
+//    outputNumbers(generateNumbersWith())
+//    outputNumbers(generateNumbersWith())
+//    outputNumbers(generateNumbersWith())
+//    outputNumbers(generateNumbersWith())
 
-    generateImage()
-
-     */
+//    val pdfDocument = PdfDocument()
+//    val document = Document()
+//    document.addTitle("hello")
+//    pdfDocument.open()
+//    val writer = PdfWriter.getInstance(document, FileOutputStream("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.pdf"))
+//
+//    generateImage()
 }
 
-private fun generateImage() {
-    val image = BufferedImage(1000, 1000, 4)
-    val graphics = image.createGraphics()
-    graphics.color = generate(currentAppearance.themeColor)
-    graphics.fillRect(0, 0, 1000, 1000)
-    graphics.dispose()
+class DanApp: App(DanView::class)
+
+class DanView: View("Dan dans tfx tutorial") {
+    override val root = vbox {
+        progressindicator {
+            effect = Reflection()
+        }
+    }
+}
+
+private fun generate() {
+    val image = generateImage(generateNumbersWith())
     val file = File("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.png")
     ImageIO.write(image, file.extension, file)
 }

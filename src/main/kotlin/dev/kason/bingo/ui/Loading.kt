@@ -1,10 +1,14 @@
 package dev.kason.bingo.ui
 
+import dev.kason.bingo.cards.generateImage
+import dev.kason.bingo.cards.generateNumbersWith
 import dev.kason.bingo.control.BingoState
 import dev.kason.bingo.control.currentState
 import dev.kason.bingo.control.moveToNextState
+import javafx.embed.swing.SwingFXUtils
 import javafx.geometry.Pos
 import javafx.scene.effect.Reflection
+import javafx.scene.image.WritableImage
 import tornadofx.*
 import kotlin.concurrent.thread
 
@@ -68,4 +72,12 @@ class LoadingView : View("Bingo Project > Loading") {
         isCurrentlyLoading = false
     }
 
+}
+
+object TestView : View("Bingo > Test Imaging") {
+    override val root = vbox {
+        val image = WritableImage(1000, 1000)
+        SwingFXUtils.toFXImage(generateImage(generateNumbersWith()), image)
+        imageview(image)
+    }
 }
