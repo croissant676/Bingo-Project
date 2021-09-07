@@ -1,3 +1,5 @@
+import dev.kason.bingo.cards.generateNumbersWith
+import dev.kason.bingo.cards.outputNumbers
 import dev.kason.bingo.control.currentAppearance
 import tornadofx.c
 import java.awt.image.BufferedImage
@@ -7,7 +9,20 @@ import javafx.scene.paint.Color as JFXColor
 import java.awt.Color as SwingColor
 
 fun main() {
+    outputNumbers(generateNumbersWith())
+    outputNumbers(generateNumbersWith())
+    outputNumbers(generateNumbersWith())
+    outputNumbers(generateNumbersWith())
+    /*
+    val pdfDocument = PdfDocument()
+    val document = Document()
+    document.addTitle("hello")
+    pdfDocument.open()
+    val writer = PdfWriter.getInstance(document, FileOutputStream("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.pdf"))
+
     generateImage()
+
+     */
 }
 
 private fun generateImage() {

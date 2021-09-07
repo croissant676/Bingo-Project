@@ -1,0 +1,16 @@
+package dev.kason.bingo.cards
+
+import java.awt.image.BufferedImage
+import javax.swing.JTextField
+
+data class BingoTile(val value: Int) {
+    var crossedOff = false
+}
+
+data class BingoCard (val numbers: List<List<BingoTile>>) {
+    operator fun get(row: Int) = numbers[row]
+}
+
+fun generateImage(bingoCard: BingoCard): BufferedImage {
+    val image = BufferedImage()z
+}
