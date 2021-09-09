@@ -2,6 +2,7 @@ package dev.kason.bingo.cards
 
 import dev.kason.bingo.control.currentAppearance
 import dev.kason.bingo.ui.Styles
+import dev.kason.bingo.util.addHoverEffect
 import javafx.geometry.Pos
 import javafx.scene.control.ContentDisplay
 import javafx.scene.control.Label
@@ -19,12 +20,13 @@ val columnColors = mutableListOf<Paint>()
 
 class CardView(val card: BingoCard) : View("Bingo > Card: ") {
     override val root = vbox {
-        button ("Generate Image of this and store"){
-//            val image = WritableImage(700, 700)
-//            scene.snapshot(image)
-//            val file = File("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.png")
-//            ImageIO.write(image, file.extension, file)
-        }
+//        button ("Generate Image of this and store"){
+////            val image = WritableImage(700, 700)
+////            scene.snapshot(image)
+////            val file = File("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.png")
+////            ImageIO.write(image, file.extension, file)
+//            addHoverEffect()
+//        }
         hbox {
             alignment = Pos.TOP_RIGHT
             label("Game 12345, Card SapF12") {
@@ -92,6 +94,7 @@ class CardView(val card: BingoCard) : View("Bingo > Card: ") {
             }
             vgap = 5.0
             hgap = 5.0
+            addClass(Styles.defaultBackground)
         }
         style {
             borderRadius += box(0.px)
@@ -99,6 +102,7 @@ class CardView(val card: BingoCard) : View("Bingo > Card: ") {
             borderColor += box(c(currentAppearance.themeColor))
             padding = box(60.px)
         }
+        addClass(Styles.defaultBackground)
         alignment = Pos.CENTER
     }
 }

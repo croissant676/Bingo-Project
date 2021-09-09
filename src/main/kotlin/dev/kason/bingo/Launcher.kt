@@ -1,11 +1,7 @@
 package dev.kason.bingo
 
-import dev.kason.bingo.cards.CardView
-import dev.kason.bingo.cards.generateNumbersWith
 import dev.kason.bingo.ui.LoadingView
 import dev.kason.bingo.ui.Styles
-import dev.kason.bingo.ui.TestView
-import dev.kason.bingo.ui.runImmediately
 import dev.kason.bingo.util.startEventLoop
 import javafx.application.Platform
 import javafx.event.EventHandler
@@ -21,7 +17,6 @@ fun main(args: Array<String>) {
 
 class BingoApp : App(LoadingView::class, Styles::class) {
     init {
-        runImmediately(CardView(generateNumbersWith()))
         startEventLoop()
         reloadViewsOnFocus()
         reloadStylesheetsOnFocus()
@@ -36,7 +31,6 @@ class BingoApp : App(LoadingView::class, Styles::class) {
         }
         super.start(stage)
     }
-
 //    override fun createPrimaryScene(view: UIComponent): Scene {
 //        scene = Scene(view.root)
 //        return super.createPrimaryScene(view)
