@@ -10,6 +10,7 @@ import javafx.geometry.Pos
 import javafx.scene.effect.Reflection
 import javafx.scene.image.WritableImage
 import tornadofx.*
+import java.awt.image.BufferedImage
 import kotlin.concurrent.thread
 
 var isCurrentlyLoading = true
@@ -77,7 +78,7 @@ class LoadingView : View("Bingo Project > Loading") {
 object TestView : View("Bingo > Test Imaging") {
     override val root = vbox {
         val image = WritableImage(1000, 1000)
-        SwingFXUtils.toFXImage(generateImage(generateNumbersWith()), image)
+        SwingFXUtils.toFXImage(generateImage(generateNumbersWith()) as BufferedImage, image)
         imageview(image)
     }
 }

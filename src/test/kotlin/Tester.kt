@@ -2,6 +2,7 @@ import dev.kason.bingo.cards.generateImage
 import dev.kason.bingo.cards.generateNumbersWith
 import javafx.scene.effect.Reflection
 import tornadofx.*
+import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 import javafx.scene.paint.Color as JFXColor
@@ -34,7 +35,7 @@ class DanView: View("Dan dans tfx tutorial") {
 }
 
 private fun generate() {
-    val image = generateImage(generateNumbersWith())
+    val image = generateImage(generateNumbersWith()) as BufferedImage
     val file = File("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.png")
     ImageIO.write(image, file.extension, file)
 }

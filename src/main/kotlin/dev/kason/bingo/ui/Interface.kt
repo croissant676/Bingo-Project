@@ -12,7 +12,6 @@ import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.control.TreeItem
 import javafx.scene.control.skin.TextFieldSkin
-import javafx.scene.input.MouseEvent
 import tornadofx.*
 import java.io.File
 
