@@ -9,6 +9,7 @@ import dev.kason.bingo.ui.runImmediately
 import dev.kason.bingo.util.startEventLoop
 import javafx.application.Platform
 import javafx.event.EventHandler
+import javafx.scene.Scene
 import javafx.scene.image.Image
 import javafx.stage.Stage
 import tornadofx.*
@@ -35,4 +36,12 @@ class BingoApp : App(LoadingView::class, Styles::class) {
         }
         super.start(stage)
     }
+
+//    override fun createPrimaryScene(view: UIComponent): Scene {
+//        scene = Scene(view.root)
+//        return super.createPrimaryScene(view)
+//    }
 }
+
+lateinit var scene: Scene
+    private set

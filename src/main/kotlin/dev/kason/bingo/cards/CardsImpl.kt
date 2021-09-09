@@ -4,8 +4,11 @@ import java.awt.Color
 import java.awt.Font
 import java.awt.image.BufferedImage
 
-data class BingoTile(val value: Int) {
-    var crossedOff = false
+class BingoTile(val value: Int) {
+    private var crossedOff = false
+    override fun toString(): String {
+        return "BingoTile~{value:$value,crossedOff:$crossedOff}"
+    }
 }
 
 data class BingoCard (val numbers: List<List<BingoTile>>) {
