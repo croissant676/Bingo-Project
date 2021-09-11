@@ -1,13 +1,14 @@
 package dev.kason.bingo.ui
 
-import dev.kason.bingo.cards.generateImage
 import dev.kason.bingo.cards.generateNumbersWith
 import dev.kason.bingo.control.BingoState
 import dev.kason.bingo.control.currentState
 import dev.kason.bingo.control.moveToNextState
 import javafx.embed.swing.SwingFXUtils
 import javafx.geometry.Pos
+import javafx.scene.control.Alert
 import javafx.scene.effect.Reflection
+import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import tornadofx.*
 import java.awt.image.BufferedImage
@@ -55,6 +56,12 @@ class LoadingView : View("Bingo Project > Loading") {
     }
 
     override fun onDock() {
+        try {
+            println("Res:${resources["bingo.png"]}")
+        } catch (e: Exception) {
+            alert(Alert.AlertType.WARNING, "Resource does not exist.", "Cannot gather resource: \"bingo.png\" inside of resources folder:\n" +
+                    "Windows will not have an image.")
+        }
         isCurrentlyLoading = true
         currentLoadingView = this
         if (immediateView != null) {
@@ -78,7 +85,6 @@ class LoadingView : View("Bingo Project > Loading") {
 object TestView : View("Bingo > Test Imaging") {
     override val root = vbox {
         val image = WritableImage(1000, 1000)
-        SwingFXUtils.toFXImage(generateImage(generateNumbersWith()) as BufferedImage, image)
         imageview(image)
     }
 }

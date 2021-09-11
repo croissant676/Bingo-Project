@@ -3,6 +3,7 @@ package dev.kason.bingo.control
 import dev.kason.bingo.ui.Styles.Companion.sizeOfText
 import dev.kason.bingo.ui.registerTheme
 import dev.kason.bingo.util.addHoverEffect
+import dev.kason.bingo.util.addHoverEffectAppearance
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Button
@@ -46,7 +47,7 @@ enum class Appearance(
             action {
                 registerTheme(this@Appearance)
             }
-            addHoverEffect(c(themeColor), c(secondaryThemeColor))
+            addHoverEffectAppearance(this@Appearance)
         }, Label(properName).apply {
             style {
                 textFill = c(darkTextFill)

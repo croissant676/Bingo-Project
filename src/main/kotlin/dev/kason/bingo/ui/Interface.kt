@@ -10,16 +10,20 @@ import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.event.EventHandler
 import javafx.geometry.Pos
+import javafx.scene.Parent
+import javafx.scene.chart.Axis
+import javafx.scene.chart.CategoryAxis
+import javafx.scene.chart.NumberAxis
 import javafx.scene.control.TreeItem
 import javafx.scene.control.skin.TextFieldSkin
 import tornadofx.*
 import java.io.File
 
-object BingoMenu : View("Bingo > Bingo") {
+object BingoMenu : View("Bingo > Menu") {
     override val root = borderpane {
         center {
             vbox {
-                label("Top Text") {
+                label("Bingo!") {
                     addClass(Styles.titleLabel)
                     padding = insets(15)
                 }
@@ -33,15 +37,15 @@ object BingoMenu : View("Bingo > Bingo") {
                     }
                     useMaxSize = true
                 }
-                button("Settings") {
-                    addClass(Styles.button)
-                    addHoverEffect()
-                    useMaxSize = true
-                    action {
-                        currentState = BingoState.SETTINGS
-                        replaceWith(SettingsView, ViewTransition.Fade(0.5.seconds))
-                    }
-                }
+//                button("Settings") {
+//                    addClass(Styles.button)
+//                    addHoverEffect()
+//                    useMaxSize = true
+//                    action {
+//                        currentState = BingoState.SETTINGS
+//                        replaceWith(SettingsView, ViewTransition.Fade(0.5.seconds))
+//                    }
+//                }
                 button("How to use") {
                     addClass(Styles.button)
                     addHoverEffect()
@@ -63,51 +67,115 @@ object BingoMenu : View("Bingo > Bingo") {
 }
 
 object SettingsView : View("Bingo > Settings") {
-    override val root = hbox {
-        tabpane {
-            tab("General") {
-                isClosable = false
-                addClass(Styles.tab)
-            }
-            tab("Formatting") {
-                isClosable = false
-                addClass(Styles.tab)
-            }
-            tab("Performance") {
-                isClosable = false
-                addClass(Styles.tab)
-            }
-            tab("Appearance") {
-                isClosable = false
-                addClass(Styles.tab)
-                val appearances = Appearance.values()
-                content = hbox {
-                    for (appearance in appearances) {
-                        this += appearance.display()
+    override val root = borderpane {
+
+        center {
+            hbox {
+                tabpane {
+                    tab("General") {
+                        isClosable = false
+                        addClass(Styles.tab)
                     }
-                    spacing = 10.0
-                    style {
-                        padding = box(10.px)
+                    tab("Formatting") {
+                        isClosable = false
+                        addClass(Styles.tab)
                     }
-                    addClass(Styles.defaultBackground)
+                    tab("Performance") {
+                        content = vbox {
+                            hbox {
+                                val heap = label("${Runtime.getRuntime().totalMemory() / 1_000_000} MB") {
+                                    addClass(Styles.regularLabel)
+                                }
+                                val free = label("${Runtime.getRuntime().freeMemory() / 1_000_000} MB") {
+                                    addClass(Styles.regularLabel)
+                                }
+                                val max = label("${Runtime.getRuntime().maxMemory() / 1_000_000} MB") {
+                                    addClass(Styles.regularLabel)
+                                }
+                                button("Refresh") {
+                                    addHoverEffect()
+                                    action {
+                                        val mbFree = Runtime.getRuntime().freeMemory() / 1_000_000
+                                        heap.text = "${Runtime.getRuntime().totalMemory() / 1_000_000} MB"
+                                        free.text = "${if (mbFree < 10) "0$mbFree" else mbFree} MB"
+                                        max.text = "${Runtime.getRuntime().maxMemory() / 1_000_000} MB"
+                                    }
+                                    style {
+                                        padding = box(0.px, 0.px, 0.px, 100.px)
+                                    }
+                                }
+                                spacing = 150.0
+                            }
+                            hbox {
+                                label("Total Memory (in MB)") {
+                                    addClass(Styles.regularLabel)
+                                }
+                                label("Free Memory (in MB)") {
+                                    addClass(Styles.regularLabel)
+                                }
+                                label("Max Memory (in MB)") {
+                                    addClass(Styles.regularLabel)
+                                }
+                                spacing = 35.0
+                            }
+                            spacing = 5.0
+
+                        }
+                        isClosable = false
+                        addClass(Styles.tab)
+                    }
+                    tab("Appearance") {
+                        isClosable = false
+                        addClass(Styles.tab)
+                        val appearances = Appearance.values()
+                        content = hbox {
+                            for (appearance in appearances) {
+                                this += appearance.display()
+                            }
+                            spacing = 10.0
+                            style {
+                                padding = box(10.px)
+                            }
+                            addClass(Styles.defaultBackground)
+                        }
+                    }
+                    addClass(Styles.tabPane)
+                    useMaxWidth = true
                 }
             }
-            addClass(Styles.tabPane)
-            useMaxWidth = true
         }
-        button("Exit") {
-            addHoverEffect(c("ff4e6c"), c("eb0028"))
-            addClass(Styles.redButton)
-            action {
-                currentState = BingoState.MENU
-                replaceWith(BingoMenu, ViewTransition.Fade(0.5.seconds))
-                BingoMenu.onDock()
+        right {
+            button("Exit") {
+                addHoverEffect(c("ff4e6c"), c("eb0028"))
+                addClass(Styles.redButton)
+                action {
+                    currentState = BingoState.MENU
+                    replaceWith(BingoMenu, ViewTransition.Fade(0.5.seconds))
+                    BingoMenu.onDock()
+                }
+                style(append = true) {
+                    paddingTop = 1
+                }
             }
-            style(append = true) {
-                paddingTop = 1
-            }
+            addClass(Styles.defaultBackground)
         }
-        addClass(Styles.defaultBackground)
+
+    }
+}
+
+object MinorSettings : View("Bingo > Settings") {
+    override val root: Parent = vbox {
+        val appearances = Appearance.values()
+        hbox {
+            for (appearance in appearances) {
+                this += appearance.display()
+            }
+            spacing = 10.0
+            style {
+                padding = box(10.px)
+            }
+            addClass(Styles.defaultBackground)
+        }
     }
 }
 

@@ -10,6 +10,10 @@ val eventLoopBlocks: MutableList<EventBlock> = mutableListOf()
 private var executionTime = 0L
 private var optimizationTimer = 0
 
+var fps = 80 // Allows me to easily change the fps
+private val timeBetweenFrames: Long
+    get() = (1000.0 / fps).toLong()
+
 private val eventLoopThread = object : Thread() {
 
     init {
@@ -48,10 +52,10 @@ private val eventLoopThread = object : Thread() {
         executionTime = measureTimeMillis {
             runOnce()
         }
-        println("Optimizations finished in time = $executionTime.")
+        println("Optimizations finished in time = $executionTime, fps = ${dev.kason.bingo.util.fps}")
     }
 
-    private fun waitTime() = sleep(15 - executionTime)
+    private fun waitTime() = sleep(timeBetweenFrames - executionTime)
 
     override fun toString(): String {
         return "Event Loop Thread: state= {alive=$isAlive, inter=$isInterrupted} }"
@@ -89,14 +93,14 @@ class EventBlock(private val block: EventBlock.() -> Unit) {
 }
 
 fun runInsideLoop(count: Int = 1, block: EventBlock.() -> Unit) {
-    if(count == 1) {
+    if (count == 1) {
         eventLoopBlocks += EventBlock(block)
         return
     }
     var number = -1
     eventLoopBlocks += EventBlock {
         number++
-        if(number % count == 0) {
+        if (number % count == 0) {
             block()
         }
     }
