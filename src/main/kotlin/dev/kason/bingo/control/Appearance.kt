@@ -29,6 +29,7 @@ enum class Appearance(
     GREEN("009a00", "008100", "006700", "001100", "e8ffe8", "e8ffe8"),
     CITRUS("ffb14d", "ffa634", "ff9b1a", "060400", "fff4ea", "fff6ea"),
     DARK("52a9ff", "6cb6ff", "86c3ff", "f5faff", "060617", "060617"),
+
     ;
 
     fun display(): Node {

@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
 
 class BingoApp : App(LoadingView::class, Styles::class) {
     init {
-        runImmediately(MinorSettings)
+//        runImmediately(MinorSettings)
         startEventLoop()
         reloadViewsOnFocus()
         reloadStylesheetsOnFocus()
@@ -35,6 +35,12 @@ class BingoApp : App(LoadingView::class, Styles::class) {
             Platform.exit()
             exitProcess(0)
         }
+        stage.isResizable = false
+        // Set the size so the views don't resize it later
+        stage.minWidth = 800.0
+        stage.minHeight = 600.0
+        stage.maxWidth = 800.0
+        stage.maxHeight = 600.0
         super.start(stage)
     }
 }

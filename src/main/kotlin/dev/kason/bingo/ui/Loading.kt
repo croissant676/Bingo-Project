@@ -1,17 +1,14 @@
 package dev.kason.bingo.ui
 
-import dev.kason.bingo.cards.generateNumbersWith
 import dev.kason.bingo.control.BingoState
 import dev.kason.bingo.control.currentState
 import dev.kason.bingo.control.moveToNextState
-import javafx.embed.swing.SwingFXUtils
 import javafx.geometry.Pos
 import javafx.scene.control.Alert
 import javafx.scene.effect.Reflection
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import tornadofx.*
-import java.awt.image.BufferedImage
 import kotlin.concurrent.thread
 
 var isCurrentlyLoading = true
@@ -57,7 +54,9 @@ class LoadingView : View("Bingo Project > Loading") {
 
     override fun onDock() {
         try {
-            println("Res:${resources["bingo.png"]}")
+            val uri = javaClass.classLoader.getResource("bingo.png")!!
+            val image = Image(uri.toExternalForm())
+            addStageIcon(image)
         } catch (e: Exception) {
             alert(Alert.AlertType.WARNING, "Resource does not exist.", "Cannot gather resource: \"bingo.png\" inside of resources folder:\n" +
                     "Windows will not have an image.")
@@ -68,7 +67,7 @@ class LoadingView : View("Bingo Project > Loading") {
             setViewFromLoading(immediateView!!)
         }
         thread {
-            FileView.indexFiles()
+//            FileView.indexFiles()
         }
         if (currentState == BingoState.LOADING) {
             moveToNextState() // Bingo Menu

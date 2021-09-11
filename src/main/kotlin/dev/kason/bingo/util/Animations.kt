@@ -120,3 +120,47 @@ fun Button.addHoverEffectAppearance(appearance: Appearance) {
         }
     }
 }
+
+fun Button.addHoverEffectLight() {
+    var stateOfHover = 0
+    runInsideLoop {
+        if(stateOfHover < 1) {
+            style {
+                backgroundColor += Styles.themeBackgroundColor
+                textFill = Styles.lightTextColor
+            }
+        }
+        val textF = Styles.lightTextColor
+        val defaultColor = Styles.themeBackgroundColor
+        val newColor = Styles.themeColor
+        // Even though this is a lot more expensive, it works better
+        if (!isVisible) {
+            exitLoop()
+        } else {
+            if (isHover && stateOfHover <= 31) {
+                stateOfHover++
+            } else if (stateOfHover > 0) {
+                stateOfHover -= 2
+            }
+            if (stateOfHover >= 1) {
+                runLater {
+                    style {
+                        textFill = textF
+                        if (stateOfHover in 1 until 31) {
+                            backgroundColor += RadialGradient(
+                                0.0, 0.0, 0.5, -0.4,
+                                1.5, true, CycleMethod.NO_CYCLE,
+                                Stop(0.01, newColor), Stop(stateOfHover / 30.0, newColor),
+                                Stop(stateOfHover / 30.0, defaultColor), Stop(1.0, defaultColor)
+                            )
+                        } else if (stateOfHover >= 30) {
+                            backgroundColor += newColor
+                        }
+                    }
+                }
+            }
+        }
+        // Just so it doesn't show
+    }
+
+}
