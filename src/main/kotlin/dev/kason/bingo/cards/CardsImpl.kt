@@ -11,4 +11,11 @@ data class BingoCard(val numbers: List<List<BingoTile>>) {
     val totalNumbers = arrayListOf<BingoTile>()
     val remainingNumbers = arrayListOf<BingoTile>()
     operator fun get(row: Int) = numbers[row]
+    operator fun invoke(number: Int, relation: Int = number / 15) {
+
+    }
+}
+
+class BingoGame(seed: Int) {
+
 }

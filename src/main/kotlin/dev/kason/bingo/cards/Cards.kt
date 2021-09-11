@@ -29,7 +29,7 @@ class CardView(val card: BingoCard) : View("Bingo > Card: ") {
 //        }
         hbox {
             alignment = Pos.TOP_RIGHT
-            label("Game 12345, Card SapF12") {
+            label("Game ") {
                 style {
                     fontSize = 20.px
                 }

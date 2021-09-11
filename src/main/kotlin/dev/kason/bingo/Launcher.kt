@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
 
 class BingoApp : App(LoadingView::class, Styles::class) {
     init {
-//        runImmediately(MinorSettings)
+        runImmediately(CardView(generateNumbersWith()))
         startEventLoop()
         reloadViewsOnFocus()
         reloadStylesheetsOnFocus()
