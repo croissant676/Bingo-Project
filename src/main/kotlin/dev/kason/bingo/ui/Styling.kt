@@ -34,6 +34,7 @@ class Styles : Stylesheet() {
         val defaultSpinner by cssclass()
         val defaultPicker by cssclass()
         val defaultTreeView by cssclass()
+        val redTile by cssclass()
 
         // Changeable Colors
         @JvmStatic
@@ -245,6 +246,15 @@ class Styles : Stylesheet() {
                     backgroundColor += tertiaryThemeColor
                 }
             }
+        }
+        redTile {
+            borderRadius += box(0.px)
+            backgroundRadius += box(0.px)
+            backgroundColor += c("ff4e6c")
+            textFill = lightTextColor
+            fontFamily = "dubai"
+            fontSize = 30.px
+            padding = box(2.px)
         }
     }
 }

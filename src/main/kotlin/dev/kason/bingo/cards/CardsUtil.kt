@@ -1,0 +1,92 @@
+package dev.kason.bingo.cards
+
+import kotlin.properties.Delegates
+import kotlin.random.Random
+
+fun generateNumbers(seed: Long = 0, count: Int = 1): BingoGame {
+    val arrayList = ArrayList<BingoCard>(count)
+    val random = Random(seed)
+    repeat(count) {
+        arrayList += BingoCard(List(5) { row ->
+            val existingNumbers = arrayListOf<Int>()
+            val list = MutableList(5) { col ->
+                BingoTile(run {
+                    if (row == 2 && col == 2) {
+                        return@run -1
+                    }
+                    var number by Delegates.notNull<Int>()
+                    do {
+                        number = random.nextInt(row * 15 + 1, (row + 1) * 15 + 1)
+                    } while (number in existingNumbers)
+                    existingNumbers += number
+                    number
+                })
+            }
+            list
+        }, seed, it + 1)
+        println("Created card: $it")
+    }
+    val game = BingoGame(seed, cards = arrayList)
+    currentGame = game
+    return game
+}
+
+
+fun outputNumbers(card: BingoCard) {
+    val stringBuilders = Array(5) { StringBuilder() }
+    for (index in 0 until 5) {
+        for (index2 in card[index].indices) {
+            stringBuilders[index2].append(
+                card[index][index2].optimizedToString()
+            ).append('\t')
+        }
+    }
+    for (index in 0 until 5) {
+        println(stringBuilders[index])
+    }
+    println("====".repeat(5))
+}
+
+private fun BingoTile.optimizedToString(): String {
+    return "$value ${if(crossedOff) "-" else "+"}  "
+}
+
+fun emptyBingoCard(): BingoCard {
+    return BingoCard(numbers = List(5) { row ->
+        val existingNumbers = arrayListOf<Int>()
+        val list = MutableList(5) { col ->
+            if (row == 2 && col == 2) {
+                val tile = BingoTile(-1)
+                tile.crossedOff = true
+            }
+            BingoTile(run {
+                var number by Delegates.notNull<Int>()
+                do {
+                    number = Random.nextInt(row * 15 + 1, (row + 1) * 15 + 1)
+                } while (number in existingNumbers)
+                existingNumbers += number
+                number
+            })
+        }
+        return@List list
+    }, -1, 0)
+}
+
+fun quickPrintCard() {
+    val game = currentGame
+    for(index in game.indices) {
+        println("Game: $index")
+        val card = game[index]
+        val stringBuilders = Array(5) { StringBuilder() }
+        for (index1 in 0 until 5) {
+            for (index2 in card[index1].indices) {
+                stringBuilders[index2].append(card[index1][index2]).append('\t')
+            }
+        }
+        for (index1 in 0 until 5) {
+            println(stringBuilders[index1])
+        }
+        println()
+    }
+    println("====".repeat(5))
+}

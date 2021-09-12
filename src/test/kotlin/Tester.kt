@@ -1,4 +1,3 @@
-import dev.kason.bingo.cards.generateImage
 import dev.kason.bingo.cards.generateNumbers
 import javafx.scene.effect.Reflection
 import tornadofx.*
@@ -24,9 +23,9 @@ fun main() {
 //    generateImage()
 }
 
-class DanApp: App(DanView::class)
+class DanApp : App(DanView::class)
 
-class DanView: View("Dan dans tfx tutorial") {
+class DanView : View("Dan dans tfx tutorial") {
     override val root = vbox {
         progressindicator {
             effect = Reflection()

@@ -22,14 +22,62 @@ enum class Appearance(
     val lightTextFill: String,
     val themeBackgroundColor: String
 ) {
-    DEFAULT("0483ff", "0076ea", "0069d1", "151554", "f5faff", "f5faff"),
-    PURPLE("7447d1", "6533cc", "5b2eb8", "150c29", "f5f0fe", "f5f0fe"),
-    MONO("767676", "595959", "3c3c3c", "000000", "f3f3f3", "ffffff"),
-    RED("ff6767", "ea0000", "b70000", "1a0000", "ffdede", "fff2f2"),
-    GREEN("009a00", "008100", "006700", "001100", "e8ffe8", "e8ffe8"),
-    CITRUS("ffb14d", "ffa634", "ff9b1a", "060400", "fff4ea", "fff6ea"),
-    DARK("52a9ff", "6cb6ff", "86c3ff", "f5faff", "060617", "060617"),
-
+    DEFAULT(
+        "0483ff",
+        "0076ea",
+        "0069d1",
+        "151554",
+        "f5faff",
+        "f5faff"
+    ),
+    PURPLE(
+        "7447d1",
+        "6533cc",
+        "5b2eb8",
+        "150c29",
+        "f5f0fe",
+        "f5f0fe"
+    ),
+    MONO(
+        "767676",
+        "595959",
+        "3c3c3c",
+        "000000",
+        "f3f3f3",
+        "ffffff"
+    ),
+    RED(
+        "ff6767",
+        "ea0000",
+        "b70000",
+        "1a0000",
+        "ffdede",
+        "fff2f2"
+    ),
+    GREEN(
+        "009a00",
+        "008100",
+        "006700",
+        "001100",
+        "e8ffe8",
+        "e8ffe8"
+    ),
+    CITRUS(
+        "ffb14d",
+        "ffa634",
+        "ff9b1a",
+        "060400",
+        "fff4ea",
+        "fff6ea"
+    ),
+    DARK(
+        "52a9ff",
+        "6cb6ff",
+        "86c3ff",
+        "f5faff",
+        "060617",
+        "060617"
+    ),
     ;
 
     fun display(): Node {

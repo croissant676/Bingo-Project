@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package dev.kason.bingo
 
 import dev.kason.bingo.cards.CardView
@@ -45,5 +47,5 @@ class BingoApp : App(LoadingView::class, Styles::class) {
     }
 }
 
-lateinit var scene: Scene
-    private set
+// lateinit var scene: Scene
+//    private set
