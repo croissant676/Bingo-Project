@@ -2,6 +2,9 @@ package dev.kason.bingo.cards
 
 import dev.kason.bingo.control.currentAppearance
 import dev.kason.bingo.ui.Styles
+import dev.kason.bingo.ui.runImmediately
+import dev.kason.bingo.util.isRunning
+import dev.kason.bingo.util.runInsideLoop
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.ContentDisplay
@@ -12,12 +15,13 @@ import javafx.scene.text.TextAlignment
 import tornadofx.*
 
 var currentGame = BingoGame(1, cards = arrayListOf())
+lateinit var currentlyDisplayedC: CardView
 
 var f = Font("dubai", 100.0)
 val columnColors = mutableListOf<Paint>()
 
 class CardView(val card: BingoCard) : View("Bingo > Card: ") {
-    override val root = vbox {
+    override var root = vbox {
 //        button ("Generate Image of this and store"){
 ////            val image = WritableImage(700, 700)
 ////            scene.snapshot(image)
@@ -103,17 +107,38 @@ class CardView(val card: BingoCard) : View("Bingo > Card: ") {
         addClass(Styles.defaultBackground)
         alignment = Pos.CENTER
     }
+
+//    fun refreshView() {
+//        root = vbox {
+//
+//        }
+//    }
 }
 
 object EditingCardView : View("Bingo > Cards") {
-    override val root: Parent = vbox {
-
+    override val root: Parent = borderpane {
+        left {
+            add(generateCardView(currentGame.first()))
+            addClass(Styles.defaultBackground)
+        }
+        center {
+            currentGame.check(12)
+        }
+        addClass(Styles.defaultBackground)
     }
+//    init {
+//        if(isRunning) {
+//            println("Event Loop is active right now!")
+//            runInsideLoop (5) {
+//
+//            }
+//        }
+//    }
 }
 
 fun generateCardView(card: BingoCard): CardView {
     val posView = currentGame.viewMap[card.cardNumber]
-    if(posView == null) {
+    if (posView == null) {
         val view = CardView(card)
         currentGame.viewMap[card.cardNumber] = view
         return view

@@ -35,9 +35,10 @@ class DanView: View("Dan dans tfx tutorial") {
 }
 
 private fun generate() {
-    val image = generateImage(generateNumbers()) as BufferedImage
-    val file = File("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.png")
-    ImageIO.write(image, file.extension, file)
+    return
+//    val image = generateImage(generateNumbers()) as BufferedImage
+//    val file = File("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.png")
+//    ImageIO.write(image, file.extension, file)
 }
 
 private fun switchColors(color: SwingColor): JFXColor {

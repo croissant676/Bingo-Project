@@ -1,6 +1,7 @@
 package dev.kason.bingo
 
 import dev.kason.bingo.cards.CardView
+import dev.kason.bingo.cards.EditingCardView
 import dev.kason.bingo.cards.generateCardView
 import dev.kason.bingo.cards.generateNumbers
 import dev.kason.bingo.ui.LoadingView
@@ -15,14 +16,15 @@ import tornadofx.*
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
+    startEventLoop()
     launch<BingoApp>(args)
 }
 
 class BingoApp : App(LoadingView::class, Styles::class) {
     init {
 //        runImmediately(CardView(generateNumbers().first()))
-        runImmediately(generateCardView(generateNumbers(100, 12).first()))
-        startEventLoop()
+        generateNumbers(100, 12)
+        runImmediately(EditingCardView)
         reloadViewsOnFocus()
         reloadStylesheetsOnFocus()
     }

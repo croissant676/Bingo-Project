@@ -14,6 +14,9 @@ var fps = 80 // Allows me to easily change the fps
 private val timeBetweenFrames: Long
     get() = (1000.0 / fps).toLong()
 
+val isRunning: Boolean
+    get() = runEventLoop && eventLoopThread.isAlive
+
 private val eventLoopThread = object : Thread() {
 
     init {
