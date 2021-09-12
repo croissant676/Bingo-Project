@@ -1,25 +1,34 @@
 package dev.kason.bingo.cards
 
+import kotlin.jvm.internal.Intrinsics
 import kotlin.properties.Delegates
 import kotlin.random.Random
 
-fun generateNumbersWith(random: Random = Random.Default): BingoCard = BingoCard(List(5) { row ->
-    val existingNumbers = arrayListOf<Int>()
-    val list = MutableList(5) { col ->
-        BingoTile(run {
-            if (row == 2 && col == 2) {
-                return@run -1
+fun generateNumbers(seed: Long = 0, count: Int = 1): List<BingoCard> {
+    val arrayList = ArrayList<BingoCard>(count)
+    val random = Random(seed)
+    repeat(count) {
+        arrayList += BingoCard(List(5) { row ->
+            val existingNumbers = arrayListOf<Int>()
+            val list = MutableList(5) { col ->
+                BingoTile(run {
+                    if (row == 2 && col == 2) {
+                        return@run -1
+                    }
+                    var number by Delegates.notNull<Int>()
+                    do {
+                        number = random.nextInt(row * 15 + 1, (row + 1) * 15 + 1)
+                    } while (number in existingNumbers)
+                    existingNumbers += number
+                    number
+                })
             }
-            var number by Delegates.notNull<Int>()
-            do {
-                number = random.nextInt(row * 15 + 1, (row + 1) * 15 + 1)
-            } while (number in existingNumbers)
-            existingNumbers += number
-            number
-        })
+            list
+        }, seed, it + 1)
     }
-    list
-})
+    return arrayList
+}
+
 
 fun outputNumbers(card: BingoCard) {
     val stringBuilders = Array(5) { StringBuilder() }

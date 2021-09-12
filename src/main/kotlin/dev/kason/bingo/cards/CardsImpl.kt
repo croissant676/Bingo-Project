@@ -7,7 +7,7 @@ class BingoTile(val value: Int) {
     }
 }
 
-data class BingoCard(val numbers: List<List<BingoTile>>) {
+data class BingoCard(val numbers: List<List<BingoTile>>, val randomSeed: Long = 0, val cardNumber: Int) {
     val totalNumbers = arrayListOf<BingoTile>()
     val remainingNumbers = arrayListOf<BingoTile>()
     operator fun get(row: Int) = numbers[row]

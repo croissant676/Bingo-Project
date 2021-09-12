@@ -18,7 +18,7 @@ import javax.imageio.ImageIO
 var f = Font("dubai", 100.0)
 val columnColors = mutableListOf<Paint>()
 
-class CardView(val card: BingoCard) : View("Bingo > Card: ") {
+class CardView(val card: BingoCard) : Fragment("Bingo > Card: ") {
     override val root = vbox {
 //        button ("Generate Image of this and store"){
 ////            val image = WritableImage(700, 700)
@@ -29,7 +29,7 @@ class CardView(val card: BingoCard) : View("Bingo > Card: ") {
 //        }
         hbox {
             alignment = Pos.TOP_RIGHT
-            label("Game ") {
+            label("Seed ${card.randomSeed}, Card ${card.cardNumber}") {
                 style {
                     fontSize = 20.px
                 }
