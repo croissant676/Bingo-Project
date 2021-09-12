@@ -11,6 +11,7 @@ import javafx.scene.paint.Paint
 import javafx.scene.text.Font
 import javafx.scene.text.TextAlignment
 import tornadofx.*
+import java.util.*
 
 var currentGame: BingoGame = generateNumbers()
 var currentlyDisplayedCard: CardView = generateCardView(currentGame.first())
@@ -75,7 +76,7 @@ class CardView(val card: BingoCard) : View("Bingo > Card: ") {
                 for (col in 0 until 5) {
                     val card = card[row][col]
                     val value = card.value
-                    val button = Label(if (value == -1) "FREE" else value.toString()).apply {
+                    val label = Label(if (value == -1) "FREE" else value.toString()).apply {
                         prefWidth = 80.0
                         prefHeight = 80.0
                         style {
@@ -89,10 +90,12 @@ class CardView(val card: BingoCard) : View("Bingo > Card: ") {
                         alignment = Pos.CENTER
                         textAlignment = TextAlignment.CENTER
                     }
-                    if(card.crossedOff) {
-                        println(card)
+                    if (card.crossedOff) {
+                        label.style(append = true) {
+                            backgroundColor += c("ff4e6c")
+                        }
                     }
-                    add(button, row, col)
+                    add(label, row, col)
                 }
             }
             vgap = 5.0
@@ -118,13 +121,83 @@ class CardView(val card: BingoCard) : View("Bingo > Card: ") {
 
 object EditingCardView : View("Bingo > Cards") {
     override val root: Parent = borderpane {
+        top {
+            menubar {
+                menu("Exporting") {
+                    menu("Export as Wrapper") {
+                        item("to PDF (.pdf)") {
+
+                        }
+                        item("to Word (.docx)") {
+
+                        }
+                        item("to Powerpoint (.pptx)") {
+
+                        }
+                    }
+                    menu("Export as Photos") {
+                        menu("to Folder") {
+                            item("as JPG (.jpg)") {
+
+                            }
+                            item("as PNG (.png)") {
+
+                            }
+                            item("as GIP (.gif)") {
+
+                            }
+                        }
+                        menu("to ZIP container (.zip)") {
+                            item("as JPG (.jpg)") {
+
+                            }
+                            item("as PNG (.png)") {
+
+                            }
+                            item("as GIP (.gif)") {
+
+                            }
+                        }
+                    }
+                    menu("Export as Other") {
+                        item("to Text (.txt)") {
+
+                        }
+                        item("to Text (other)") {
+
+                        }
+                    }
+                }
+                menu("Analytics") {
+                    item("View Single Card") {
+
+                    }
+                    item("View Game at instant") {
+
+                    }
+                    item("View Game over time") {
+
+                    }
+                }
+                menu("Help"){
+                    item("How to play bingo") {
+                    }
+                    item("How to export game") {
+
+                    }
+                    item("How to use analytics") {
+
+                    }
+                }
+            }
+        }
         left {
             add(generateCardView(currentGame.first()))
             addClass(Styles.defaultBackground)
         }
         center {
             borderpane {
-                val otherView = currentlyDisplayedCard
+                val card = currentlyDisplayedCard.card
                 center {
                     currentGame.check(12)
                 }

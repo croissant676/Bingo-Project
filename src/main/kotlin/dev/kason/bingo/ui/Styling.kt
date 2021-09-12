@@ -186,7 +186,7 @@ class Styles : Stylesheet() {
                 borderColor += box(Color.TRANSPARENT)
                 button {
                     backgroundColor += themeColor
-                    and(hover){
+                    and(hover) {
                         backgroundColor += secondaryThemeColor
                     }
                 }
@@ -255,6 +255,58 @@ class Styles : Stylesheet() {
             fontFamily = "dubai"
             fontSize = 30.px
             padding = box(2.px)
+        }
+        menuBar {
+            backgroundColor += themeBackgroundColor
+            menu {
+                fontFamily = "dubai"
+                fontSize = sizeOfText
+                backgroundColor += themeBackgroundColor
+                textFill = darkTextFill
+                and(hover) {
+                    backgroundColor += themeColor
+                    label {
+                        textFill = lightTextColor
+                    }
+                }
+                label {
+                    textFill = darkTextFill
+                }
+                menuItem {
+                    backgroundColor += themeBackgroundColor
+                    fontFamily = "dubai"
+                    fontSize = sizeOfText
+                    backgroundColor += themeBackgroundColor
+                    textFill = darkTextFill
+                    and(hover) {
+                        backgroundColor += themeColor
+                        label {
+                            textFill = lightTextColor
+                        }
+                    }
+                    label {
+                        textFill = darkTextFill
+                    }
+                }
+                menuButton {
+                    fontFamily = "dubai"
+                    fontSize = sizeOfText
+                    backgroundColor += themeBackgroundColor
+                    textFill = darkTextFill
+                    and(hover) {
+                        backgroundColor += themeColor
+                        label {
+                            textFill = lightTextColor
+                        }
+                    }
+                    button {
+
+                    }
+                    label {
+                        textFill = darkTextFill
+                    }
+                }
+            }
         }
     }
 }

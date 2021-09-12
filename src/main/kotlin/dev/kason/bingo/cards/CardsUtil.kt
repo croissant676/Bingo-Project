@@ -10,10 +10,12 @@ fun generateNumbers(seed: Long = 0, count: Int = 1): BingoGame {
         arrayList += BingoCard(List(5) { row ->
             val existingNumbers = arrayListOf<Int>()
             val list = MutableList(5) { col ->
+                if (row == 2 && col == 2) {
+                    val tile = BingoTile(-1)
+                    tile.crossedOff = true
+                    return@MutableList tile
+                }
                 BingoTile(run {
-                    if (row == 2 && col == 2) {
-                        return@run -1
-                    }
                     var number by Delegates.notNull<Int>()
                     do {
                         number = random.nextInt(row * 15 + 1, (row + 1) * 15 + 1)
@@ -56,8 +58,10 @@ fun emptyBingoCard(): BingoCard {
         val existingNumbers = arrayListOf<Int>()
         val list = MutableList(5) { col ->
             if (row == 2 && col == 2) {
+                println("Im not this dumb right")
                 val tile = BingoTile(-1)
                 tile.crossedOff = true
+                return@MutableList tile
             }
             BingoTile(run {
                 var number by Delegates.notNull<Int>()
