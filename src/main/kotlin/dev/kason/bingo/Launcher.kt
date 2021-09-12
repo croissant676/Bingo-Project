@@ -1,6 +1,7 @@
 package dev.kason.bingo
 
 import dev.kason.bingo.cards.CardView
+import dev.kason.bingo.cards.generateCardView
 import dev.kason.bingo.cards.generateNumbers
 import dev.kason.bingo.ui.LoadingView
 import dev.kason.bingo.ui.Styles
@@ -19,7 +20,8 @@ fun main(args: Array<String>) {
 
 class BingoApp : App(LoadingView::class, Styles::class) {
     init {
-        runImmediately(CardView(generateNumbers().first()))
+//        runImmediately(CardView(generateNumbers().first()))
+        runImmediately(generateCardView(generateNumbers(100, 12).first()))
         startEventLoop()
         reloadViewsOnFocus()
         reloadStylesheetsOnFocus()

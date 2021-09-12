@@ -2,23 +2,21 @@ package dev.kason.bingo.cards
 
 import dev.kason.bingo.control.currentAppearance
 import dev.kason.bingo.ui.Styles
-import dev.kason.bingo.util.addHoverEffect
 import javafx.geometry.Pos
+import javafx.scene.Parent
 import javafx.scene.control.ContentDisplay
 import javafx.scene.control.Label
-import javafx.scene.image.WritableImage
 import javafx.scene.paint.Paint
 import javafx.scene.text.Font
 import javafx.scene.text.TextAlignment
 import tornadofx.*
-import java.awt.image.BufferedImage
-import java.io.File
-import javax.imageio.ImageIO
+
+var currentGame = BingoGame(1, cards = arrayListOf())
 
 var f = Font("dubai", 100.0)
 val columnColors = mutableListOf<Paint>()
 
-class CardView(val card: BingoCard) : Fragment("Bingo > Card: ") {
+class CardView(val card: BingoCard) : View("Bingo > Card: ") {
     override val root = vbox {
 //        button ("Generate Image of this and store"){
 ////            val image = WritableImage(700, 700)
@@ -105,4 +103,20 @@ class CardView(val card: BingoCard) : Fragment("Bingo > Card: ") {
         addClass(Styles.defaultBackground)
         alignment = Pos.CENTER
     }
+}
+
+object EditingCardView : View("Bingo > Cards") {
+    override val root: Parent = vbox {
+
+    }
+}
+
+fun generateCardView(card: BingoCard): CardView {
+    val posView = currentGame.viewMap[card.cardNumber]
+    if(posView == null) {
+        val view = CardView(card)
+        currentGame.viewMap[card.cardNumber] = view
+        return view
+    }
+    return posView
 }

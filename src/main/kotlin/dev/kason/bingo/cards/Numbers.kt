@@ -1,10 +1,9 @@
 package dev.kason.bingo.cards
 
-import kotlin.jvm.internal.Intrinsics
 import kotlin.properties.Delegates
 import kotlin.random.Random
 
-fun generateNumbers(seed: Long = 0, count: Int = 1): List<BingoCard> {
+fun generateNumbers(seed: Long = 0, count: Int = 1): BingoGame {
     val arrayList = ArrayList<BingoCard>(count)
     val random = Random(seed)
     repeat(count) {
@@ -26,7 +25,9 @@ fun generateNumbers(seed: Long = 0, count: Int = 1): List<BingoCard> {
             list
         }, seed, it + 1)
     }
-    return arrayList
+    val game = BingoGame(seed, cards = arrayList)
+    currentGame = game
+    return game
 }
 
 
