@@ -311,9 +311,10 @@ class Styles : Stylesheet() {
             }
         }
         textField {
-            borderWidth += box(3.px)
+            backgroundColor += themeBackgroundColor
+            borderWidth += box(2.px)
             borderColor += box(themeColor)
-            effect = Reflection()
+//            effect = Reflection()
         }
     }
 }

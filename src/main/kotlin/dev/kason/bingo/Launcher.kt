@@ -4,6 +4,7 @@ package dev.kason.bingo
 
 import dev.kason.bingo.cards.CardView
 import dev.kason.bingo.cards.EditingCardView
+import dev.kason.bingo.cards.exporting.FindFileView
 import dev.kason.bingo.cards.generateCardView
 import dev.kason.bingo.cards.generateNumbers
 import dev.kason.bingo.ui.LoadingView
@@ -26,7 +27,8 @@ class BingoApp : App(LoadingView::class, Styles::class) {
     init {
 //        runImmediately(CardView(generateNumbers().first()))
         generateNumbers(100, 12)
-        runImmediately(EditingCardView)
+//        runImmediately(EditingCardView)
+        runImmediately(FindFileView("string.pdf") {})
         reloadViewsOnFocus()
         reloadStylesheetsOnFocus()
     }
@@ -37,7 +39,7 @@ class BingoApp : App(LoadingView::class, Styles::class) {
             Platform.exit()
             exitProcess(0)
         }
-        stage.isResizable = false
+        stage.isResizable = true
         // Set the size so the views don't resize it later
 //        stage.minWidth = 800.0
 //        stage.minHeight = 600.0

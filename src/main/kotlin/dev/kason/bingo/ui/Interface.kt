@@ -2,6 +2,7 @@
 
 package dev.kason.bingo.ui
 
+import dev.kason.bingo.cards.exporting.FindFileView
 import dev.kason.bingo.control.Appearance
 import dev.kason.bingo.control.BingoState
 import dev.kason.bingo.control.currentState
@@ -37,7 +38,7 @@ object BingoMenu : View("Bingo > Menu") {
                     addHoverEffect()
                     action {
                         currentState = BingoState.CREATION_MENU
-                        replaceWith(MinorSettings.CreationMenuView, ViewTransition.Fade(0.5.seconds))
+                        replaceWith(CreationMenuView, ViewTransition.Fade(0.5.seconds))
                     }
                     useMaxSize = true
                 }
@@ -55,7 +56,7 @@ object BingoMenu : View("Bingo > Menu") {
                     addHoverEffect()
                     action {
                         currentState = BingoState.HOW_TO_USE
-                        replaceWith(MinorSettings.HowToUseView, ViewTransition.Fade(0.5.seconds))
+                        replaceWith(HowToUseView, ViewTransition.Fade(0.5.seconds))
                     }
                     useMaxSize = true
                 }
@@ -249,178 +250,178 @@ object MinorSettings : View("Bingo > Settings") {
         addClass(Styles.defaultBackground)
         useMaxSize = true
     }
+}
 
-    object CreationMenuView : View("Bingo > Create Bingo Game") {
+object CreationMenuView : View("Bingo > Create Bingo Game") {
 
-        private var dayProperty = SimpleIntegerProperty(0)
+    private var dayProperty = SimpleIntegerProperty(0)
 
-        override val root = vbox {
-            label {
-                addClass("")
-            }
-
-            hbox {
-
-                label("Input the number of days to play the game:") {
-                    addClass(Styles.regularLabel)
-                }
-                spinner<Number>(0, 100, 5, 1, false, dayProperty, true) {
-                    addClass(Styles.defaultSpinner)
-                    onKeyTyped = EventHandler {
-                        this.promptTextProperty().set("Hello")
-                    }
-                }
-                label("Or choose the day you want it to end.") {
-                    addClass(Styles.regularLabel)
-                }
-                datepicker {
-                    addClass(Styles.defaultPicker)
-                    editor.skin = TextFieldSkin(editor).apply {
-                        scaleX = 0.7
-                        scaleY = 0.7
-                    }
-                }
-            }
-            hbox {
-                button("< Back") {
-                    addClass(Styles.button)
-                    addHoverEffect()
-                    action {
-                        assert(currentState == BingoState.CREATION_MENU) {
-                            "State not linked"
-                        }
-                        currentState = BingoState.MENU
-                        replaceWith(BingoMenu, ViewTransition.Fade(0.5.seconds))
-                    }
-                }
-                button("Next > ") {
-                    addClass(Styles.button)
-                    addHoverEffect()
-                    action {
-                        assert(currentState == BingoState.CREATION_MENU) {
-                            "State not linked"
-                        }
-                        replaceWith(CreationMenu2, ViewTransition.Fade(0.5.seconds))
-                    }
-                }
-                alignment = Pos.CENTER
-                spacing = 10.0
-            }
-            addClass(Styles.defaultBackground)
+    override val root = vbox {
+        label {
+            addClass("")
         }
-    }
 
-    object CreationMenu2 : View("Bingo > Create Bingo Game") {
+        hbox {
 
-
-        override val root = hbox {
+            label("Input the number of days to play the game:") {
+                addClass(Styles.regularLabel)
+            }
+            spinner<Number>(0, 100, 5, 1, false, dayProperty, true) {
+                addClass(Styles.defaultSpinner)
+                onKeyTyped = EventHandler {
+                    this.promptTextProperty().set("Hello")
+                }
+            }
+            label("Or choose the day you want it to end.") {
+                addClass(Styles.regularLabel)
+            }
+            datepicker {
+                addClass(Styles.defaultPicker)
+                editor.skin = TextFieldSkin(editor).apply {
+                    scaleX = 0.7
+                    scaleY = 0.7
+                }
+            }
+        }
+        hbox {
             button("< Back") {
+                addClass(Styles.button)
                 addHoverEffect()
                 action {
                     assert(currentState == BingoState.CREATION_MENU) {
                         "State not linked"
                     }
-                    replaceWith(CreationMenuView, ViewTransition.Fade(0.5.seconds))
-                }
-            }
-            button("Next > ") {
-                addHoverEffect()
-                action {
-                    assert(currentState == BingoState.CREATION_MENU) {
-                        "State not linked"
-                    }
-                    replaceWith(FileView, ViewTransition.Fade(0.5.seconds))
-                }
-            }
-            alignment = Pos.CENTER
-            addClass(Styles.defaultBackground)
-            spacing = 20.0
-        }
-    }
-
-    object FileView : View("Bingo > Find File") {
-
-        private val startingItem = TreeItem("C:\\Users")
-        private var currentFile = File(startingItem.value)
-        private val stringProperty = SimpleStringProperty("")
-        val string: String get() = stringProperty.get()
-
-        override val root = vbox {
-            label("Select the location that you want the result to be") {
-                addClass(Styles.titleLabel)
-            }
-            textfield(stringProperty) {
-                isEditable = false
-                stringProperty.value = "Hello"
-            }
-            treeview(startingItem) {
-                addClass(Styles.defaultTreeView)
-
-            }
-            addClass(Styles.defaultBackground)
-            button("< Go Back") {
-                addHoverEffect()
-                action {
-                    replaceWith(CreationMenu2, ViewTransition.Fade(0.5.seconds))
-                }
-            }
-            button("Next >") {
-                addHoverEffect()
-                action {
-                    println(string)
-                }
-            }
-            spacing = 10.0
-        }
-
-        private var numberOfFiles = 0
-
-        private fun recursivelyUpdateItem(item: TreeItem<String>): Boolean {
-            numberOfFiles++
-            if (currentFile.isHidden) return false
-            if (currentFile.name.startsWith('.')) return false
-            val children = currentFile.listFiles()
-            if (children != null) {
-                for (child in children) {
-                    currentFile = child
-                    val newItem = TreeItem(child.name)
-                    if (recursivelyUpdateItem(newItem)) {
-                        item += newItem
-                    }
-
-                }
-                return true
-            }
-            return false
-        }
-
-        fun indexFiles() {
-            recursivelyUpdateItem(startingItem)
-            println("Index of files done: Number of files indexed: $numberOfFiles")
-        }
-
-    }
-
-    object HowToUseView : View("Bingo > How To Use") {
-        override val root = vbox {
-            label("How to use") {
-                addClass(Styles.titleLabel)
-            }
-            label("First do stuff:") {
-                addClass(Styles.regularLabel)
-            }
-            label("Next do more stuff") {
-                addClass(Styles.regularLabel)
-            }
-            button("< Back") {
-                addHoverEffect()
-                action {
                     currentState = BingoState.MENU
                     replaceWith(BingoMenu, ViewTransition.Fade(0.5.seconds))
                 }
             }
+            button("Next > ") {
+                addClass(Styles.button)
+                addHoverEffect()
+                action {
+                    assert(currentState == BingoState.CREATION_MENU) {
+                        "State not linked"
+                    }
+                    replaceWith(CreationMenu2, ViewTransition.Fade(0.5.seconds))
+                }
+            }
             alignment = Pos.CENTER
-            addClass(Styles.defaultBackground)
+            spacing = 10.0
         }
+        addClass(Styles.defaultBackground)
+    }
+}
+
+object CreationMenu2 : View("Bingo > Create Bingo Game") {
+
+
+    override val root = hbox {
+        button("< Back") {
+            addHoverEffect()
+            action {
+                assert(currentState == BingoState.CREATION_MENU) {
+                    "State not linked"
+                }
+                replaceWith(CreationMenuView, ViewTransition.Fade(0.5.seconds))
+            }
+        }
+        button("Next > ") {
+            addHoverEffect()
+            action {
+                assert(currentState == BingoState.CREATION_MENU) {
+                    "State not linked"
+                }
+                replaceWith(FileView, ViewTransition.Fade(0.5.seconds))
+            }
+        }
+        alignment = Pos.CENTER
+        addClass(Styles.defaultBackground)
+        spacing = 20.0
+    }
+}
+
+object FileView : View("Bingo > Find File") {
+
+    lateinit var called: FindFileView
+    var currentFile = File("")
+    val startingItem = TreeItem(currentFile.path)
+    private val stringProperty = SimpleStringProperty("")
+    val string: String get() = stringProperty.get()
+
+    override val root = vbox {
+        label("Select the location that you want the result to be") {
+            addClass(Styles.titleLabel)
+        }
+        textfield(stringProperty) {
+            isEditable = false
+            stringProperty.value = "Hello"
+        }
+        treeview(startingItem) {
+            addClass(Styles.defaultTreeView)
+
+        }
+        addClass(Styles.defaultBackground)
+        button("< Back") {
+            addHoverEffect()
+            action {
+                replaceWith(called, ViewTransition.Fade(0.5.seconds))
+            }
+        }
+        button("Next >") {
+            addHoverEffect()
+            action {
+                called.whenFinished
+            }
+        }
+        spacing = 10.0
+    }
+
+    private var numberOfFiles = 0
+
+    private fun recursivelyUpdateItem(item: TreeItem<String>): Boolean {
+        numberOfFiles++
+        if (currentFile.isHidden) return false
+        if (currentFile.name.startsWith('.')) return false
+        val children = currentFile.listFiles()
+        if (children != null) {
+            for (child in children) {
+                currentFile = child
+                val newItem = TreeItem(child.name)
+                if (recursivelyUpdateItem(newItem)) {
+                    item += newItem
+                }
+            }
+            return true
+        }
+        return false
+    }
+
+    fun indexFiles() {
+        recursivelyUpdateItem(startingItem)
+        println("Index of files done: Number of files indexed: $numberOfFiles")
+    }
+
+}
+
+object HowToUseView : View("Bingo > How To Use") {
+    override val root = vbox {
+        label("How to use") {
+            addClass(Styles.titleLabel)
+        }
+        label("First do stuff:") {
+            addClass(Styles.regularLabel)
+        }
+        label("Next do more stuff") {
+            addClass(Styles.regularLabel)
+        }
+        button("< Back") {
+            addHoverEffect()
+            action {
+                currentState = BingoState.MENU
+                replaceWith(BingoMenu, ViewTransition.Fade(0.5.seconds))
+            }
+        }
+        alignment = Pos.CENTER
+        addClass(Styles.defaultBackground)
     }
 }
