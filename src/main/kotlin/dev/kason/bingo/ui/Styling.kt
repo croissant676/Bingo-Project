@@ -1,6 +1,7 @@
 package dev.kason.bingo.ui
 
 import dev.kason.bingo.control.Appearance
+import javafx.scene.effect.Effect
 import javafx.scene.effect.Reflection
 import javafx.scene.paint.Color
 import tornadofx.*
@@ -35,6 +36,7 @@ class Styles : Stylesheet() {
         val defaultPicker by cssclass()
         val defaultTreeView by cssclass()
         val redTile by cssclass()
+        val textField by cssclass()
 
         // Changeable Colors
         @JvmStatic
@@ -307,6 +309,11 @@ class Styles : Stylesheet() {
                     }
                 }
             }
+        }
+        textField {
+            borderWidth += box(3.px)
+            borderColor += box(themeColor)
+            effect = Reflection()
         }
     }
 }

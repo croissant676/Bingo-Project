@@ -204,13 +204,19 @@ object EditingCardView : View("Bingo > Cards") {
                         }
                     }
                     item("How to export game") {
-
+                        action {
+                            replaceWith(UseE, ViewTransition.Fade(0.5.seconds))
+                        }
                     }
-                    item("How to use analytics") {
-
+                    item("How to use statistics") {
+                        action {
+                            replaceWith(UseS, ViewTransition.Fade(0.5.seconds))
+                        }
                     }
                     item("Search for help:") {
-
+                        action {
+                            replaceWith(SearchView, ViewTransition.Fade(0.5.seconds))
+                        }
                     }
                 }
             }
