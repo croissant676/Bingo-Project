@@ -1,7 +1,9 @@
 package dev.kason.bingo.cards
 
 class BingoTile(val value: Int) {
+
     var crossedOff = false
+
     override fun toString(): String {
         return "BingoTile~{value:$value,crossedOff:$crossedOff}"
     }
@@ -20,6 +22,7 @@ data class BingoCard(val numbers: List<List<BingoTile>>, val randomSeed: Long = 
         val tile = list.singleOrNull { !it.crossedOff && it.value == number } ?: return
         tile.crossedOff = true
     }
+
 }
 
 class BingoGame(val seed: Long, var desiredNumberOfWinners: Int = -1, val cards: List<BingoCard>) : List<BingoCard> {
@@ -81,3 +84,4 @@ class BingoGame(val seed: Long, var desiredNumberOfWinners: Int = -1, val cards:
     var viewMap = hashMapOf<Int, CardView>()
 
 }
+

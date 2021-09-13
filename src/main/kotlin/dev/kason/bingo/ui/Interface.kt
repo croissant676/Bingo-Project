@@ -22,6 +22,7 @@ import tornadofx.*
 import java.io.File
 import javax.swing.text.Style
 
+
 object BingoMenu : View("Bingo > Menu") {
     override val root = borderpane {
         center {

@@ -138,24 +138,36 @@ object EditingCardView : View("Bingo > Cards") {
                     menu("Export as Photos") {
                         menu("to Folder") {
                             item("as JPG (.jpg)") {
-
+                                action {
+                                    outputCardsFolder(0)
+                                }
                             }
                             item("as PNG (.png)") {
-
+                                action {
+                                    outputCardsFolder(1)
+                                }
                             }
                             item("as GIP (.gif)") {
-
+                                action {
+                                    outputCardsFolder(2)
+                                }
                             }
                         }
                         menu("to ZIP container (.zip)") {
                             item("as JPG (.jpg)") {
-
+                                action {
+                                    outputCardsFolder(0)
+                                }
                             }
                             item("as PNG (.png)") {
-
+                                action {
+                                    outputCardsFolder(1)
+                                }
                             }
                             item("as GIP (.gif)") {
-
+                                action {
+                                    outputCardsFolder(2)
+                                }
                             }
                         }
                     }
@@ -164,6 +176,12 @@ object EditingCardView : View("Bingo > Cards") {
 
                         }
                         item("to Text (other)") {
+
+                        }
+                        item("to Clipboard (single image)") {
+
+                        }
+                        item("to Clipboard (as Text)") {
 
                         }
                     }
@@ -179,13 +197,19 @@ object EditingCardView : View("Bingo > Cards") {
 
                     }
                 }
-                menu("Help"){
+                menu("Help") {
                     item("How to play bingo") {
+                        action {
+                            replaceWith(UseB, ViewTransition.Fade(0.5.seconds))
+                        }
                     }
                     item("How to export game") {
 
                     }
                     item("How to use analytics") {
+
+                    }
+                    item("Search for help:") {
 
                     }
                 }
@@ -231,4 +255,34 @@ fun generateCardView(card: BingoCard): CardView {
         return view
     }
     return posView
+}
+
+fun outputCards(type: Int) {
+    println("Zip as type: $type")
+    when (type) {
+        0 -> {
+
+        }
+        1 -> {
+
+        }
+        2 -> {
+
+        }
+    }
+}
+
+fun outputCardsFolder(type: Int) {
+    println("Folder as type: $type")
+    when (type) {
+        0 -> {
+
+        }
+        1 -> {
+
+        }
+        2 -> {
+
+        }
+    }
 }
