@@ -3,6 +3,7 @@
 package dev.kason.bingo.ui
 
 import dev.kason.bingo.cards.exporting.FindFileView
+import dev.kason.bingo.cards.exporting.currentFFView
 import dev.kason.bingo.control.Appearance
 import dev.kason.bingo.control.BingoState
 import dev.kason.bingo.control.currentState
@@ -13,15 +14,13 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Parent
-import javafx.scene.chart.Axis
-import javafx.scene.chart.CategoryAxis
-import javafx.scene.chart.NumberAxis
 import javafx.scene.control.TreeItem
+import javafx.scene.control.TreeTableView
+import javafx.scene.control.TreeView
 import javafx.scene.control.skin.TextFieldSkin
 import javafx.scene.paint.Color
 import tornadofx.*
 import java.io.File
-import javax.swing.text.Style
 
 
 object BingoMenu : View("Bingo > Menu") {
@@ -314,7 +313,6 @@ object CreationMenuView : View("Bingo > Create Bingo Game") {
 
 object CreationMenu2 : View("Bingo > Create Bingo Game") {
 
-
     override val root = hbox {
         button("< Back") {
             addHoverEffect()
@@ -342,38 +340,93 @@ object CreationMenu2 : View("Bingo > Create Bingo Game") {
 
 object FileView : View("Bingo > Find File") {
 
+    var startingLocation: String
+        get() = startingItem.value
+        set(value) {
+            currentFile = File(value).absoluteFile
+            startingItem.value = value
+        }
+
     lateinit var called: FindFileView
-    var currentFile = File("")
-    val startingItem = TreeItem(currentFile.path)
+    private var currentFile = File("")
+    private val startingItem = TreeItem(currentFile.path)
     private val stringProperty = SimpleStringProperty("")
     val string: String get() = stringProperty.get()
 
-    override val root = vbox {
-        label("Select the location that you want the result to be") {
-            addClass(Styles.titleLabel)
-        }
-        textfield(stringProperty) {
-            isEditable = false
-            stringProperty.value = "Hello"
-        }
-        treeview(startingItem) {
-            addClass(Styles.defaultTreeView)
+    @Suppress("SpellCheckingInspection")
+    private lateinit var tview: TreeView<String>
 
-        }
-        addClass(Styles.defaultBackground)
-        button("< Back") {
-            addHoverEffect()
-            action {
-                replaceWith(called, ViewTransition.Fade(0.5.seconds))
+    override val root = borderpane {
+        center {
+            vbox {
+                label("Input location of the file.") {
+
+                    addClass(Styles.titleLabel)
+                }
+                textfield(currentFFView.string) {
+                    isEditable = false
+                    stringProperty.value = "Hello"
+                }
+                tview = treeview(startingItem) {
+                    addClass(Styles.defaultTreeView)
+
+                }
+                addClass(Styles.defaultBackground)
+                alignment = Pos.CENTER
             }
         }
-        button("Next >") {
-            addHoverEffect()
-            action {
-                called.whenFinished
+        left {
+            region {
+                style {
+                    backgroundColor += Styles.themeBackgroundColor
+                }
+                minWidth = 70.0
             }
         }
-        spacing = 10.0
+        right {
+            region {
+                style {
+                    backgroundColor += Styles.themeBackgroundColor
+                }
+                minWidth = 70.0
+            }
+        }
+        tview.selectFirst()
+        bottom {
+            hbox {
+                button("< Back") {
+                    addHoverEffect()
+                    action {
+                        replaceWith(called, ViewTransition.Fade(0.5.seconds))
+                    }
+                }
+                vbox {
+//                    val label = label("You must select a file before continuing") {
+//                        addClass(Styles.regularLabel)
+//                        style {
+//                            textFill = c("ff4e6c")
+//                        }
+//                        isVisible = false
+//                    }
+                    button("Proceed to next step >") {
+                        addHoverEffect()
+                        action {
+                            val result = tview.selectedValue
+                            if (result == null) {
+                                // This section will never run
+//                                label.isVisible = true
+                            } else {
+                                called.whenFinished(called)
+                            }
+                        }
+                    }
+                }
+                spacing = 10.0
+                addClass(Styles.defaultBackground)
+                alignment = Pos.CENTER
+                paddingBottom = 30.0
+            }
+        }
     }
 
     private var numberOfFiles = 0
@@ -397,10 +450,10 @@ object FileView : View("Bingo > Find File") {
     }
 
     fun indexFiles() {
+//        replaceWith(LoadingView(), ViewTransition.Fade(0.5.seconds))
         recursivelyUpdateItem(startingItem)
-        println("Index of files done: Number of files indexed: $numberOfFiles")
+        setViewFromLoading(this)
     }
-
 }
 
 object HowToUseView : View("Bingo > How To Use") {

@@ -5,9 +5,10 @@ import dev.kason.bingo.util.addHoverEffect
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.TextField
+import org.apache.commons.lang3.StringUtils.center
 import tornadofx.*
 
-object UseB : View("Bingo > How to play bingo") {
+object HowToPlay : View("Bingo > How to play bingo") {
     override val root = vbox {
         label("Playing Bingo") {
             addClass(Styles.titleLabel)
@@ -27,7 +28,7 @@ object UseB : View("Bingo > How to play bingo") {
         button("< Back") {
             addHoverEffect()
             action {
-                replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
+                replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
             }
         }
         alignment = Pos.CENTER
@@ -36,7 +37,7 @@ object UseB : View("Bingo > How to play bingo") {
     }
 }
 
-object UseS : View("Bingo > How to use statistics") {
+object HowToStatistics : View("Bingo > How to use statistics") {
     override val root = vbox {
         label("Using Statistics") {
             addClass(Styles.titleLabel)
@@ -44,7 +45,7 @@ object UseS : View("Bingo > How to use statistics") {
         button("< Back") {
             addHoverEffect()
             action {
-                replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
+                replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
             }
         }
         alignment = Pos.CENTER
@@ -53,7 +54,7 @@ object UseS : View("Bingo > How to use statistics") {
     }
 }
 
-object UseE : View("Bingo > How to export") {
+object HowToExport : View("Bingo > How to export") {
     override val root = vbox {
         label("Exporting") {
             addClass(Styles.titleLabel)
@@ -73,7 +74,7 @@ object UseE : View("Bingo > How to export") {
         button("< Back") {
             addHoverEffect()
             action {
-                replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
+                replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
             }
         }
         alignment = Pos.CENTER
@@ -84,47 +85,51 @@ object UseE : View("Bingo > How to export") {
 
 object SearchView : View("Bingo > Help") {
     private lateinit var box: TextField
-    override val root = vbox {
-        hbox {
-            label("Enter what you want to search here!") {
-                addClass(Styles.regularLabel)
-            }
-            box = textfield()
-        }
-        hbox {
-            button("< Back") {
-                addHoverEffect()
-                action {
-                    replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
+    override val root = borderpane {
+        center {
+            hbox {
+                label("Enter what you want to search here!") {
+                    addClass(Styles.regularLabel)
                 }
-            }
-            button("Search!") {
-                addHoverEffect()
-                action {
-                    // Search functionality
-                    val string = box.text ?: return@action
-                    replaceWith(ResultView(string), ViewTransition.Slide(0.3.seconds))
-                }
+                box = textfield()
+                alignment = Pos.CENTER
+                spacing = 20.0
+                addClass(Styles.defaultBackground)
             }
         }
-        alignment = Pos.CENTER
-        spacing = 20.0
-        addClass(Styles.defaultBackground)
+        bottom {
+            hbox {
+                button("< Back") {
+                    addHoverEffect()
+                    action {
+                        replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                    }
+                }
+                button("Search!") {
+                    addHoverEffect()
+                    action {
+                        // Search functionality
+                        val string = box.text ?: return@action
+                        replaceWith(ResultView(string), ViewTransition.Fade(0.5.seconds))
+                    }
+                }
+                alignment = Pos.CENTER
+                spacing = 20.0
+                addClass(Styles.defaultBackground)
+                paddingBottom = 30.0
+            }
+        }
     }
 }
 
 class ResultView(val string: String) : View("Bingo > Results for \"$string\"") {
 
-    override val root = vbox {
+    override val root = borderpane {
         val things = generateSearchResults(string)
         if (things.isEmpty()) {
-            label("No search results for \"$string\"") {
-                addClass(Styles.regularLabel)
-            }
-            button ("< Back") {
-                addHoverEffect()
-                action {
-                    replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
+            center {
+                label("No search results for \"$string\"") {
+                    addClass(Styles.regularLabel)
                 }
             }
         } else {
@@ -133,8 +138,18 @@ class ResultView(val string: String) : View("Bingo > Results for \"$string\"") {
 
             }
         }
-        alignment = Pos.CENTER
-        spacing = 20.0
+        bottom = hbox {
+            button("< Back") {
+                addHoverEffect()
+                action {
+                    replaceWith(SearchView, ViewTransition.Fade(0.5.seconds))
+                }
+            }
+            alignment = Pos.CENTER
+            spacing = 20.0
+            addClass(Styles.defaultBackground)
+            paddingBottom = 30.0
+        }
         addClass(Styles.defaultBackground)
     }
 }

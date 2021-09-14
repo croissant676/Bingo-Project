@@ -1,6 +1,8 @@
 package dev.kason.bingo.ui
 
 import dev.kason.bingo.control.Appearance
+import javafx.scene.control.TextField
+import javafx.scene.control.skin.TextFieldSkin
 import javafx.scene.effect.Effect
 import javafx.scene.effect.Reflection
 import javafx.scene.paint.Color
@@ -239,13 +241,13 @@ class Styles : Stylesheet() {
                 fontFamily = "dubai"
                 fontSize = sizeOfText
                 backgroundColor += themeBackgroundColor
-                and(hover) {
-                    textFill = lightTextColor
-                    backgroundColor += tertiaryThemeColor
-                }
+//                and(hover) {
+//                    textFill = lightTextColor
+//                    backgroundColor += tertiaryThemeColor
+//                }
                 and(selected) {
                     textFill = lightTextColor
-                    backgroundColor += tertiaryThemeColor
+                    backgroundColor += themeColor
                 }
             }
         }
@@ -312,9 +314,12 @@ class Styles : Stylesheet() {
         }
         textField {
             backgroundColor += themeBackgroundColor
-            borderWidth += box(2.px)
-            borderColor += box(themeColor)
+            borderColor += box(darkTextFill)
+            borderWidth += box(0.px, 0.px, 2.px, 0.px)
 //            effect = Reflection()
+            fontFamily = "dubai"
+            fontSize = sizeOfText
+            accentColor = themeColor
         }
     }
 }

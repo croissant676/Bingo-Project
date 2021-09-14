@@ -16,13 +16,11 @@ var isCurrentlyLoading = true
 
 private lateinit var currentLoadingView: LoadingView
 
-fun setViewFromLoading(view: View, transition: ViewTransition? = ViewTransition.Slide(0.5.seconds)) {
+fun setViewFromLoading(view: View, transition: ViewTransition? = ViewTransition.Fade(0.5.seconds)) {
     if (isCurrentlyLoading) {
         runLater {
             currentLoadingView.replaceWith(view, transition, true, centerOnScreen = true)
         }
-    } else {
-        throw IllegalArgumentException("Trying to change view from loading view when loading view is not active.")
     }
 }
 

@@ -1,5 +1,6 @@
 package dev.kason.bingo.cards
 
+import dev.kason.bingo.cards.exporting.exportAsPdf
 import dev.kason.bingo.control.currentAppearance
 import dev.kason.bingo.ui.Styles
 import dev.kason.bingo.util.addHoverEffect
@@ -11,7 +12,6 @@ import javafx.scene.paint.Paint
 import javafx.scene.text.Font
 import javafx.scene.text.TextAlignment
 import tornadofx.*
-import java.util.*
 
 var currentGame: BingoGame = generateNumbers()
 var currentlyDisplayedCard: CardView = generateCardView(currentGame.first())
@@ -126,7 +126,9 @@ object EditingCardView : View("Bingo > Cards") {
                 menu("Exporting") {
                     menu("Export as Wrapper") {
                         item("to PDF (.pdf)") {
-
+                            action {
+                                exportAsPdf()
+                            }
                         }
                         item("to Word (.docx)") {
 
@@ -200,22 +202,22 @@ object EditingCardView : View("Bingo > Cards") {
                 menu("Help") {
                     item("How to play bingo") {
                         action {
-                            replaceWith(UseB, ViewTransition.Fade(0.5.seconds))
+                            replaceWith(HowToPlay, ViewTransition.Slide(0.5.seconds))
                         }
                     }
                     item("How to export game") {
                         action {
-                            replaceWith(UseE, ViewTransition.Fade(0.5.seconds))
+                            replaceWith(HowToExport, ViewTransition.Slide(0.5.seconds))
                         }
                     }
                     item("How to use statistics") {
                         action {
-                            replaceWith(UseS, ViewTransition.Fade(0.5.seconds))
+                            replaceWith(HowToStatistics, ViewTransition.Slide(0.5.seconds))
                         }
                     }
                     item("Search for help:") {
                         action {
-                            replaceWith(SearchView, ViewTransition.Fade(0.5.seconds))
+                            replaceWith(SearchView, ViewTransition.Slide(0.5.seconds))
                         }
                     }
                 }
