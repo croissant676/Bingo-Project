@@ -6,6 +6,7 @@ import dev.kason.bingo.ui.Styles
 import dev.kason.bingo.util.addHoverEffect
 import javafx.geometry.Pos
 import javafx.scene.Parent
+import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import tornadofx.*
 import java.io.File
@@ -53,12 +54,14 @@ lateinit var currentFFView: FindFileView
  * */
 var typeOfFile by Delegates.notNull<Int>()
 
-class FindFileView(var string: String, val whenFinished: FindFileView.() -> Unit = {}) : View("Bingo > Locate File") {
+class FindFileView(var string: String, var whenFinished: FindFileView.() -> Unit = {}) : View("Bingo > Locate File") {
     private lateinit var filePath: TextField
     private lateinit var fileName: TextField
 
     var result: String = ""
         private set
+
+    lateinit var label: Label
 
     override val root: Parent = borderpane {
         val file = File(FindFileView::class.java.protectionDomain.codeSource.location.toURI()).parentFile.parentFile.parentFile
@@ -114,6 +117,21 @@ class FindFileView(var string: String, val whenFinished: FindFileView.() -> Unit
                 minWidth = 70.0
             }
         }
+        top {
+            hbox {
+                label = label("Area where the label appears") {
+                    addClass(Styles.regularLabel)
+                    style {
+                        textFill = c("ff4e6c")
+                    }
+                    isVisible = false
+                }
+                paddingTop = 30.0
+                alignment = Pos.CENTER
+                spacing = 20.0
+                addClass(Styles.defaultBackground)
+            }
+        }
         FileView.startingLocation = file.path
         FileView.indexFiles()
         bottom {
@@ -133,8 +151,22 @@ class FindFileView(var string: String, val whenFinished: FindFileView.() -> Unit
                 button("Proceed to next step >") {
                     addHoverEffect()
                     action {
-                        if (fileName.text == null || !fileName.text.endsWith(string.substringAfterLast('.'))) {
-
+                        if (fileName.text == null || !fileName.text.endsWith(string.substringAfterLast('.')) || filePath.text == null) {
+                            if (fileName.text == null) {
+                                label.text = "Must enter a file name!"
+                            } else if (fileName.text.endsWith(string.substringAfterLast('.'))) {
+                                label.text = "File extension must be \"${string.substringAfterLast('.')}\"!"
+                            } else {
+                                label.text = "Must enter a file path!"
+                            }
+                            label.isVisible = true
+                        } else {
+                            result = if (!filePath.text.endsWith('\\')) {
+                                "${filePath.text}\\${fileName.text}"
+                            } else {
+                                "${filePath.text}${fileName.text}"
+                            }
+                            whenFinished(this@FindFileView)
                         }
                     }
                 }
@@ -146,5 +178,4 @@ class FindFileView(var string: String, val whenFinished: FindFileView.() -> Unit
         }
         addClass(Styles.defaultBackground)
     }
-
 }

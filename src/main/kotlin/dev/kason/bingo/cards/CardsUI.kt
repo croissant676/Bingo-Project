@@ -1,6 +1,7 @@
 package dev.kason.bingo.cards
 
-import dev.kason.bingo.cards.exporting.exportAsPdf
+import dev.kason.bingo.cards.exporting.pdfUI
+import dev.kason.bingo.cards.exporting.wordUI
 import dev.kason.bingo.control.currentAppearance
 import dev.kason.bingo.ui.Styles
 import dev.kason.bingo.util.addHoverEffect
@@ -8,6 +9,7 @@ import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.ContentDisplay
 import javafx.scene.control.Label
+import javafx.scene.layout.Pane
 import javafx.scene.paint.Paint
 import javafx.scene.text.Font
 import javafx.scene.text.TextAlignment
@@ -111,15 +113,11 @@ class CardView(val card: BingoCard) : View("Bingo > Card: ") {
         addClass(Styles.defaultBackground)
         alignment = Pos.CENTER
     }
-
-//    fun refreshView() {
-//        root = vbox {
-//
-//        }
-//    }
 }
 
 object EditingCardView : View("Bingo > Cards") {
+    private lateinit var pane: Pane
+    private lateinit var previousView: CardView
     override val root: Parent = borderpane {
         top {
             menubar {
@@ -127,11 +125,13 @@ object EditingCardView : View("Bingo > Cards") {
                     menu("Export as Wrapper") {
                         item("to PDF (.pdf)") {
                             action {
-                                exportAsPdf()
+                                pdfUI()
                             }
                         }
                         item("to Word (.docx)") {
-
+                            action {
+                                wordUI()
+                            }
                         }
                         item("to Powerpoint (.pptx)") {
 
@@ -215,7 +215,7 @@ object EditingCardView : View("Bingo > Cards") {
                             replaceWith(HowToStatistics, ViewTransition.Slide(0.5.seconds))
                         }
                     }
-                    item("Search for help:") {
+                    item("Search for help") {
                         action {
                             replaceWith(SearchView, ViewTransition.Slide(0.5.seconds))
                         }
@@ -224,12 +224,23 @@ object EditingCardView : View("Bingo > Cards") {
             }
         }
         left {
-            add(generateCardView(currentGame.first()))
-            addClass(Styles.defaultBackground)
+            pane = pane {
+                currentlyDisplayedCard = generateCardView(currentGame.first())
+                add(currentlyDisplayedCard)
+                addClass(Styles.defaultBackground)
+                setOnMouseClicked {
+                    println(value)
+                    quickPrintCard()
+                    if (currentlyDisplayedCard.card.cardNumber != value) { // Prevent duplicate children error
+                        val card = generateCardView(currentGame[value - 1])
+                        currentlyDisplayedCard.replaceWith(card, ViewTransition.Fade(0.3.seconds))
+                        currentlyDisplayedCard = card
+                    }
+                }
+            }
         }
         center {
             borderpane {
-                val card = currentlyDisplayedCard.card
                 center {
                     currentGame.check(12)
                 }
@@ -241,10 +252,21 @@ object EditingCardView : View("Bingo > Cards") {
                         addHoverEffect()
                     }
                 }
+                top {
+                    paddingTop = 30.0
+                    paddingLeft = 10.0
+                    spinner(1, currentGame.size) {
+                        setOnMouseClicked {
+                            this@EditingCardView.value = this.value
+                        }
+                    }
+                }
             }
         }
         addClass(Styles.defaultBackground)
     }
+
+    private var value: Int = 1
 //    init {
 //        if(isRunning) {
 //            println("Event Loop is active right now!")

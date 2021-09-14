@@ -50,7 +50,7 @@ fun outputNumbers(card: BingoCard) {
 }
 
 private fun BingoTile.optimizedToString(): String {
-    return "$value ${if(crossedOff) "-" else "+"}  "
+    return "$value ${if (crossedOff) "-" else "+"}  "
 }
 
 fun emptyBingoCard(): BingoCard {
@@ -76,9 +76,9 @@ fun emptyBingoCard(): BingoCard {
     }, -1, 0)
 }
 
-fun quickPrintCard() {
+fun quickPrintGame() {
     val game = currentGame
-    for(index in game.indices) {
+    for (index in game.indices) {
         println("Game: $index")
         val card = game[index]
         val stringBuilders = Array(5) { StringBuilder() }
@@ -93,4 +93,43 @@ fun quickPrintCard() {
         println()
     }
     println("====".repeat(5))
+}
+
+fun quickPrintCard() {
+    val card = currentlyDisplayedCard.card
+    val stringBuilders = Array(5) { StringBuilder() }
+    for (index1 in 0 until 5) {
+        for (index2 in card[index1].indices) {
+            stringBuilders[index2].append(card[index1][index2]).append('\t')
+        }
+    }
+    for (index1 in 0 until 5) {
+        println(stringBuilders[index1])
+    }
+    println()
+}
+
+class EventLogger {
+
+    val events: ArrayList<Event> = arrayListOf()
+
+    data class Event(val round: Int, val r: Byte, val c: Byte)
+
+    private fun searchThroughEvents(number: Int): Int {
+        // Was going to implement, but too lazy to :)
+        return events.binarySearch { it.round - number }
+    }
+
+    operator fun get(round: Int) {
+
+    }
+
+    operator fun plus(number: Int): List<Event> {
+        return events.subList(0, searchThroughEvents(number))
+    }
+
+    operator fun invoke(range: IntRange): List<Event> {
+        return events.subList(searchThroughEvents(range.first), searchThroughEvents(range.last))
+    }
+
 }

@@ -25,7 +25,7 @@ data class BingoCard(val numbers: List<List<BingoTile>>, val randomSeed: Long = 
 
 }
 
-class BingoGame(val seed: Long, var desiredNumberOfWinners: Int = -1, val cards: List<BingoCard>) : List<BingoCard> {
+class BingoGame(val seed: Long, var desiredNumberOfWinners: Int = -1, val cards: MutableList<BingoCard>) : List<BingoCard> {
 
     override val size: Int
         get() = cards.size

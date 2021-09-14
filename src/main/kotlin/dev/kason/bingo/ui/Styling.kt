@@ -6,6 +6,7 @@ import javafx.scene.control.skin.TextFieldSkin
 import javafx.scene.effect.Effect
 import javafx.scene.effect.Reflection
 import javafx.scene.paint.Color
+import javafx.scene.text.FontWeight
 import tornadofx.*
 
 fun registerTheme(theme: Appearance) {
@@ -248,7 +249,19 @@ class Styles : Stylesheet() {
                 and(selected) {
                     textFill = lightTextColor
                     backgroundColor += themeColor
+                    fontWeight = FontWeight.BOLD
+                    arrow {
+                        backgroundColor += darkTextFill
+                        borderColor += box(tertiaryThemeColor)
+                        borderWidth += box(0.5.px)
+                    }
                 }
+                arrow {
+                    backgroundColor += darkTextFill
+                    borderColor += box(themeBackgroundColor)
+                    borderWidth += box(1.px)
+                }
+                cellHeight = 20.px
             }
         }
         redTile {
@@ -272,6 +285,9 @@ class Styles : Stylesheet() {
                     label {
                         textFill = lightTextColor
                     }
+                }
+                arrow {
+                    backgroundColor += darkTextFill
                 }
                 label {
                     textFill = darkTextFill
@@ -302,9 +318,6 @@ class Styles : Stylesheet() {
                         label {
                             textFill = lightTextColor
                         }
-                    }
-                    button {
-
                     }
                     label {
                         textFill = darkTextFill
