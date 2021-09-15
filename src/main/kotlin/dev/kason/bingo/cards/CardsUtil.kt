@@ -120,8 +120,8 @@ class EventLogger {
         return events.binarySearch { it.round - number }
     }
 
-    operator fun get(round: Int) {
-
+    operator fun get(index: Int): Int {
+        return events[index].round
     }
 
     operator fun plus(number: Int): List<Event> {

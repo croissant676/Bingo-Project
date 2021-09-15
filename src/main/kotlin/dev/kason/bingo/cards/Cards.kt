@@ -1,5 +1,8 @@
 package dev.kason.bingo.cards
 
+import com.ibm.jvm.format.TraceArgs.override
+import kotlin.random.Random
+
 class BingoTile(val value: Int) {
 
     var crossedOff = false
@@ -26,6 +29,8 @@ data class BingoCard(val numbers: List<List<BingoTile>>, val randomSeed: Long = 
 }
 
 class BingoGame(val seed: Long, var desiredNumberOfWinners: Int = -1, val cards: MutableList<BingoCard>) : List<BingoCard> {
+
+    val game = Random(seed - 1)
 
     override val size: Int
         get() = cards.size

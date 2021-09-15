@@ -26,7 +26,7 @@ fun main(args: Array<String>) {
 class BingoApp : App(LoadingView::class, Styles::class) {
     init {
 //        runImmediately(CardView(generateNumbers().first()))
-        generateNumbers(100, 12)
+        generateNumbers(100, 1000)
         runImmediately(EditingCardView)
         reloadViewsOnFocus()
         reloadStylesheetsOnFocus()

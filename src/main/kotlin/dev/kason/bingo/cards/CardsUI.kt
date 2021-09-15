@@ -256,8 +256,17 @@ object EditingCardView : View("Bingo > Cards") {
                     paddingTop = 30.0
                     paddingLeft = 10.0
                     spinner(1, currentGame.size) {
-                        setOnMouseClicked {
-                            this@EditingCardView.value = this.value
+                        valueProperty().addListener { observable, oldValue, newValue ->
+                            this@EditingCardView.value = newValue
+                            refresh()
+                        }
+                    }
+                }
+                center {
+                    button ("Draw number"){
+                        addHoverEffect()
+                        action {
+
                         }
                     }
                 }
@@ -267,6 +276,18 @@ object EditingCardView : View("Bingo > Cards") {
     }
 
     private var value: Int = 1
+
+    private fun refresh() {
+        // Prevent duplicate children error
+        val card = generateCardView(currentGame[value - 1])
+        currentlyDisplayedCard.replaceWith(card)
+        currentlyDisplayedCard = card
+    }
+
+    private fun updateToMatch() {
+        pane.clear()
+        pane.add(currentlyDisplayedCard)
+    }
 //    init {
 //        if(isRunning) {
 //            println("Event Loop is active right now!")
