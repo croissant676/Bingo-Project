@@ -1,6 +1,5 @@
 package dev.kason.bingo.cards
 
-import com.ibm.jvm.format.TraceArgs.override
 import kotlin.random.Random
 
 class BingoTile(val value: Int) {

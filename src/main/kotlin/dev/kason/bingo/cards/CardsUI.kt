@@ -1,5 +1,6 @@
 package dev.kason.bingo.cards
 
+import dev.kason.bingo.cards.exporting.ExportCompleted
 import dev.kason.bingo.cards.exporting.pdfUI
 import dev.kason.bingo.cards.exporting.wordUI
 import dev.kason.bingo.control.currentAppearance
@@ -175,16 +176,24 @@ object EditingCardView : View("Bingo > Cards") {
                     }
                     menu("Export as Other") {
                         item("to Text (.txt)") {
-
+                            action {
+                                println()
+                            }
                         }
                         item("to Text (other)") {
-
+                            action {
+                                println()
+                            }
                         }
                         item("to Clipboard (single image)") {
-
+                            action {
+                                println()
+                            }
                         }
                         item("to Clipboard (as Text)") {
-
+                            action {
+                                this@EditingCardView.replaceWith(ExportCompleted("sdf", {}))
+                            }
                         }
                     }
                 }
@@ -256,17 +265,19 @@ object EditingCardView : View("Bingo > Cards") {
                     paddingTop = 30.0
                     paddingLeft = 10.0
                     spinner(1, currentGame.size) {
-                        valueProperty().addListener { observable, oldValue, newValue ->
+                        valueProperty().addListener { _, _, newValue ->
                             this@EditingCardView.value = newValue
                             refresh()
                         }
                     }
                 }
                 center {
-                    button ("Draw number"){
+                    button("Draw number") {
                         addHoverEffect()
                         action {
-
+                            val number = currentGame.game.nextInt(75) + 1
+                            currentGame.check(number)
+                            println(number)
                         }
                     }
                 }

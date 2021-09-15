@@ -1,13 +1,16 @@
 package dev.kason.bingo.cards.exporting
 
 import dev.kason.bingo.cards.EditingCardView
+import dev.kason.bingo.control.Appearance
 import dev.kason.bingo.ui.FileView
 import dev.kason.bingo.ui.Styles
 import dev.kason.bingo.util.addHoverEffect
+import dev.kason.bingo.util.addHoverEffectAppearance
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
+import javafx.scene.paint.Color
 import tornadofx.*
 import java.io.File
 import kotlin.properties.Delegates
@@ -154,7 +157,7 @@ class FindFileView(var string: String, var whenFinished: FindFileView.() -> Unit
                         if (fileName.text == null || !fileName.text.endsWith(string.substringAfterLast('.')) || filePath.text == null) {
                             if (fileName.text == null) {
                                 label.text = "Must enter a file name!"
-                            } else if (fileName.text.endsWith(string.substringAfterLast('.'))) {
+                            } else if (!fileName.text.endsWith(string.substringAfterLast('.'))) {
                                 label.text = "File extension must be \"${string.substringAfterLast('.')}\"!"
                             } else {
                                 label.text = "Must enter a file path!"
@@ -177,5 +180,45 @@ class FindFileView(var string: String, var whenFinished: FindFileView.() -> Unit
             }
         }
         addClass(Styles.defaultBackground)
+    }
+}
+
+class ExportCompleted(val string: String = "exporting nothing", val action: ExportCompleted.() -> Unit = {}, val message: String = string) : View("Bingo > Finished $string") {
+    override val root = borderpane {
+        center {
+            label(message) {
+                addClass(Styles.regularLabel)
+                style(append = true) {
+                    textFill = c(Appearance.GREEN.darkTextFill)
+                }
+            }
+        }
+        bottom {
+            hbox {
+                button("Next >") {
+                    addHoverEffectAppearance(Appearance.GREEN)
+                    fire()
+                    action {
+                        action(this@ExportCompleted)
+                    }
+                    style(append = true) {
+                        textFill = c(Appearance.GREEN.lightTextFill)
+                        padding = box(1.px, 12.px)
+                        borderWidth += box(1.px, 3.px)
+                        borderRadius += box(0.px)
+                        backgroundRadius += box(0.px)
+                        borderColor += box(Color.TRANSPARENT)
+                        fontFamily = "dubai"
+                        fontSize = Styles.sizeOfText
+                        backgroundColor += c(Appearance.GREEN.themeBackgroundColor)
+                    }
+                }
+                paddingBottom = 30.0
+                alignment = Pos.CENTER
+            }
+        }
+        style {
+            backgroundColor += c(Appearance.GREEN.themeBackgroundColor)
+        }
     }
 }

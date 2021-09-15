@@ -4,6 +4,9 @@ package dev.kason.bingo
 
 import dev.kason.bingo.cards.CardView
 import dev.kason.bingo.cards.EditingCardView
+import dev.kason.bingo.cards.currentGame
+import dev.kason.bingo.cards.exporting.ExportCompleted
+import dev.kason.bingo.cards.exporting.generateString
 import dev.kason.bingo.cards.generateNumbers
 import dev.kason.bingo.ui.LoadingView
 import dev.kason.bingo.ui.Styles
@@ -26,8 +29,10 @@ fun main(args: Array<String>) {
 class BingoApp : App(LoadingView::class, Styles::class) {
     init {
 //        runImmediately(CardView(generateNumbers().first()))
-        generateNumbers(100, 1000)
+        generateNumbers(100, 10)
+        println(generateString(currentGame))
         runImmediately(EditingCardView)
+//        runImmediately(ExportCompleted("sdf", {}))
         reloadViewsOnFocus()
         reloadStylesheetsOnFocus()
     }
