@@ -3,6 +3,8 @@ package dev.kason.bingo.cards
 import kotlin.properties.Delegates
 import kotlin.random.Random
 
+var currentRound: Int = 1
+
 fun generateNumbers(seed: Long = 0, count: Int = 1): BingoGame {
     val arrayList = ArrayList<BingoCard>(count)
     val random = Random(seed)
@@ -109,11 +111,14 @@ fun quickPrintCard() {
     println()
 }
 
-class EventLogger {
+class EventLogger(val referenceNum: Int) {
+    private val events: ArrayList<Event> = arrayListOf()
 
-    val events: ArrayList<Event> = arrayListOf()
-
-    data class Event(val round: Int, val r: Byte, val c: Byte)
+    class Event(val round: Int, val r: Byte, val c: Byte) {
+        override fun toString(): String {
+            return "E[$round: $r, $c]"
+        }
+    }
 
     private fun searchThroughEvents(number: Int): Int {
         // Was going to implement, but too lazy to :)
@@ -132,4 +137,19 @@ class EventLogger {
         return events.subList(searchThroughEvents(range.first), searchThroughEvents(range.last))
     }
 
+    operator fun plusAssign(event: Event) {
+        events += event
+    }
+
+    override fun toString(): String {
+        if (events.isEmpty()) return ""
+        val stringBuilder = StringBuilder("Card: $referenceNum -- {")
+        for (event in events) {
+            stringBuilder.append(event).append(',')
+        }
+        return "${stringBuilder.removePrefix(",")}}"
+    }
+
 }
+
+fun ev(r: Byte, c: Byte) = EventLogger.Event(currentRound, r, c)

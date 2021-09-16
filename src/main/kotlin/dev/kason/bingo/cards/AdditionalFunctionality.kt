@@ -62,7 +62,7 @@ object HowToStatistics : View("Bingo > How to use statistics") {
                 }
                 label(
                     "To use statistics, click on the statistics item at the top of the menu" +
-                            "\nThis can also be done by using the shortcut Alt+S"
+                            "\n"
                 ) {
                     addClass(Styles.regularLabel)
                 }
@@ -108,7 +108,7 @@ object HowToExport : View("Bingo > How to export") {
                 }
                 label(
                     "To export a game from the viewing panel, click on the Export item" +
-                            "\nat the top of the panel. (Shortcut for this is Alt+E)"
+                            "\nat the top of the panel."
                 ) {
                     addClass(Styles.regularLabel)
                 }

@@ -1,6 +1,7 @@
 package dev.kason.bingo.cards.exporting
 
 import dev.kason.bingo.cards.EditingCardView
+import dev.kason.bingo.cards.currentGame
 import dev.kason.bingo.control.Appearance
 import dev.kason.bingo.ui.FileView
 import dev.kason.bingo.ui.Styles
@@ -8,12 +9,15 @@ import dev.kason.bingo.util.addHoverEffect
 import dev.kason.bingo.util.addHoverEffectAppearance
 import javafx.geometry.Pos
 import javafx.scene.Parent
-import javafx.scene.control.Label
-import javafx.scene.control.TextField
+import javafx.scene.control.*
 import javafx.scene.paint.Color
 import tornadofx.*
+import java.awt.Toolkit
+import java.awt.datatransfer.Clipboard
+import java.awt.datatransfer.StringSelection
 import java.io.File
 import kotlin.properties.Delegates
+
 
 object WrapperFileView : View("Bingo > Wrapper Transition File") {
     override val root = vbox {
@@ -183,7 +187,65 @@ class FindFileView(var string: String, var whenFinished: FindFileView.() -> Unit
     }
 }
 
-class ExportCompleted(val string: String = "exporting nothing", val action: ExportCompleted.() -> Unit = {}, val message: String = string) : View("Bingo > Finished $string") {
+object ExportTextView : View("Bingo > Export text") {
+
+    private lateinit var toggleGroup: ToggleGroup
+    private lateinit var spinner: Spinner<Int>
+
+    override val root: Parent = borderpane {
+        center {
+            vbox {
+                label("Exporting Text to Clipboard") {
+                    addClass(Styles.titleLabel)
+                }
+                toggleGroup = togglegroup {
+                    radiobutton("Export all cards")
+                    radiobutton("Export a single card")
+                }
+                spinner = spinner(1, currentGame.size)
+                alignment = Pos.CENTER
+                spacing = 10.0
+                addClass(Styles.defaultBackground)
+            }
+        }
+        bottom {
+            hbox {
+                button("< Back") {
+                    addHoverEffect()
+                    action {
+                        this@ExportTextView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                    }
+                }
+                button("Next >") {
+                    addHoverEffect()
+                    action {
+                        if ((toggleGroup.selectedToggle as? RadioButton)?.text!!.contains("all")) {
+                            val selection = StringSelection(generateString(currentGame))
+                            val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
+                            clipboard.setContents(selection, selection)
+                        } else {
+                            val selection = StringSelection(generateString(currentGame[spinner.value]))
+                            val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
+                            clipboard.setContents(selection, selection)
+                        }
+                        this@ExportTextView.replaceWith(ExportCompleted("Export Complete", {
+                            replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
+                        }, "Finished copying game into clipboard"), ViewTransition.Slide(0.5.seconds))
+                    }
+                }
+                paddingBottom = 30.0
+                alignment = Pos.CENTER
+                spacing = 20.0
+                addClass(Styles.defaultBackground)
+            }
+        }
+        addClass(Styles.defaultBackground)
+    }
+
+}
+
+class ExportCompleted(val string: String = "Exporting", val action: ExportCompleted.() -> Unit = {}, private val message: String = string) :
+    View("Bingo > $string") {
     override val root = borderpane {
         center {
             label(message) {

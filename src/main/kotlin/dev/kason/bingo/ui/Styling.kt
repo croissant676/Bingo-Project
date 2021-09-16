@@ -334,5 +334,46 @@ class Styles : Stylesheet() {
             fontSize = sizeOfText
             accentColor = themeColor
         }
+        radioButton {
+            accentColor = darkTextFill
+            backgroundColor += themeBackgroundColor
+            fontFamily = "dubai"
+            fontSize = sizeOfText
+            radio {
+                borderRadius += box(15.px)
+                borderColor += box(darkTextFill)
+                and(hover) {
+                    borderColor += box(themeColor)
+                }
+                and(selected) {
+                    borderColor += box(lightTextColor)
+                    accentColor = darkTextFill
+                    backgroundColor += darkTextFill
+                }
+                backgroundColor += themeBackgroundColor
+            }
+            dot {
+                backgroundRadius += box(sizeOfText)
+                backgroundColor += themeBackgroundColor
+            }
+            and(selected) {
+                dot {
+                    backgroundColor += darkTextFill
+                }
+            }
+        }
+        scrollPane {
+            borderColor += box(themeBackgroundColor)
+            borderWidth += box(2.px)
+            backgroundColor += themeBackgroundColor
+            scrollBar {
+                backgroundColor += Color.TRANSPARENT
+                borderColor += box(Color.SLATEGREY)
+                thumb {
+                    backgroundColor += c(Appearance.MONO.themeBackgroundColor)
+                    backgroundRadius += box(123.px)
+                }
+            }
+        }
     }
 }

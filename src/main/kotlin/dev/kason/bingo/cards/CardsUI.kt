@@ -1,6 +1,6 @@
 package dev.kason.bingo.cards
 
-import dev.kason.bingo.cards.exporting.ExportCompleted
+import dev.kason.bingo.cards.exporting.ExportTextView
 import dev.kason.bingo.cards.exporting.pdfUI
 import dev.kason.bingo.cards.exporting.wordUI
 import dev.kason.bingo.control.currentAppearance
@@ -10,11 +10,16 @@ import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.ContentDisplay
 import javafx.scene.control.Label
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCodeCombination
+import javafx.scene.input.KeyCombination
+import javafx.scene.layout.FlowPane
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Paint
 import javafx.scene.text.Font
 import javafx.scene.text.TextAlignment
 import tornadofx.*
+
 
 var currentGame: BingoGame = generateNumbers()
 var currentlyDisplayedCard: CardView = generateCardView(currentGame.first())
@@ -125,32 +130,37 @@ object EditingCardView : View("Bingo > Cards") {
                 menu("Exporting") {
                     menu("Export as Wrapper") {
                         item("to PDF (.pdf)") {
+                            accelerator = KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN)
                             action {
                                 pdfUI()
                             }
                         }
                         item("to Word (.docx)") {
+                            accelerator = KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN)
                             action {
                                 wordUI()
                             }
                         }
                         item("to Powerpoint (.pptx)") {
-
+                            accelerator = KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN)
                         }
                     }
                     menu("Export as Photos") {
                         menu("to Folder") {
                             item("as JPG (.jpg)") {
+                                accelerator = KeyCodeCombination(KeyCode.J, KeyCombination.ALT_DOWN)
                                 action {
                                     outputCardsFolder(0)
                                 }
                             }
                             item("as PNG (.png)") {
+                                accelerator = KeyCodeCombination(KeyCode.U, KeyCombination.ALT_DOWN)
                                 action {
                                     outputCardsFolder(1)
                                 }
                             }
                             item("as GIP (.gif)") {
+                                accelerator = KeyCodeCombination(KeyCode.G, KeyCombination.ALT_DOWN)
                                 action {
                                     outputCardsFolder(2)
                                 }
@@ -158,16 +168,19 @@ object EditingCardView : View("Bingo > Cards") {
                         }
                         menu("to ZIP container (.zip)") {
                             item("as JPG (.jpg)") {
+                                accelerator = KeyCodeCombination(KeyCode.K, KeyCombination.ALT_DOWN)
                                 action {
                                     outputCardsFolder(0)
                                 }
                             }
                             item("as PNG (.png)") {
+                                accelerator = KeyCodeCombination(KeyCode.P, KeyCombination.ALT_DOWN)
                                 action {
                                     outputCardsFolder(1)
                                 }
                             }
                             item("as GIP (.gif)") {
+                                accelerator = KeyCodeCombination(KeyCode.F, KeyCombination.ALT_DOWN)
                                 action {
                                     outputCardsFolder(2)
                                 }
@@ -176,55 +189,63 @@ object EditingCardView : View("Bingo > Cards") {
                     }
                     menu("Export as Other") {
                         item("to Text (.txt)") {
+                            accelerator = KeyCodeCombination(KeyCode.T, KeyCombination.ALT_DOWN)
                             action {
                                 println()
                             }
                         }
                         item("to Text (other)") {
+                            accelerator = KeyCodeCombination(KeyCode.O, KeyCombination.ALT_DOWN)
                             action {
                                 println()
                             }
                         }
                         item("to Clipboard (single image)") {
+                            accelerator = KeyCodeCombination(KeyCode.I, KeyCombination.ALT_DOWN)
                             action {
                                 println()
                             }
                         }
                         item("to Clipboard (as Text)") {
+                            accelerator = KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN)
                             action {
-                                this@EditingCardView.replaceWith(ExportCompleted("sdf", {}))
+                                this@EditingCardView.replaceWith(ExportTextView)
                             }
                         }
                     }
                 }
                 menu("Analytics") {
                     item("View Single Card") {
-
+                        accelerator = KeyCodeCombination(KeyCode.V, KeyCombination.SHIFT_DOWN)
                     }
                     item("View Game at instant") {
-
+                        accelerator = KeyCodeCombination(KeyCode.I, KeyCombination.SHIFT_DOWN)
                     }
                     item("View Game over time") {
-
+                        accelerator = KeyCodeCombination(KeyCode.T, KeyCombination.SHIFT_DOWN)
                     }
                 }
                 menu("Help") {
                     item("How to play bingo") {
+                        accelerator = KeyCodeCombination(KeyCode.H, KeyCombination.SHIFT_DOWN)
                         action {
                             replaceWith(HowToPlay, ViewTransition.Slide(0.5.seconds))
                         }
                     }
                     item("How to export game") {
+                        accelerator = KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN)
                         action {
                             replaceWith(HowToExport, ViewTransition.Slide(0.5.seconds))
                         }
                     }
                     item("How to use statistics") {
+                        accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN)
                         action {
                             replaceWith(HowToStatistics, ViewTransition.Slide(0.5.seconds))
                         }
                     }
                     item("Search for help") {
+                        accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN)
                         action {
                             replaceWith(SearchView, ViewTransition.Slide(0.5.seconds))
                         }
@@ -250,40 +271,117 @@ object EditingCardView : View("Bingo > Cards") {
         }
         center {
             borderpane {
-                center {
-                    currentGame.check(12)
-                }
                 bottom {
-                    button("Print View") {
-                        action {
-                            outputNumbers(currentlyDisplayedCard.card)
-                        }
-                        addHoverEffect()
+                    label {
+
                     }
+//                    button("Print View") {
+//                        action {
+//                            println(drawnBalls.height)
+//                        }
+//                        addHoverEffect()
+//                    }
                 }
                 top {
-                    paddingTop = 30.0
-                    paddingLeft = 10.0
-                    spinner(1, currentGame.size) {
-                        valueProperty().addListener { _, _, newValue ->
-                            this@EditingCardView.value = newValue
-                            refresh()
+                    hbox {
+                        paddingTop = 30.0
+                        paddingLeft = 10.0
+                        label("Card: ") {
+                            addClass(Styles.regularLabel)
+                            style(append = true) {
+                                fontSize = 25.px
+                            }
                         }
+                        spinner(1, currentGame.size) {
+                            valueProperty().addListener { _, _, newValue ->
+                                this@EditingCardView.value = newValue
+                                refresh()
+                            }
+                        }
+                        alignment = Pos.CENTER
+                        spacing = 10.0
+                        addClass(Styles.defaultBackground)
                     }
                 }
                 center {
-                    button("Draw number") {
-                        addHoverEffect()
-                        action {
-                            val number = currentGame.game.nextInt(75) + 1
-                            currentGame.check(number)
-                            println(number)
+                    vbox {
+                        button("Draw number") {
+                            addHoverEffect()
+                            action {
+                                runNumber()
+                            }
                         }
+                        vbox {
+                            scrollpane(fitToWidth = true) {
+                                drawnBalls = flowpane {
+                                    vgap = 5.0
+                                    hgap = 5.0
+                                    alignment = Pos.TOP_LEFT
+                                    addClass(Styles.defaultBackground)
+                                }
+                                maxHeight = 255.0
+                                prefHeight = 255.0
+                                addClass(Styles.defaultBackground)
+                            }
+                            scrollpane {
+                                wonCards = flowpane {
+                                    vgap = 5.0
+                                    hgap = 5.0
+                                    alignment = Pos.TOP_LEFT
+                                    addClass(Styles.defaultBackground)
+                                }
+                                maxHeight = 255.0
+                                prefHeight = 255.0
+                                addClass(Styles.defaultBackground)
+                            }
+                            spacing = 10.0
+                            alignment = Pos.CENTER
+                            addClass(Styles.defaultBackground)
+                        }
+                        addClass(Styles.defaultBackground)
+                        alignment = Pos.CENTER
+                        paddingHorizontal = 10.0
+                        spacing = 20.0
                     }
                 }
             }
         }
         addClass(Styles.defaultBackground)
+    }
+
+    private lateinit var drawnBalls: FlowPane
+    private lateinit var wonCards: FlowPane
+
+    private fun runNumber() {
+        val number = currentGame.generateRandomNumber()
+        if (number != -1) {
+            currentRound++
+            currentGame.check(number)
+            refresh()
+            drawnBalls.add(generateLabel(number))
+        } else {
+            // To stuff here
+        }
+        // Do some more things
+    }
+
+    private fun generateLabel(number: Int): Label {
+        val label = Label(number.toString())
+        with(label) {
+            prefWidth = 60.0
+            prefHeight = 60.0
+            style {
+                backgroundColor += c("ff4e6c")
+                textFill = Styles.lightTextColor
+                fontFamily = "dubai"
+                fontSize = 30.px
+                padding = box(2.px)
+            }
+            contentDisplay = ContentDisplay.CENTER
+            alignment = Pos.CENTER
+            textAlignment = TextAlignment.CENTER
+        }
+        return label
     }
 
     private var value: Int = 1
@@ -293,6 +391,7 @@ object EditingCardView : View("Bingo > Cards") {
         val card = generateCardView(currentGame[value - 1])
         currentlyDisplayedCard.replaceWith(card)
         currentlyDisplayedCard = card
+
     }
 
     private fun updateToMatch() {
@@ -309,42 +408,34 @@ object EditingCardView : View("Bingo > Cards") {
 //    }
 }
 
+
 fun generateCardView(card: BingoCard): CardView {
-    val posView = currentGame.viewMap[card.cardNumber]
-    if (posView == null) {
-        val view = CardView(card)
-        currentGame.viewMap[card.cardNumber] = view
-        return view
-    }
-    return posView
+    return CardView(card)
+//    val posView = currentGame.viewMap[card.cardNumber]
+//    if (posView == null) {
+//        val view = CardView(card)
+//        currentGame.viewMap[card.cardNumber] = view
+//        return view
+//    }
+//    return posView
 }
 
-fun outputCards(type: Int) {
+fun outputCardsZip(type: Int) {
     println("Zip as type: $type")
-    when (type) {
-        0 -> {
-
-        }
-        1 -> {
-
-        }
-        2 -> {
-
-        }
+    var string = when (type) {
+        0 -> "jpg"
+        1 -> "png"
+        2 -> "gif"
+        else -> throw IllegalStateException("no")
     }
 }
 
 fun outputCardsFolder(type: Int) {
     println("Folder as type: $type")
-    when (type) {
-        0 -> {
-
-        }
-        1 -> {
-
-        }
-        2 -> {
-
-        }
+    var string = when (type) {
+        0 -> "jpg"
+        1 -> "png"
+        2 -> "gif"
+        else -> throw IllegalStateException("no")
     }
 }
