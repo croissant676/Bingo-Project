@@ -49,17 +49,33 @@ lateinit var currentFFView: FindFileView
  *
  * 5 = gif (folder)
  *
- * 6 = jpg (folder)
+ * 6 = jpg (zip)
  *
- * 7 = png (folder)
+ * 7 = png (zip)
  *
- * 8 = gif (folder)
+ * 8 = gif (zip)
  *
  * 9 = txt
  *
  * 10 = other text options
  * */
 var typeOfFile by Delegates.notNull<Int>()
+
+fun fileExt(): String {
+    return when (typeOfFile) {
+        0 -> "pdf"
+        1 -> "docx"
+        2 -> "pptx"
+        3 -> "jpg:f"
+        4 -> "png:f"
+        5 -> "gif:f"
+        6 -> "jpg:z"
+        7 -> "png:z"
+        8 -> "gif:z"
+        9 -> "txt"
+        else -> throw IllegalStateException("no?")
+    }
+}
 
 class FindFileView(var string: String, var whenFinished: FindFileView.() -> Unit = {}) : View("Bingo > Locate File") {
     private lateinit var filePath: TextField
@@ -228,9 +244,17 @@ object ExportTextView : View("Bingo > Export text") {
                             val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
                             clipboard.setContents(selection, selection)
                         }
-                        this@ExportTextView.replaceWith(ExportCompleted("Export Complete", {
-                            replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
-                        }, "Finished copying game into clipboard"), ViewTransition.Slide(0.5.seconds))
+                        ExportCompleted(action = {
+                            println("Yessss")
+                        }).apply {
+                            val exportCompleted = this
+                            openModal()!!.apply {
+                                setOnCloseRequest {
+                                    exportCompleted.action()
+                                    close()
+                                }
+                            }
+                        }
                     }
                 }
                 paddingBottom = 30.0
@@ -241,15 +265,18 @@ object ExportTextView : View("Bingo > Export text") {
         }
         addClass(Styles.defaultBackground)
     }
-
 }
 
-class ExportCompleted(val string: String = "Exporting", val action: ExportCompleted.() -> Unit = {}, private val message: String = string) :
-    View("Bingo > $string") {
+class ExportCompleted(
+    eTitle: String = "Exporting",
+    private val message: String = "Exporting has been completed!",
+    val action: ExportCompleted.() -> Unit = {}
+) :
+    View("Bingo > $eTitle") {
     override val root = borderpane {
         center {
             label(message) {
-                addClass(Styles.regularLabel)
+                addClass(Styles.titleLabel)
                 style(append = true) {
                     textFill = c(Appearance.GREEN.darkTextFill)
                 }
@@ -259,11 +286,10 @@ class ExportCompleted(val string: String = "Exporting", val action: ExportComple
             hbox {
                 button("Next >") {
                     addHoverEffectAppearance(Appearance.GREEN)
-                    fire()
                     action {
-                        action(this@ExportCompleted)
+                        action()
                     }
-                    style(append = true) {
+                    style {
                         textFill = c(Appearance.GREEN.lightTextFill)
                         padding = box(1.px, 12.px)
                         borderWidth += box(1.px, 3.px)
@@ -272,7 +298,7 @@ class ExportCompleted(val string: String = "Exporting", val action: ExportComple
                         borderColor += box(Color.TRANSPARENT)
                         fontFamily = "dubai"
                         fontSize = Styles.sizeOfText
-                        backgroundColor += c(Appearance.GREEN.themeBackgroundColor)
+                        backgroundColor += c(Appearance.GREEN.themeColor)
                     }
                 }
                 paddingBottom = 30.0

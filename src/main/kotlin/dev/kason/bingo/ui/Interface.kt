@@ -478,3 +478,11 @@ object HowToUseView : View("Bingo > How To Use") {
         addClass(Styles.defaultBackground)
     }
 }
+
+object AdView: View("Bingo > Buy ") {
+    override val root = vbox {
+        button {
+
+        }
+    }
+}

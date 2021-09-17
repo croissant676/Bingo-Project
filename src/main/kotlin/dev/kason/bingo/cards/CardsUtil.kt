@@ -28,7 +28,6 @@ fun generateNumbers(seed: Long = 0, count: Int = 1): BingoGame {
             }
             list
         }, seed, it + 1)
-        println("Created card: $it")
     }
     val game = BingoGame(seed, cards = arrayList)
     currentGame = game
@@ -60,7 +59,6 @@ fun emptyBingoCard(): BingoCard {
         val existingNumbers = arrayListOf<Int>()
         val list = MutableList(5) { col ->
             if (row == 2 && col == 2) {
-                println("Im not this dumb right")
                 val tile = BingoTile(-1)
                 tile.crossedOff = true
                 return@MutableList tile

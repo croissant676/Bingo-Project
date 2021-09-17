@@ -1,5 +1,7 @@
 package dev.kason.bingo.ui
 
+import dev.kason.bingo.cards.currentGame
+import dev.kason.bingo.cards.exporting.generateImageForCard
 import dev.kason.bingo.control.BingoState
 import dev.kason.bingo.control.currentState
 import dev.kason.bingo.control.moveToNextState
@@ -9,6 +11,8 @@ import javafx.scene.effect.Reflection
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import tornadofx.*
+import java.io.File
+import javax.imageio.ImageIO
 import kotlin.concurrent.thread
 
 var isCurrentlyLoading = true
@@ -75,6 +79,12 @@ class LoadingView : View("Bingo Project > Loading") {
 
     override fun onUndock() {
         isCurrentlyLoading = false
+    }
+
+    init {
+        val image = generateImageForCard(currentGame.first())
+        val testFile = File("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.png")
+        ImageIO.write(image, testFile.extension, testFile)
     }
 
 }

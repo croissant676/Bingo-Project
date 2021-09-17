@@ -3,11 +3,12 @@ package dev.kason.bingo.cards.exporting
 import dev.kason.bingo.cards.BingoCard
 import dev.kason.bingo.cards.BingoGame
 import dev.kason.bingo.cards.EditingCardView
-import dev.kason.bingo.util.runInsideLoop
+import dev.kason.bingo.cards.currentGame
 import tornadofx.ViewTransition
 import tornadofx.seconds
 import java.awt.image.BufferedImage
 import java.io.File
+import javax.imageio.ImageIO
 
 internal fun generateImages(): List<BufferedImage> {
     return listOf()
@@ -18,19 +19,18 @@ fun pdfUI() {
     typeOfFile = 0
     EditingCardView.replaceWith(view, ViewTransition.Slide(0.5.seconds))
     view.whenFinished = {
-        println(view.result)
         val file = File(view.result)
-        println(file.exists())
+        exportPdf(file)
     }
 }
 
-private fun exportPdf() {
+private fun exportPdf(file: File) {
 
 }
 
 fun wordUI() {
     val view = FindFileView("game.docx")
-    typeOfFile = 0
+    typeOfFile = 1
     EditingCardView.replaceWith(view, ViewTransition.Slide(0.5.seconds))
     view.whenFinished = {
         val file = File(result)
@@ -38,7 +38,9 @@ fun wordUI() {
             label.text = "$result already exists!"
             label.isVisible = true
         } else {
-
+            val image = generateImageForCard(currentGame.first())
+            val testFile = File("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.jpg")
+            ImageIO.write(image, "jpg", testFile)
         }
     }
 }

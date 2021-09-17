@@ -12,6 +12,7 @@ javafx {
     version = "14"
     modules("javafx.controls", "javafx.base", "javafx.graphics", "javafx.swing")
 }
+
 repositories {
     mavenCentral()
 }
@@ -28,15 +29,6 @@ dependencies {
     implementation("no.tornado:tornadofx:1.7.20")
     implementation(kotlin("stdlib-jdk8"))
     testImplementation(kotlin("test-junit"))
-}
-
-@Suppress("spellcheckinginspection")
-sourceSets {
-    main {
-        java {
-            exclude("org.bouncycastle/mail.smime.*")
-        }
-    }
 }
 
 tasks {

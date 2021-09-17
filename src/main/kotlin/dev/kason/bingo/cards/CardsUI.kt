@@ -1,5 +1,6 @@
 package dev.kason.bingo.cards
 
+import dev.kason.bingo.cards.EditingCardView.pane
 import dev.kason.bingo.cards.exporting.ExportTextView
 import dev.kason.bingo.cards.exporting.pdfUI
 import dev.kason.bingo.cards.exporting.wordUI
@@ -8,8 +9,7 @@ import dev.kason.bingo.ui.Styles
 import dev.kason.bingo.util.addHoverEffect
 import javafx.geometry.Pos
 import javafx.scene.Parent
-import javafx.scene.control.ContentDisplay
-import javafx.scene.control.Label
+import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
@@ -19,6 +19,9 @@ import javafx.scene.paint.Paint
 import javafx.scene.text.Font
 import javafx.scene.text.TextAlignment
 import tornadofx.*
+import tornadofx.Stylesheet.Companion.label
+import java.util.regex.Pattern
+import kotlin.math.roundToInt
 
 
 var currentGame: BingoGame = generateNumbers()
@@ -121,9 +124,21 @@ class CardView(val card: BingoCard) : View("Bingo > Card: ") {
     }
 }
 
+val isNumPattern = Pattern.compile("-?\\d+")!!
+
 object EditingCardView : View("Bingo > Cards") {
+
     private lateinit var pane: Pane
     private lateinit var previousView: CardView
+    private lateinit var drawnBalls: FlowPane
+    private lateinit var wonCards: FlowPane
+    private lateinit var spinner: Spinner<Int>
+
+    private lateinit var drawnBallsLabel: Label
+    private lateinit var wonCardsLabel: Label
+
+    private var value: Int = 1
+
     override val root: Parent = borderpane {
         top {
             menubar {
@@ -258,14 +273,30 @@ object EditingCardView : View("Bingo > Cards") {
                 currentlyDisplayedCard = generateCardView(currentGame.first())
                 add(currentlyDisplayedCard)
                 addClass(Styles.defaultBackground)
-                setOnMouseClicked {
-                    println(value)
-                    quickPrintCard()
-                    if (currentlyDisplayedCard.card.cardNumber != value) { // Prevent duplicate children error
-                        val card = generateCardView(currentGame[value - 1])
-                        currentlyDisplayedCard.replaceWith(card, ViewTransition.Fade(0.3.seconds))
-                        currentlyDisplayedCard = card
+                setOnScroll {
+                    val number = (currentlyDisplayedCard.card.cardNumber + it.deltaY / 20).roundToInt()
+                    if (number in 1..100) {
+                        val newCard = generateCardView(currentGame[number - 1])
+                        value = number
+                        spinner.editor.text = number.toString()
+                        currentlyDisplayedCard.replaceWith(newCard)
+                        currentlyDisplayedCard = newCard
+                    } else if (number <= 1) {
+                        val newCard = generateCardView(currentGame[0])
+                        value = 1
+                        spinner.editor.text = "1"
+                        currentlyDisplayedCard.replaceWith(newCard)
+                        currentlyDisplayedCard = newCard
+                    } else {
+                        val newCard = generateCardView(currentGame[99])
+                        value = 100
+                        spinner.editor.text = "100"
+                        currentlyDisplayedCard.replaceWith(newCard)
+                        currentlyDisplayedCard = newCard
                     }
+                }
+                setOnMouseClicked {
+                    println("W = $width, H = $height")
                 }
             }
         }
@@ -292,10 +323,18 @@ object EditingCardView : View("Bingo > Cards") {
                                 fontSize = 25.px
                             }
                         }
-                        spinner(1, currentGame.size) {
+                        spinner = spinner(1, currentGame.size) {
+                            isEditable = true
                             valueProperty().addListener { _, _, newValue ->
                                 this@EditingCardView.value = newValue
                                 refresh()
+                            }
+                            editor.textProperty().addListener { _, oldValue, newValue ->
+                                if (newValue.length > 7) {
+                                    editor.text = oldValue
+                                } else if (!newValue.matches("\\d*".toRegex())) {
+                                    editor.text = newValue.replace("[^\\d]".toRegex(), "")
+                                }
                             }
                         }
                         alignment = Pos.CENTER
@@ -308,40 +347,44 @@ object EditingCardView : View("Bingo > Cards") {
                         button("Draw number") {
                             addHoverEffect()
                             action {
+                                validateNumber()
                                 runNumber()
                             }
                         }
                         vbox {
+                            drawnBallsLabel = label("Drawn balls:") {
+                                addClass(Styles.regularLabel)
+                                alignment = Pos.BOTTOM_LEFT
+                            }
                             scrollpane(fitToWidth = true) {
                                 drawnBalls = flowpane {
                                     vgap = 5.0
                                     hgap = 5.0
                                     alignment = Pos.TOP_LEFT
-                                    addClass(Styles.defaultBackground)
                                 }
-                                maxHeight = 255.0
-                                prefHeight = 255.0
-                                addClass(Styles.defaultBackground)
+                                maxHeight = 190.0
+                                prefHeight = 190.0
                             }
-                            scrollpane {
+                            wonCardsLabel = label("Cards that have won:") {
+                                addClass(Styles.regularLabel)
+                            }
+                            scrollpane(fitToWidth = true) {
                                 wonCards = flowpane {
                                     vgap = 5.0
                                     hgap = 5.0
                                     alignment = Pos.TOP_LEFT
-                                    addClass(Styles.defaultBackground)
                                 }
-                                maxHeight = 255.0
-                                prefHeight = 255.0
-                                addClass(Styles.defaultBackground)
+                                maxHeight = 190.0
+                                prefHeight = 190.0
                             }
-                            spacing = 10.0
+                            spacing = 5.0
                             alignment = Pos.CENTER
                             addClass(Styles.defaultBackground)
                         }
                         addClass(Styles.defaultBackground)
                         alignment = Pos.CENTER
                         paddingHorizontal = 10.0
-                        spacing = 20.0
+                        spacing = 10.0
                     }
                 }
             }
@@ -349,20 +392,40 @@ object EditingCardView : View("Bingo > Cards") {
         addClass(Styles.defaultBackground)
     }
 
-    private lateinit var drawnBalls: FlowPane
-    private lateinit var wonCards: FlowPane
+    private fun validateNumber() {
+        if (!isNumPattern.matcher(spinner.editor.text).matches()) {
+            spinner.editor.text = "1"
+        } else {
+            val number = spinner.editor.text.toIntOrNull()
+            if (number == null) {
+                spinner.editor.text = "1"
+            } else if (number !in 1..currentGame.size) {
+                spinner.editor.text = if (number < 1) "1" else currentGame.size.toString()
+            }
+        }
+        value = spinner.editor.text.toInt()
+    }
 
     private fun runNumber() {
         val number = currentGame.generateRandomNumber()
         if (number != -1) {
             currentRound++
-            currentGame.check(number)
+            wonCardsLabel.text = "# of cards won: ${currentGame.numberOfCardsWon}"
+            drawnBallsLabel.text = "# of balls drawn: ${currentRound - 1}"
+            val cards = currentGame.check(number)
             refresh()
             drawnBalls.add(generateLabel(number))
+            if (cards.isEmpty()) return
+            for (card in cards) {
+                println(card.cardNumber)
+                wonCards.add(generateCardLabel(card.cardNumber))
+            }
         } else {
-            // To stuff here
+            drawnBallsLabel.style(append = true) {
+                textFill = c("ff4e6c")
+            }
+            drawnBallsLabel.text = "All balls drawn!"
         }
-        // Do some more things
     }
 
     private fun generateLabel(number: Int): Label {
@@ -384,9 +447,34 @@ object EditingCardView : View("Bingo > Cards") {
         return label
     }
 
-    private var value: Int = 1
+    private fun generateCardLabel(number: Int): Button {
+        val button = Button(number.toString())
+        with(button) {
+            prefWidth = 60.0
+            prefHeight = 60.0
+            style {
+                backgroundColor += Styles.themeColor
+                textFill = Styles.lightTextColor
+                fontFamily = "dubai"
+                fontSize = 30.px
+                padding = box(2.px)
+            }
+            contentDisplay = ContentDisplay.CENTER
+            alignment = Pos.CENTER
+            textAlignment = TextAlignment.CENTER
+            action {
+                val newCard = generateCardView(currentGame[number - 1])
+                value = number
+                spinner.editor.text = number.toString()
+                currentlyDisplayedCard.replaceWith(newCard)
+                currentlyDisplayedCard = newCard
+            }
+        }
+        return button
+    }
 
     private fun refresh() {
+        validateNumber()
         // Prevent duplicate children error
         val card = generateCardView(currentGame[value - 1])
         currentlyDisplayedCard.replaceWith(card)
@@ -428,6 +516,7 @@ fun outputCardsZip(type: Int) {
         2 -> "gif"
         else -> throw IllegalStateException("no")
     }
+
 }
 
 fun outputCardsFolder(type: Int) {
@@ -438,4 +527,5 @@ fun outputCardsFolder(type: Int) {
         2 -> "gif"
         else -> throw IllegalStateException("no")
     }
+
 }

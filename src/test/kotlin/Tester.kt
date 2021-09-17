@@ -1,3 +1,6 @@
+import com.sun.security.auth.module.NTSystem
+import dev.kason.bingo.cards.currentGame
+import dev.kason.bingo.cards.exporting.generateImageForCard
 import dev.kason.bingo.cards.generateNumbers
 import javafx.scene.effect.Reflection
 import tornadofx.*
@@ -8,36 +11,11 @@ import javafx.scene.paint.Color as JFXColor
 import java.awt.Color as SwingColor
 
 fun main() {
-    launch<DanApp>()
-//    outputNumbers(generateNumbersWith())
-//    outputNumbers(generateNumbersWith())
-//    outputNumbers(generateNumbersWith())
-//    outputNumbers(generateNumbersWith())
-
-//    val pdfDocument = PdfDocument()
-//    val document = Document()
-//    document.addTitle("hello")
-//    pdfDocument.open()
-//    val writer = PdfWriter.getInstance(document, FileOutputStream("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.pdf"))
-//
-//    generateImage()
-}
-
-class DanApp : App(DanView::class)
-
-class DanView : View("Dan dans tfx tutorial") {
-    override val root = vbox {
-        progressindicator {
-            effect = Reflection()
-        }
-    }
+    val ntSystem = NTSystem()
+    println(ntSystem.name)
 }
 
 private fun generate() {
-    return
-//    val image = generateImage(generateNumbers()) as BufferedImage
-//    val file = File("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.png")
-//    ImageIO.write(image, file.extension, file)
 }
 
 private fun switchColors(color: SwingColor): JFXColor {

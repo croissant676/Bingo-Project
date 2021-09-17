@@ -1,5 +1,6 @@
 package dev.kason.bingo.cards
 
+import dev.kason.bingo.cards.exporting.array
 import kotlin.random.Random
 
 class BingoTile(val value: Int) {
@@ -22,7 +23,7 @@ data class BingoCard(val numbers: List<List<BingoTile>>, val randomSeed: Long = 
     operator fun get(row: Int) = numbers[row]
 
     operator fun invoke(number: Int, relation: Int = (number - 1) / 15) {
-        println(eventLogger)
+        if (isFinished != -1) return
         val list = numbers[relation]
         for (value in 0 until 5) {
             if (list[value].value == number) {
@@ -33,10 +34,19 @@ data class BingoCard(val numbers: List<List<BingoTile>>, val randomSeed: Long = 
         }
     }
 
-    fun checkFinished() {
-        if (isFinished != -1) return
+    fun values(): Array<Array<Int>> {
+        return Array(5) { row ->
+            Array(5) { col ->
+                numbers[row][col].value
+            }
+        }
+    }
+
+    fun checkFinished(): Boolean {
+        if (isFinished != -1) return false
         if (checkHorizontal() || checkVertical() || checkDiagonals()) {
             isFinished = currentRound
+            return true
             // May switch to new implementation soon
             // Where it keeps track of longer lines
             // and then detects any changes in their size
@@ -44,6 +54,7 @@ data class BingoCard(val numbers: List<List<BingoTile>>, val randomSeed: Long = 
             // Problem with that is, I'm too lazy to implement
             // that, and it seems like a lot of work :)
         }
+        return false
     }
 
     private fun checkHorizontal(): Boolean {
@@ -104,6 +115,9 @@ class BingoGame(val seed: Long, var desiredNumberOfWinners: Int = -1, val cards:
 
     private val random = Random(seed - 1)
 
+    var numberOfCardsWon = 0
+        private set
+    val numberOfCardsLeft: Int get() = 75 - numberOfCardsWon
     var currentRoundNumber = 0
 
     override val size: Int
@@ -153,13 +167,19 @@ class BingoGame(val seed: Long, var desiredNumberOfWinners: Int = -1, val cards:
         return cards.toString()
     }
 
-    fun check(number: Int) {
-        if (number == -1) return
+    fun check(number: Int): List<BingoCard> {
+        if (number == -1) return listOf()
         alreadyExistingNumbers += number
         val relation = (number - 1) / 15 // So we can easily check the columns
+        val list = arrayListOf<BingoCard>()
         for (card in cards) {
             card(number, relation)
+            if (card.checkFinished()) {
+                list += card
+            }
         }
+        numberOfCardsWon += list.size
+        return list
     }
 
     var viewMap = hashMapOf<Int, CardView>()

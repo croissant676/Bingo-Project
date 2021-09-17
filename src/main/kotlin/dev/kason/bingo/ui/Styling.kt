@@ -363,14 +363,12 @@ class Styles : Stylesheet() {
             }
         }
         scrollPane {
-            borderColor += box(themeBackgroundColor)
-            borderWidth += box(2.px)
-            backgroundColor += themeBackgroundColor
             scrollBar {
                 backgroundColor += Color.TRANSPARENT
                 borderColor += box(Color.SLATEGREY)
+                borderWidth += box(0.px, 0.px, 0.px, 2.px)
                 thumb {
-                    backgroundColor += c(Appearance.MONO.themeBackgroundColor)
+                    backgroundColor += c(Appearance.MONO.themeColor)
                     backgroundRadius += box(123.px)
                 }
             }

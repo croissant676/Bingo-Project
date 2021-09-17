@@ -1,8 +1,6 @@
 package dev.kason.bingo.util
 
-import tornadofx.c
 import kotlin.math.max
-import kotlin.system.measureNanoTime
 import kotlin.system.measureTimeMillis
 
 private var runEventLoop = true
@@ -56,7 +54,6 @@ private val eventLoopThread = object : Thread() {
         executionTime = max(executionTime, measureTimeMillis {
             runOnce()
         })
-        println("Optimizations finished in time = $executionTime")
     }
 
     private fun waitTime() = sleep(timeBetweenFrames - executionTime)
