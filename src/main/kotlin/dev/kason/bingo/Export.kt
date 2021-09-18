@@ -1,9 +1,7 @@
 package dev.kason.bingo
 
-import javafx.scene.control.Alert
 import javafx.scene.control.RadioButton
 import tornadofx.ViewTransition
-import tornadofx.alert
 import tornadofx.runLater
 import tornadofx.seconds
 import java.awt.Toolkit
@@ -191,10 +189,10 @@ private fun generateDoc() {
 fun exportImageCB() {
     EditingCardView.replaceWith(ExportAsClipBoardView, ViewTransition.Slide(0.5.seconds))
     ExportAsClipBoardView.action = {
-        val card = currentGame[value - 1]
+        curView = ExportAsClipBoardView
         replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
         FormattingView.action = {
-            val image = generateImageForCard(card)
+            val image = generateViewRes(format = number, startingIndex = value - 1)
             thread {
                 val trans = TransferableImage(image)
                 val c = Toolkit.getDefaultToolkit().systemClipboard

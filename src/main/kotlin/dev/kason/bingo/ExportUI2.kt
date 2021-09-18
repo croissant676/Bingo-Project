@@ -96,11 +96,7 @@ object FormattingView : View("Bingo > Export > Format") {
                 button("< Back") {
                     addHoverEffect()
                     action {
-                        try {
-                            replaceWith(currentFFView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
-                        }catch(err: Exception) {
-                            replaceWith(curView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
-                        }
+                        replaceWith(curView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
                     }
                 }
                 button("Next >") {
@@ -153,8 +149,13 @@ object ExportAsClipBoardView : View("Bingo > Export As Clipboard") {
                 }
                 label(
                     "Because clipboard can only handle 1 image, you have to select the card that\n" +
-                            "you want saved into your clipboard."
+                            "you want saved into your clipboard. If you want multiple cards in 1 (see \"Format\"\n" +
+                            "for some context), this will act as your first card."
                 ) {
+                    addClass(Styles.regularLabel)
+                }
+                label ("For example, if you want to save cards 1 - 4 into your image, you would select\n" +
+                        "1 as your card, and select 4 as the format."){
                     addClass(Styles.regularLabel)
                 }
                 spinner(1, currentGame.size) {

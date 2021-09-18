@@ -155,7 +155,7 @@ open class FindFileView(var string: String, var whenFinished: FindFileView.() ->
                 button("< Back") {
                     addHoverEffect()
                     action {
-                        replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        replaceWith(curView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
                     }
                 }
                 button("Select file from system") {
