@@ -2,6 +2,7 @@ package dev.kason.bingo.cards
 
 import dev.kason.bingo.cards.EditingCardView.pane
 import dev.kason.bingo.cards.exporting.ExportTextView
+import dev.kason.bingo.cards.exporting.FolderFindFileView
 import dev.kason.bingo.cards.exporting.pdfUI
 import dev.kason.bingo.cards.exporting.wordUI
 import dev.kason.bingo.control.currentAppearance
@@ -156,9 +157,6 @@ object EditingCardView : View("Bingo > Cards") {
                                 wordUI()
                             }
                         }
-                        item("to Powerpoint (.pptx)") {
-                            accelerator = KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN)
-                        }
                     }
                     menu("Export as Photos") {
                         menu("to Folder") {
@@ -275,7 +273,7 @@ object EditingCardView : View("Bingo > Cards") {
                 addClass(Styles.defaultBackground)
                 setOnScroll {
                     val number = (currentlyDisplayedCard.card.cardNumber + it.deltaY / 20).roundToInt()
-                    if (number in 1..100) {
+                    if (number in 1..currentGame.size) {
                         val newCard = generateCardView(currentGame[number - 1])
                         value = number
                         spinner.editor.text = number.toString()
@@ -288,9 +286,9 @@ object EditingCardView : View("Bingo > Cards") {
                         currentlyDisplayedCard.replaceWith(newCard)
                         currentlyDisplayedCard = newCard
                     } else {
-                        val newCard = generateCardView(currentGame[99])
-                        value = 100
-                        spinner.editor.text = "100"
+                        val newCard = generateCardView(currentGame.last())
+                        value = currentGame.size
+                        spinner.editor.text = currentGame.size.toString()
                         currentlyDisplayedCard.replaceWith(newCard)
                         currentlyDisplayedCard = newCard
                     }
@@ -516,7 +514,9 @@ fun outputCardsZip(type: Int) {
         2 -> "gif"
         else -> throw IllegalStateException("no")
     }
+    EditingCardView.replaceWith(FolderFindFileView {
 
+    })
 }
 
 fun outputCardsFolder(type: Int) {

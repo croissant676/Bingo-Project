@@ -77,8 +77,8 @@ fun fileExt(): String {
     }
 }
 
-class FindFileView(var string: String, var whenFinished: FindFileView.() -> Unit = {}) : View("Bingo > Locate File") {
-    private lateinit var filePath: TextField
+open class FindFileView(var string: String, var whenFinished: FindFileView.() -> Unit = {}) : View("Bingo > Locate File") {
+    protected lateinit var filePath: TextField
     private lateinit var fileName: TextField
 
     var result: String = ""
@@ -90,6 +90,7 @@ class FindFileView(var string: String, var whenFinished: FindFileView.() -> Unit
         val file = File(FindFileView::class.java.protectionDomain.codeSource.location.toURI()).parentFile.parentFile.parentFile
         currentFFView = this@FindFileView
         FileView.called = this@FindFileView
+        FileView.showFileTextField = true
         center {
             vbox {
                 label("Input the location of the file.") {
@@ -203,6 +204,97 @@ class FindFileView(var string: String, var whenFinished: FindFileView.() -> Unit
     }
 }
 
+class FolderFindFileView(whenFinished: FindFileView.() -> Unit = {}) : FindFileView("yes", whenFinished) {
+    override val root: Parent = borderpane {
+        val file = File(FindFileView::class.java.protectionDomain.codeSource.location.toURI()).parentFile.parentFile.parentFile
+        currentFFView = this@FolderFindFileView
+        FileView.called = this@FolderFindFileView
+        FileView.showFileTextField = false
+        center {
+            vbox {
+                label("Input the location of the file.") {
+                    addClass(Styles.titleLabel)
+                }
+                vbox {
+                    filePath = textfield(file.path) {
+                        alignment = Pos.CENTER
+                    }
+                    label("Location of files") {
+                        addClass(Styles.regularLabel)
+                        style(append = true) {
+                            fontSize = 10.px
+                        }
+                    }
+                    alignment = Pos.TOP_LEFT
+                }
+                alignment = Pos.CENTER
+                spacing = 20.0
+                addClass(Styles.defaultBackground)
+            }
+        }
+        left {
+            region {
+                style {
+                    backgroundColor += Styles.themeBackgroundColor
+                }
+                minWidth = 70.0
+            }
+        }
+        right {
+            region {
+                style {
+                    backgroundColor += Styles.themeBackgroundColor
+                }
+                minWidth = 70.0
+            }
+        }
+        top {
+            hbox {
+                label = label("Area where the label appears") {
+                    addClass(Styles.regularLabel)
+                    style {
+                        textFill = c("ff4e6c")
+                    }
+                    isVisible = false
+                }
+                paddingTop = 30.0
+                alignment = Pos.CENTER
+                spacing = 20.0
+                addClass(Styles.defaultBackground)
+            }
+        }
+        FileView.startingLocation = file.path
+        FileView.indexFiles()
+        bottom {
+            hbox {
+                button("< Back") {
+                    addHoverEffect()
+                    action {
+                        replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                    }
+                }
+                button("Select file from system") {
+                    addHoverEffect()
+                    action {
+                        replaceWith(FileView, ViewTransition.Fade(0.5.seconds))
+                    }
+                }
+                button("Proceed to next step >") {
+                    addHoverEffect()
+                    action {
+
+                    }
+                }
+                alignment = Pos.CENTER
+                spacing = 20.0
+                addClass(Styles.defaultBackground)
+                paddingBottom = 30.0
+            }
+        }
+        addClass(Styles.defaultBackground)
+    }
+}
+
 object ExportTextView : View("Bingo > Export text") {
 
     private lateinit var toggleGroup: ToggleGroup
@@ -214,11 +306,26 @@ object ExportTextView : View("Bingo > Export text") {
                 label("Exporting Text to Clipboard") {
                     addClass(Styles.titleLabel)
                 }
-                toggleGroup = togglegroup {
-                    radiobutton("Export all cards")
-                    radiobutton("Export a single card")
+                vbox {
+                    toggleGroup = togglegroup {
+                        radiobutton("Export all cards") {
+                            isSelected = true
+                        }
+                        radiobutton("Export a single card")
+                        alignment = Pos.CENTER_LEFT
+                    }
+                    paddingLeft = 300.0
                 }
-                spinner = spinner(1, currentGame.size)
+                spinner = spinner(1, currentGame.size) {
+                    isEditable = true
+                    editor.textProperty().addListener { _, oldValue, newValue ->
+                        if (newValue.length > 7) {
+                            editor.text = oldValue
+                        } else if (!newValue.matches("\\d*".toRegex())) {
+                            editor.text = newValue.replace("[^\\d]".toRegex(), "")
+                        }
+                    }
+                }
                 alignment = Pos.CENTER
                 spacing = 10.0
                 addClass(Styles.defaultBackground)
@@ -245,10 +352,10 @@ object ExportTextView : View("Bingo > Export text") {
                             clipboard.setContents(selection, selection)
                         }
                         ExportCompleted(action = {
-                            println("Yessss")
+                            this@ExportTextView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
                         }).apply {
                             val exportCompleted = this
-                            openModal()!!.apply {
+                            openModal(escapeClosesWindow = false)!!.apply {
                                 setOnCloseRequest {
                                     exportCompleted.action()
                                     close()
@@ -287,6 +394,7 @@ class ExportCompleted(
                 button("Next >") {
                     addHoverEffectAppearance(Appearance.GREEN)
                     action {
+                        close()
                         action()
                     }
                     style {
@@ -310,3 +418,4 @@ class ExportCompleted(
         }
     }
 }
+

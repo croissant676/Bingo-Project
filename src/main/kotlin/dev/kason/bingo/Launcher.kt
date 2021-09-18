@@ -3,8 +3,6 @@
 package dev.kason.bingo
 
 import dev.kason.bingo.cards.EditingCardView
-import dev.kason.bingo.cards.currentGame
-import dev.kason.bingo.cards.exporting.generateImageForCard
 import dev.kason.bingo.cards.generateNumbers
 import dev.kason.bingo.ui.LoadingView
 import dev.kason.bingo.ui.Styles
@@ -17,8 +15,6 @@ import tornadofx.App
 import tornadofx.launch
 import tornadofx.reloadStylesheetsOnFocus
 import tornadofx.reloadViewsOnFocus
-import java.io.File
-import javax.imageio.ImageIO
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
@@ -28,7 +24,7 @@ fun main(args: Array<String>) {
 
 class BingoApp : App(LoadingView::class, Styles::class) {
     init {
-        generateNumbers(12332, 100)
+        generateNumbers(12332, 10000)
         runImmediately(EditingCardView)
         reloadViewsOnFocus()
         reloadStylesheetsOnFocus()

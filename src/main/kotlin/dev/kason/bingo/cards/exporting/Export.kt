@@ -20,7 +20,13 @@ fun pdfUI() {
     EditingCardView.replaceWith(view, ViewTransition.Slide(0.5.seconds))
     view.whenFinished = {
         val file = File(view.result)
-        exportPdf(file)
+        if (file.exists()) {
+            label.text = "$result already exists!"
+            label.isVisible = true
+        } else {
+            println(currentFFView)
+            replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
+        }
     }
 }
 
@@ -38,9 +44,10 @@ fun wordUI() {
             label.text = "$result already exists!"
             label.isVisible = true
         } else {
-            val image = generateImageForCard(currentGame.first())
-            val testFile = File("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.jpg")
-            ImageIO.write(image, "jpg", testFile)
+            replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
+//            val image = generateImageForCard(currentGame.first())
+//            val testFile = File("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.jpg")
+//            ImageIO.write(image, "jpg", testFile)
         }
     }
 }
@@ -51,7 +58,7 @@ fun generateString(game: BingoGame): String {
     stringBuffer.append("# of cards: ${game.size}\n")
     stringBuffer.append("# of winners: ${game.desiredNumberOfWinners}\n\n")
     stringBuffer.append("=======================\n")
-    for(card in game) {
+    for (card in game) {
         stringBuffer.append(generateString(card)).append('\n')
     }
     return stringBuffer.toString()

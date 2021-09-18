@@ -15,7 +15,6 @@ import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.TreeItem
-import javafx.scene.control.TreeTableView
 import javafx.scene.control.TreeView
 import javafx.scene.control.skin.TextFieldSkin
 import javafx.scene.paint.Color
@@ -347,6 +346,11 @@ object FileView : View("Bingo > Find File") {
             startingItem.value = value
         }
 
+    var showFileTextField: Boolean = true
+        set(value) {
+            field = value
+            refresh()
+        }
     lateinit var called: FindFileView
     private var currentFile = File("")
     private val startingItem = TreeItem(currentFile.path)
@@ -356,16 +360,18 @@ object FileView : View("Bingo > Find File") {
     @Suppress("SpellCheckingInspection")
     private lateinit var tview: TreeView<String>
 
-    override val root = borderpane {
+    override var root = borderpane {
         center {
             vbox {
-                label("Input location of the file.") {
+                label("Input the location of the file.") {
 
                     addClass(Styles.titleLabel)
                 }
-                textfield(currentFFView.string) {
-                    isEditable = false
-                    stringProperty.value = "Hello"
+                if (showFileTextField) {
+                    textfield(currentFFView.string) {
+                        isEditable = false
+                        stringProperty.value = "Hello"
+                    }
                 }
                 tview = treeview(startingItem) {
                     addClass(Styles.defaultTreeView)
@@ -429,6 +435,83 @@ object FileView : View("Bingo > Find File") {
         }
     }
 
+    fun refresh() {
+        root = borderpane {
+            center {
+                vbox {
+                    label("Input the location of the file.") {
+
+                        addClass(Styles.titleLabel)
+                    }
+                    if (showFileTextField) {
+                        textfield(currentFFView.string) {
+                            isEditable = false
+                            stringProperty.value = "Hello"
+                        }
+                    }
+                    tview = treeview(startingItem) {
+                        addClass(Styles.defaultTreeView)
+
+                    }
+                    addClass(Styles.defaultBackground)
+                    alignment = Pos.CENTER
+                }
+            }
+            left {
+                region {
+                    style {
+                        backgroundColor += Styles.themeBackgroundColor
+                    }
+                    minWidth = 70.0
+                }
+            }
+            right {
+                region {
+                    style {
+                        backgroundColor += Styles.themeBackgroundColor
+                    }
+                    minWidth = 70.0
+                }
+            }
+            tview.selectFirst()
+            bottom {
+                hbox {
+                    button("< Back") {
+                        addHoverEffect()
+                        action {
+                            replaceWith(called, ViewTransition.Fade(0.5.seconds))
+                        }
+                    }
+                    vbox {
+//                    val label = label("You must select a file before continuing") {
+//                        addClass(Styles.regularLabel)
+//                        style {
+//                            textFill = c("ff4e6c")
+//                        }
+//                        isVisible = false
+//                    }
+                        button("Proceed to next step >") {
+                            addHoverEffect()
+                            action {
+                                val result = tview.selectedValue
+                                if (result == null) {
+                                    // This section will never run
+//                                label.isVisible = true
+                                } else {
+                                    called.whenFinished(called)
+                                }
+                            }
+                        }
+                    }
+                    spacing = 10.0
+                    addClass(Styles.defaultBackground)
+                    alignment = Pos.CENTER
+                    paddingBottom = 30.0
+                }
+            }
+        }
+    }
+
     private var numberOfFiles = 0
 
     private fun recursivelyUpdateItem(item: TreeItem<String>): Boolean {
@@ -479,7 +562,7 @@ object HowToUseView : View("Bingo > How To Use") {
     }
 }
 
-object AdView: View("Bingo > Buy ") {
+object AdView : View("Bingo > Buy ") {
     override val root = vbox {
         button {
 
