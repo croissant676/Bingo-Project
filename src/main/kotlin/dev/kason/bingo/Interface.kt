@@ -7,8 +7,8 @@ import dev.kason.bingo.cards.exporting.currentFFView
 import dev.kason.bingo.control.Appearance
 import dev.kason.bingo.control.BingoState
 import dev.kason.bingo.control.currentState
-import dev.kason.bingo.util.addHoverEffect
-import dev.kason.bingo.util.addHoverEffectLight
+import dev.kason.bingo.addHoverEffect
+import dev.kason.bingo.addHoverEffectLight
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.event.EventHandler
@@ -364,7 +364,6 @@ object FileView : View("Bingo > Find File") {
         center {
             vbox {
                 label("Input the location of the file.") {
-
                     addClass(Styles.titleLabel)
                 }
                 if (showFileTextField) {
@@ -420,7 +419,8 @@ object FileView : View("Bingo > Find File") {
                             val result = tview.selectedValue
                             if (result == null) {
                                 // This section will never run
-//                                label.isVisible = true
+                                called.label.text = "ur bad"
+                                called.label.isVisible = true
                             } else {
                                 called.whenFinished(called)
                             }
@@ -435,12 +435,11 @@ object FileView : View("Bingo > Find File") {
         }
     }
 
-    fun refresh() {
+    private fun refresh() {
         root = borderpane {
             center {
                 vbox {
                     label("Input the location of the file.") {
-
                         addClass(Styles.titleLabel)
                     }
                     if (showFileTextField) {

@@ -1,6 +1,5 @@
-package dev.kason.bingo.cards
+package dev.kason.bingo
 
-import dev.kason.bingo.cards.exporting.array
 import kotlin.random.Random
 
 class BingoTile(val value: Int) {

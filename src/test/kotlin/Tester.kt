@@ -1,5 +1,5 @@
 import com.sun.security.auth.module.NTSystem
-import dev.kason.bingo.cards.currentGame
+import dev.kason.bingo.currentGame
 import dev.kason.bingo.cards.exporting.generateImageForCard
 import dev.kason.bingo.cards.generateNumbers
 import javafx.scene.effect.Reflection

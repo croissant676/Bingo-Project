@@ -1,4 +1,4 @@
-package dev.kason.bingo.ui
+package dev.kason.bingo
 
 import dev.kason.bingo.control.Appearance
 import javafx.scene.control.TextField

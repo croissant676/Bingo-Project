@@ -1,12 +1,6 @@
 package dev.kason.bingo.cards.exporting
 
-import dev.kason.bingo.cards.EditingCardView
-import dev.kason.bingo.cards.currentGame
-import dev.kason.bingo.control.Appearance
-import dev.kason.bingo.ui.FileView
-import dev.kason.bingo.ui.Styles
-import dev.kason.bingo.util.addHoverEffect
-import dev.kason.bingo.util.addHoverEffectAppearance
+import dev.kason.bingo.*
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.*
@@ -295,7 +289,7 @@ class FolderFindFileView(whenFinished: FindFileView.() -> Unit = {}) : FindFileV
     }
 }
 
-object ExportTextView : View("Bingo > Export text") {
+class ExportTextView(val text: String = "Export text to Clipboard") : View("Bingo > Export text") {
 
     private lateinit var toggleGroup: ToggleGroup
     private lateinit var spinner: Spinner<Int>
@@ -303,7 +297,7 @@ object ExportTextView : View("Bingo > Export text") {
     override val root: Parent = borderpane {
         center {
             vbox {
-                label("Exporting Text to Clipboard") {
+                label(text) {
                     addClass(Styles.titleLabel)
                 }
                 vbox {

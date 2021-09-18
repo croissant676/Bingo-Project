@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package dev.kason.bingo.control
+package dev.kason.bingo
 
 enum class BingoState {
     LOADING,

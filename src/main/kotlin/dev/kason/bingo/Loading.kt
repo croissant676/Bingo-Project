@@ -1,6 +1,6 @@
 package dev.kason.bingo.ui
 
-import dev.kason.bingo.cards.currentGame
+import dev.kason.bingo.currentGame
 import dev.kason.bingo.cards.exporting.generateImageForCard
 import dev.kason.bingo.control.BingoState
 import dev.kason.bingo.control.currentState

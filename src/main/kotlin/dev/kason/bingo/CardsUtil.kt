@@ -1,5 +1,6 @@
-package dev.kason.bingo.cards
+package dev.kason.bingo
 
+import dev.kason.bingo.cards.*
 import kotlin.properties.Delegates
 import kotlin.random.Random
 

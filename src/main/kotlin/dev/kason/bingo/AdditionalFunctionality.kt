@@ -1,7 +1,5 @@
-package dev.kason.bingo.cards
+package dev.kason.bingo
 
-import dev.kason.bingo.ui.Styles
-import dev.kason.bingo.util.addHoverEffect
 import javafx.geometry.Pos
 import javafx.scene.control.TextField
 import tornadofx.*

@@ -1,4 +1,4 @@
-package dev.kason.bingo.util
+package dev.kason.bingo
 
 import kotlin.math.max
 import kotlin.system.measureTimeMillis

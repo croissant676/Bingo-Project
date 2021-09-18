@@ -1,7 +1,5 @@
-package dev.kason.bingo.util
+package dev.kason.bingo
 
-import dev.kason.bingo.control.Appearance
-import dev.kason.bingo.ui.Styles
 import javafx.scene.control.Button
 import javafx.scene.paint.Color
 import javafx.scene.paint.CycleMethod

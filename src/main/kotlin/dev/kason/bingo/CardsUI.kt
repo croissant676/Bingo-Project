@@ -1,13 +1,8 @@
-package dev.kason.bingo.cards
+package dev.kason.bingo
 
-import dev.kason.bingo.cards.EditingCardView.pane
 import dev.kason.bingo.cards.exporting.ExportTextView
+import dev.kason.bingo.cards.exporting.FindFileView
 import dev.kason.bingo.cards.exporting.FolderFindFileView
-import dev.kason.bingo.cards.exporting.pdfUI
-import dev.kason.bingo.cards.exporting.wordUI
-import dev.kason.bingo.control.currentAppearance
-import dev.kason.bingo.ui.Styles
-import dev.kason.bingo.util.addHoverEffect
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.*
@@ -20,7 +15,6 @@ import javafx.scene.paint.Paint
 import javafx.scene.text.Font
 import javafx.scene.text.TextAlignment
 import tornadofx.*
-import tornadofx.Stylesheet.Companion.label
 import java.util.regex.Pattern
 import kotlin.math.roundToInt
 
@@ -204,7 +198,9 @@ object EditingCardView : View("Bingo > Cards") {
                         item("to Text (.txt)") {
                             accelerator = KeyCodeCombination(KeyCode.T, KeyCombination.ALT_DOWN)
                             action {
-                                println()
+                                this@EditingCardView.replaceWith(FindFileView("") {
+
+                                }, ViewTransition.Slide(0.5.seconds))
                             }
                         }
                         item("to Text (other)") {
@@ -222,7 +218,7 @@ object EditingCardView : View("Bingo > Cards") {
                         item("to Clipboard (as Text)") {
                             accelerator = KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN)
                             action {
-                                this@EditingCardView.replaceWith(ExportTextView)
+                                this@EditingCardView.replaceWith(ExportTextView(), ViewTransition.Slide(0.5.seconds))
                             }
                         }
                     }
@@ -301,9 +297,6 @@ object EditingCardView : View("Bingo > Cards") {
         center {
             borderpane {
                 bottom {
-                    label {
-
-                    }
 //                    button("Print View") {
 //                        action {
 //                            println(drawnBalls.height)
@@ -324,7 +317,7 @@ object EditingCardView : View("Bingo > Cards") {
                         spinner = spinner(1, currentGame.size) {
                             isEditable = true
                             valueProperty().addListener { _, _, newValue ->
-                                this@EditingCardView.value = newValue
+                                EditingCardView.value = newValue
                                 refresh()
                             }
                             editor.textProperty().addListener { _, oldValue, newValue ->
@@ -378,6 +371,9 @@ object EditingCardView : View("Bingo > Cards") {
                             spacing = 5.0
                             alignment = Pos.CENTER
                             addClass(Styles.defaultBackground)
+                        }
+                        button("Play Button") {
+                            addHoverEffect()
                         }
                         addClass(Styles.defaultBackground)
                         alignment = Pos.CENTER
@@ -445,11 +441,13 @@ object EditingCardView : View("Bingo > Cards") {
         return label
     }
 
+    private val size = (currentGame.size.toString().length * 10 + 30).coerceAtLeast(60)
+
     private fun generateCardLabel(number: Int): Button {
         val button = Button(number.toString())
         with(button) {
-            prefWidth = 60.0
-            prefHeight = 60.0
+            prefWidth = size.toDouble()
+            prefHeight = size.toDouble()
             style {
                 backgroundColor += Styles.themeColor
                 textFill = Styles.lightTextColor

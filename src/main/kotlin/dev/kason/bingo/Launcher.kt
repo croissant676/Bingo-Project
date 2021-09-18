@@ -2,7 +2,7 @@
 
 package dev.kason.bingo
 
-import dev.kason.bingo.cards.EditingCardView
+import dev.kason.bingo.EditingCardView
 import dev.kason.bingo.cards.generateNumbers
 import dev.kason.bingo.ui.LoadingView
 import dev.kason.bingo.ui.Styles
@@ -24,7 +24,7 @@ fun main(args: Array<String>) {
 
 class BingoApp : App(LoadingView::class, Styles::class) {
     init {
-        generateNumbers(12332, 10000)
+        generateNumbers(12332, 100)
         runImmediately(EditingCardView)
         reloadViewsOnFocus()
         reloadStylesheetsOnFocus()
