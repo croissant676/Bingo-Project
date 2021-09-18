@@ -490,7 +490,7 @@ class ExportLocationCompleted(
                 button("Open location") {
                     addHoverEffectAppearance(Appearance.GREEN)
                     action {
-                        Runtime.getRuntime().exec("explorer.exe /select,${file.absolutePath}");
+                        Runtime.getRuntime().exec("explorer.exe /select,${file.absolutePath}")
                     }
                     style {
                         textFill = c(Appearance.GREEN.lightTextFill)

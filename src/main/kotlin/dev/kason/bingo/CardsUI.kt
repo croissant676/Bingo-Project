@@ -253,12 +253,12 @@ object EditingCardView : View("Bingo > Cards") {
                             replaceWith(HowToStatistics, ViewTransition.Slide(0.5.seconds))
                         }
                     }
-                    item("Search for help") {
-                        accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN)
-                        action {
-                            replaceWith(SearchView, ViewTransition.Slide(0.5.seconds))
-                        }
-                    }
+//                    item("Search for help") {
+//                        accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN)
+//                        action {
+//                            replaceWith(SearchView, ViewTransition.Slide(0.5.seconds))
+//                        }
+//                    }
                 }
             }
         }

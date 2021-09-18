@@ -2,10 +2,11 @@ package dev.kason.bingo
 
 import javafx.embed.swing.SwingFXUtils
 import javafx.geometry.Pos
-import javafx.scene.Parent
 import javafx.scene.control.ToggleGroup
 import javafx.scene.layout.Pane
 import tornadofx.*
+import java.lang.Error
+import java.lang.Exception
 
 object FormattingView : View("Bingo > Export > Format") {
 
@@ -95,7 +96,11 @@ object FormattingView : View("Bingo > Export > Format") {
                 button("< Back") {
                     addHoverEffect()
                     action {
-                        replaceWith(currentFFView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        try {
+                            replaceWith(currentFFView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        }catch(err: Exception) {
+                            replaceWith(curView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        }
                     }
                 }
                 button("Next >") {
@@ -138,6 +143,7 @@ object ExportAsClipBoardView : View("Bingo > Export As Clipboard") {
 
     var value: Int = 1
         private set
+    var action: ExportAsClipBoardView.() -> Unit = {}
 
     override val root = borderpane {
         center {
@@ -147,7 +153,7 @@ object ExportAsClipBoardView : View("Bingo > Export As Clipboard") {
                 }
                 label(
                     "Because clipboard can only handle 1 image, you have to select the card that\n" +
-                            "you want saved into your clipboard"
+                            "you want saved into your clipboard."
                 ) {
                     addClass(Styles.regularLabel)
                 }
@@ -179,7 +185,7 @@ object ExportAsClipBoardView : View("Bingo > Export As Clipboard") {
                 button("Next > ") {
                     addHoverEffect()
                     action {
-                        replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        action()
                     }
                 }
                 paddingBottom = 30.0

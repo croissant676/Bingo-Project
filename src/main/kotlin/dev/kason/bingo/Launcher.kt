@@ -14,11 +14,11 @@ fun main(args: Array<String>) {
     launch<BingoApp>(args)
 }
 
-const val maxCardsSmooth = 50000
+const val maxCardsSmooth = 10000
 
 class BingoApp : App(LoadingView::class, Styles::class) {
     init {
-        generateNumbers(12332, 1000)
+        generateNumbers(12332, 100)
         runImmediately(EditingCardView)
     }
 

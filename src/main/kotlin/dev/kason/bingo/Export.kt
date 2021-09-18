@@ -1,15 +1,17 @@
 package dev.kason.bingo
 
+import javafx.scene.control.Alert
 import javafx.scene.control.RadioButton
 import tornadofx.ViewTransition
+import tornadofx.alert
 import tornadofx.runLater
 import tornadofx.seconds
 import java.awt.Toolkit
-import java.awt.datatransfer.Clipboard
-import java.awt.datatransfer.StringSelection
+import java.awt.datatransfer.*
 import java.awt.image.BufferedImage
 import java.io.File
 import kotlin.concurrent.thread
+
 
 internal fun generateImages(): List<BufferedImage> {
     return listOf()
@@ -187,7 +189,59 @@ private fun generateDoc() {
 }
 
 fun exportImageCB() {
+    EditingCardView.replaceWith(ExportAsClipBoardView, ViewTransition.Slide(0.5.seconds))
+    ExportAsClipBoardView.action = {
+        val card = currentGame[value - 1]
+        replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
+        FormattingView.action = {
+            val image = generateImageForCard(card)
+            thread {
+                val trans = TransferableImage(image)
+                val c = Toolkit.getDefaultToolkit().systemClipboard
+                c.setContents(trans) { _, _ -> }
+                runLater {
+                    ExportCompleted(whenDone = {
+                        FormattingView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
+                    }).apply {
+                        val exportCompleted = this
+                        openModal(escapeClosesWindow = false)!!.apply {
+                            setOnCloseRequest {
+                                exportCompleted.whenDone()
+                                close()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
+private class TransferableImage(val i: BufferedImage) : Transferable {
+
+    override fun getTransferData(flavor: DataFlavor): Any? {
+        if (flavor == DataFlavor.imageFlavor) {
+            return i
+        } else {
+            throw UnsupportedFlavorException(flavor)
+        }
+    }
+
+    override fun getTransferDataFlavors(): Array<DataFlavor?> {
+        val flavors = arrayOfNulls<DataFlavor>(1)
+        flavors[0] = DataFlavor.imageFlavor
+        return flavors
+    }
+
+    override fun isDataFlavorSupported(flavor: DataFlavor): Boolean {
+        val flavors = transferDataFlavors
+        for (i in flavors.indices) {
+            if (flavor.equals(flavors[i])) {
+                return true
+            }
+        }
+        return false
+    }
 }
 
 fun generateImagesInFile() {
