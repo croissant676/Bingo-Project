@@ -1,14 +1,12 @@
 package dev.kason.bingo
 
-import dev.kason.bingo.BingoCard
-import dev.kason.bingo.BingoGame
-import dev.kason.bingo.cards.exporting.ExportCompleted
-import dev.kason.bingo.cards.exporting.FindFileView
-import dev.kason.bingo.cards.exporting.FormattingView
-import dev.kason.bingo.cards.exporting.typeOfFile
+import javafx.scene.control.RadioButton
 import tornadofx.ViewTransition
 import tornadofx.runLater
 import tornadofx.seconds
+import java.awt.Toolkit
+import java.awt.datatransfer.Clipboard
+import java.awt.datatransfer.StringSelection
 import java.awt.image.BufferedImage
 import java.io.File
 import kotlin.concurrent.thread
@@ -18,6 +16,9 @@ internal fun generateImages(): List<BufferedImage> {
 }
 
 lateinit var resultFile: File
+lateinit var bulkImgTypes: String
+
+var isFolder = true
 
 fun pdfUI() {
     val view = FindFileView("game.pdf")
@@ -27,17 +28,16 @@ fun pdfUI() {
         checkFileAndRun {
             replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
             FormattingView.action = {
-                println("Yes")
                 thread {
                     generateDoc()
                     runLater {
-                        ExportCompleted(action = {
-                            replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
+                        ExportCompleted(whenDone = {
+                            FormattingView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
                         }).apply {
                             val exportCompleted = this
                             openModal(escapeClosesWindow = false)!!.apply {
                                 setOnCloseRequest {
-                                    exportCompleted.action()
+                                    exportCompleted.whenDone()
                                     close()
                                 }
                             }
@@ -47,6 +47,99 @@ fun pdfUI() {
             }
         }
     }
+}
+
+fun exportTXTText() {
+    EditingCardView.replaceWith(FindFileView(string = "game.txt", whenFinished = {
+        checkFileAndRun {
+            replaceWith(ExportTextView("Export text to file", {
+                thread(start = true, name = "Text Runner", priority = 9) {
+                    val text =
+                        if ((toggleGroup.selectedToggle as RadioButton).text == "Export all cards") generateString(
+                            currentGame
+                        )
+                        else generateString(currentGame[spinner.value - 1])
+                    val fileWriter = resultFile.bufferedWriter()
+                    fileWriter.write(text)
+                    fileWriter.close()
+                    runLater {
+                        ExportLocationCompleted("Exporting to file", whenDone = {
+                            this@ExportTextView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
+                        }, message = "Finished exporting to file!", file = resultFile).apply {
+                            val exportCompleted = this
+                            openModal(escapeClosesWindow = false)!!.apply {
+                                setOnCloseRequest {
+                                    exportCompleted.whenDone()
+                                    close()
+                                }
+                            }
+                        }
+                    }
+                }
+            }, "File Location: $resultFile"), ViewTransition.Slide(0.5.seconds))
+        }
+    }).also {
+        curView = it
+    }, ViewTransition.Slide(0.5.seconds))
+}
+
+fun exportOtherText() {
+    EditingCardView.replaceWith(FindFileView(string = "game", whenFinished = {
+        checkFileAndRun {
+            replaceWith(ExportTextView("Export text to file", {
+                thread(start = true, name = "Text Runner", priority = 9) {
+                    val text =
+                        if ((toggleGroup.selectedToggle as RadioButton).text == "Export all cards") generateString(
+                            currentGame
+                        )
+                        else generateString(currentGame[spinner.value - 1])
+                    val fileWriter = resultFile.bufferedWriter()
+                    fileWriter.write(text)
+                    fileWriter.close()
+                    runLater {
+                        ExportLocationCompleted("Exporting to file", whenDone = {
+                            this@ExportTextView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
+                        }, message = "Finished exporting to file!", file = resultFile).apply {
+                            val exportCompleted = this
+                            openModal(escapeClosesWindow = false)!!.apply {
+                                setOnCloseRequest {
+                                    exportCompleted.whenDone()
+                                    close()
+                                }
+                            }
+                        }
+                    }
+                }
+            }, "File Location: $resultFile"), ViewTransition.Slide(0.5.seconds))
+        }
+    }, implementExtensionCheck = false).also {
+        curView = it
+    }, ViewTransition.Slide(0.5.seconds))
+}
+
+fun exportCBText() {
+    EditingCardView.replaceWith(ExportTextView(whenFinished = {
+        if ((toggleGroup.selectedToggle as? RadioButton)?.text!!.contains("all")) {
+            val selection = StringSelection(generateString(currentGame))
+            val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
+            clipboard.setContents(selection, selection)
+        } else {
+            val selection = StringSelection(generateString(currentGame[spinner.value - 1]))
+            val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
+            clipboard.setContents(selection, selection)
+        }
+        ExportCompleted("Exporting to clipboard", whenDone = {
+            this@ExportTextView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
+        }, message = "Finished exporting to clipboard!").apply {
+            val exportCompleted = this
+            openModal(escapeClosesWindow = false)!!.apply {
+                setOnCloseRequest {
+                    exportCompleted.whenDone()
+                    close()
+                }
+            }
+        }
+    }), ViewTransition.Slide(0.5.seconds))
 }
 
 fun FindFileView.checkFileAndRun(action: FindFileView.() -> Unit) {
@@ -71,13 +164,13 @@ fun wordUI() {
                 thread {
                     generateDoc()
                     runLater {
-                        ExportCompleted(action = {
-                            replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
+                        ExportCompleted(whenDone = {
+                            FormattingView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
                         }).apply {
                             val exportCompleted = this
                             openModal(escapeClosesWindow = false)!!.apply {
                                 setOnCloseRequest {
-                                    exportCompleted.action()
+                                    exportCompleted.whenDone()
                                     close()
                                 }
                             }
@@ -91,6 +184,20 @@ fun wordUI() {
 
 private fun generateDoc() {
 
+}
+
+fun exportImageCB() {
+
+}
+
+fun generateImagesInFile() {
+    val view = FolderFindFileView()
+    typeOfFile = 0
+    EditingCardView.replaceWith(view, ViewTransition.Slide(0.5.seconds))
+    view.whenFinished = {
+        println("sdf")
+
+    }
 }
 
 fun generateString(game: BingoGame): String {

@@ -1,19 +1,11 @@
-package dev.kason.bingo.ui
+package dev.kason.bingo
 
-import dev.kason.bingo.currentGame
-import dev.kason.bingo.cards.exporting.generateImageForCard
-import dev.kason.bingo.control.BingoState
-import dev.kason.bingo.control.currentState
-import dev.kason.bingo.control.moveToNextState
 import javafx.geometry.Pos
 import javafx.scene.control.Alert
 import javafx.scene.effect.Reflection
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import tornadofx.*
-import java.io.File
-import javax.imageio.ImageIO
-import kotlin.concurrent.thread
 
 var isCurrentlyLoading = true
     private set
@@ -60,16 +52,15 @@ class LoadingView : View("Bingo Project > Loading") {
             val image = Image(uri.toExternalForm())
             addStageIcon(image)
         } catch (e: Exception) {
-            alert(Alert.AlertType.WARNING, "Resource does not exist.", "Cannot gather resource: \"bingo.png\" inside of resources folder:\n" +
-                    "Windows will not have an image.")
+            alert(
+                Alert.AlertType.WARNING, "Resource does not exist.", "Cannot gather resource: \"bingo.png\" inside of resources folder:\n" +
+                        "Windows will not have an image."
+            )
         }
         isCurrentlyLoading = true
         currentLoadingView = this
         if (immediateView != null) {
             setViewFromLoading(immediateView!!)
-        }
-        thread {
-//            FileView.indexFiles()
         }
         if (currentState == BingoState.LOADING) {
             moveToNextState() // Bingo Menu
@@ -80,13 +71,6 @@ class LoadingView : View("Bingo Project > Loading") {
     override fun onUndock() {
         isCurrentlyLoading = false
     }
-
-    init {
-        val image = generateImageForCard(currentGame.first())
-        val testFile = File("C:\\Users\\crois\\IdeaProjects\\BingoProject\\src\\main\\resources\\Test.png")
-        ImageIO.write(image, testFile.extension, testFile)
-    }
-
 }
 
 object TestView : View("Bingo > Test Imaging") {

@@ -1,12 +1,5 @@
 import com.sun.security.auth.module.NTSystem
-import dev.kason.bingo.currentGame
-import dev.kason.bingo.cards.exporting.generateImageForCard
-import dev.kason.bingo.cards.generateNumbers
-import javafx.scene.effect.Reflection
 import tornadofx.*
-import java.awt.image.BufferedImage
-import java.io.File
-import javax.imageio.ImageIO
 import javafx.scene.paint.Color as JFXColor
 import java.awt.Color as SwingColor
 

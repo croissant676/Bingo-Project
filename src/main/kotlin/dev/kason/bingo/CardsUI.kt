@@ -1,8 +1,7 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 package dev.kason.bingo
 
-import dev.kason.bingo.cards.exporting.ExportTextView
-import dev.kason.bingo.cards.exporting.FindFileView
-import dev.kason.bingo.cards.exporting.FolderFindFileView
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.*
@@ -16,13 +15,15 @@ import javafx.scene.text.Font
 import javafx.scene.text.TextAlignment
 import tornadofx.*
 import java.util.regex.Pattern
+import kotlin.concurrent.thread
 import kotlin.math.roundToInt
 
+lateinit var curView: View
 
 var currentGame: BingoGame = generateNumbers()
 var currentlyDisplayedCard: CardView = generateCardView(currentGame.first())
 
-var f = Font("dubai", 100.0)
+val f = Font("dubai", 100.0)
 val columnColors = mutableListOf<Paint>()
 
 class CardView(val card: BingoCard) : View("Bingo > Card: ") {
@@ -198,27 +199,26 @@ object EditingCardView : View("Bingo > Cards") {
                         item("to Text (.txt)") {
                             accelerator = KeyCodeCombination(KeyCode.T, KeyCombination.ALT_DOWN)
                             action {
-                                this@EditingCardView.replaceWith(FindFileView("") {
-
-                                }, ViewTransition.Slide(0.5.seconds))
+                                exportTXTText()
                             }
                         }
                         item("to Text (other)") {
                             accelerator = KeyCodeCombination(KeyCode.O, KeyCombination.ALT_DOWN)
                             action {
-                                println()
+                                exportOtherText()
                             }
                         }
                         item("to Clipboard (single image)") {
                             accelerator = KeyCodeCombination(KeyCode.I, KeyCombination.ALT_DOWN)
                             action {
-                                println()
+                                exportImageCB()
                             }
                         }
                         item("to Clipboard (as Text)") {
                             accelerator = KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN)
                             action {
-                                this@EditingCardView.replaceWith(ExportTextView(), ViewTransition.Slide(0.5.seconds))
+                                curView = EditingCardView
+                                exportCBText()
                             }
                         }
                     }
@@ -406,13 +406,16 @@ object EditingCardView : View("Bingo > Cards") {
             currentRound++
             wonCardsLabel.text = "# of cards won: ${currentGame.numberOfCardsWon}"
             drawnBallsLabel.text = "# of balls drawn: ${currentRound - 1}"
-            val cards = currentGame.check(number)
             refresh()
             drawnBalls.add(generateLabel(number))
-            if (cards.isEmpty()) return
-            for (card in cards) {
-                println(card.cardNumber)
-                wonCards.add(generateCardLabel(card.cardNumber))
+            thread(name = "UpdateThread", priority = 7) {
+                val cards = currentGame.check(number)
+                if (cards.isEmpty()) return@thread
+                for (card in cards) {
+                    runLater {
+                        wonCards.add(generateCardLabel(card.cardNumber))
+                    }
+                }
             }
         } else {
             drawnBallsLabel.style(append = true) {
@@ -441,7 +444,7 @@ object EditingCardView : View("Bingo > Cards") {
         return label
     }
 
-    private val size = (currentGame.size.toString().length * 10 + 30).coerceAtLeast(60)
+    private val size = (currentGame.size.toString().length * 20).coerceAtLeast(60)
 
     private fun generateCardLabel(number: Int): Button {
         val button = Button(number.toString())
@@ -505,25 +508,22 @@ fun generateCardView(card: BingoCard): CardView {
 }
 
 fun outputCardsZip(type: Int) {
-    println("Zip as type: $type")
-    var string = when (type) {
+    bulkImgTypes = when (type) {
         0 -> "jpg"
         1 -> "png"
         2 -> "gif"
         else -> throw IllegalStateException("no")
     }
-    EditingCardView.replaceWith(FolderFindFileView {
-
-    })
+    isFolder = false
 }
 
 fun outputCardsFolder(type: Int) {
-    println("Folder as type: $type")
-    var string = when (type) {
+    bulkImgTypes = when (type) {
         0 -> "jpg"
         1 -> "png"
         2 -> "gif"
         else -> throw IllegalStateException("no")
     }
+    isFolder = true
 
 }

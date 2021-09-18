@@ -1,6 +1,5 @@
 package dev.kason.bingo
 
-import dev.kason.bingo.cards.*
 import kotlin.properties.Delegates
 import kotlin.random.Random
 
@@ -110,6 +109,7 @@ fun quickPrintCard() {
     println()
 }
 
+@Suppress("MemberVisibilityCanBePrivate")
 class EventLogger(val referenceNum: Int) {
     private val events: ArrayList<Event> = arrayListOf()
 

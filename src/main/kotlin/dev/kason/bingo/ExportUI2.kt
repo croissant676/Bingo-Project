@@ -1,10 +1,8 @@
-package dev.kason.bingo.cards.exporting
+package dev.kason.bingo
 
-import dev.kason.bingo.currentGame
-import dev.kason.bingo.ui.Styles
-import dev.kason.bingo.addHoverEffect
 import javafx.embed.swing.SwingFXUtils
 import javafx.geometry.Pos
+import javafx.scene.Parent
 import javafx.scene.control.ToggleGroup
 import javafx.scene.layout.Pane
 import tornadofx.*
@@ -133,5 +131,62 @@ object FormattingView : View("Bingo > Export > Format") {
         }
         node.replaceWith(newNode, ViewTransition.Fade(0.15.seconds))
         node = newNode
+    }
+}
+
+object ExportAsClipBoardView : View("Bingo > Export As Clipboard") {
+
+    var value: Int = 1
+        private set
+
+    override val root = borderpane {
+        center {
+            vbox {
+                label("Select the card to export") {
+                    addClass(Styles.titleLabel)
+                }
+                label(
+                    "Because clipboard can only handle 1 image, you have to select the card that\n" +
+                            "you want saved into your clipboard"
+                ) {
+                    addClass(Styles.regularLabel)
+                }
+                spinner(1, currentGame.size) {
+                    isEditable = true
+                    valueProperty().addListener { _, _, newValue ->
+                        this@ExportAsClipBoardView.value = newValue
+                    }
+                    editor.textProperty().addListener { _, oldValue, newValue ->
+                        if (newValue.length > 7) {
+                            editor.text = oldValue
+                        } else if (!newValue.matches("\\d*".toRegex())) {
+                            editor.text = newValue.replace("[^\\d]".toRegex(), "")
+                        }
+                    }
+                }
+                spacing = 30.0
+                alignment = Pos.CENTER
+            }
+        }
+        bottom {
+            hbox {
+                button("< Back") {
+                    addHoverEffect()
+                    action {
+                        replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                    }
+                }
+                button("Next > ") {
+                    addHoverEffect()
+                    action {
+                        replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                    }
+                }
+                paddingBottom = 30.0
+                spacing = 20.0
+                alignment = Pos.CENTER
+            }
+        }
+        addClass(Styles.defaultBackground)
     }
 }

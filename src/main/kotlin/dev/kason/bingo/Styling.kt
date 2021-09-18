@@ -1,9 +1,5 @@
 package dev.kason.bingo
 
-import dev.kason.bingo.control.Appearance
-import javafx.scene.control.TextField
-import javafx.scene.control.skin.TextFieldSkin
-import javafx.scene.effect.Effect
 import javafx.scene.effect.Reflection
 import javafx.scene.paint.Color
 import javafx.scene.text.FontWeight

@@ -53,7 +53,7 @@ private val eventLoopThread = object : Thread() {
         Runtime.getRuntime().gc()
         executionTime = max(executionTime, measureTimeMillis {
             runOnce()
-        })
+        }).coerceAtMost(15)
     }
 
     private fun waitTime() = sleep(timeBetweenFrames - executionTime)

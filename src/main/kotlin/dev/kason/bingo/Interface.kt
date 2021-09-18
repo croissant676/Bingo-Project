@@ -1,14 +1,7 @@
 @file:Suppress("DuplicatedCode")
 
-package dev.kason.bingo.ui
+package dev.kason.bingo
 
-import dev.kason.bingo.cards.exporting.FindFileView
-import dev.kason.bingo.cards.exporting.currentFFView
-import dev.kason.bingo.control.Appearance
-import dev.kason.bingo.control.BingoState
-import dev.kason.bingo.control.currentState
-import dev.kason.bingo.addHoverEffect
-import dev.kason.bingo.addHoverEffectLight
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.event.EventHandler

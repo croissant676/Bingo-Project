@@ -1,11 +1,5 @@
-package dev.kason.bingo.cards.exporting
+package dev.kason.bingo
 
-import dev.kason.bingo.BingoCard
-import dev.kason.bingo.BingoGame
-import dev.kason.bingo.currentGame
-import dev.kason.bingo.f
-import dev.kason.bingo.control.currentAppearance
-import dev.kason.bingo.ui.Styles
 import javafx.embed.swing.SwingFXUtils
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -17,8 +11,8 @@ import javafx.scene.layout.GridPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.text.TextAlignment
-import javafx.stage.Stage
 import tornadofx.*
+import java.awt.SystemColor.control
 import java.awt.image.BufferedImage
 
 
@@ -359,11 +353,23 @@ fun generateViewRes(bingoGame: BingoGame = currentGame, format: Int, startingInd
                 }
                 add(node, rowCount, number)
             }
+            for (number in rowCount until dimension.first) {
+                for (column in 0 until dimension.second) {
+                    val node = Label().apply {
+                        prefWidth = 546.0
+                        prefHeight = 722.0
+                        style {
+                            backgroundColor += Color.BLACK
+                        }
+                    }
+                    add(node, number, column)
+                }
+            }
             addClass(Styles.defaultBackground)
         }
         val scene = Scene(gridPane)
-        val writableImage = scene.snapshot(WritableImage(546, 722))
-        return SwingFXUtils.fromFXImage(writableImage, BufferedImage(546, 722, BufferedImage.TYPE_INT_RGB))
+        val writableImage = scene.snapshot(WritableImage(dimension.first * 546, dimension.second * 722))
+        return SwingFXUtils.fromFXImage(writableImage, BufferedImage(dimension.first * 546, dimension.second * 722, BufferedImage.TYPE_INT_RGB))
     }
     // copied and pasted code so it doesn't really matter
     gridPane.apply {

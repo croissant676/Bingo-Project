@@ -1,14 +1,11 @@
-package dev.kason.bingo.cards.exporting
+package dev.kason.bingo
 
-import dev.kason.bingo.*
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.*
 import javafx.scene.paint.Color
 import tornadofx.*
-import java.awt.Toolkit
-import java.awt.datatransfer.Clipboard
-import java.awt.datatransfer.StringSelection
+import java.awt.Desktop
 import java.io.File
 import kotlin.properties.Delegates
 
@@ -20,9 +17,9 @@ object WrapperFileView : View("Bingo > Wrapper Transition File") {
     }
 
     init {
-        replaceWith(FindFileView("string.pdf") {
+        replaceWith(FindFileView("string.pdf", whenFinished = {
             println("Wrapper completed!")
-        }, ViewTransition.Slide(0.5.seconds))
+        }), ViewTransition.Slide(0.5.seconds))
     }
 }
 
@@ -71,7 +68,8 @@ fun fileExt(): String {
     }
 }
 
-open class FindFileView(var string: String, var whenFinished: FindFileView.() -> Unit = {}) : View("Bingo > Locate File") {
+open class FindFileView(var string: String, var whenFinished: FindFileView.() -> Unit = {}, val implementExtensionCheck: Boolean = true) :
+    View("Bingo > Locate File") {
     protected lateinit var filePath: TextField
     private lateinit var fileName: TextField
 
@@ -169,22 +167,40 @@ open class FindFileView(var string: String, var whenFinished: FindFileView.() ->
                 button("Proceed to next step >") {
                     addHoverEffect()
                     action {
-                        if (fileName.text == null || !fileName.text.endsWith(string.substringAfterLast('.')) || filePath.text == null) {
-                            if (fileName.text == null) {
-                                label.text = "Must enter a file name!"
-                            } else if (!fileName.text.endsWith(string.substringAfterLast('.'))) {
-                                label.text = "File extension must be \"${string.substringAfterLast('.')}\"!"
+                        if (implementExtensionCheck) {
+                            if (fileName.text == null || !fileName.text.endsWith(string.substringAfterLast('.')) || filePath.text == null) {
+                                if (fileName.text == null) {
+                                    label.text = "Must enter a file name!"
+                                } else if (!fileName.text.endsWith(string.substringAfterLast('.'))) {
+                                    label.text = "File extension must be \"${string.substringAfterLast('.')}\"!"
+                                } else {
+                                    label.text = "Must enter a file path!"
+                                }
+                                label.isVisible = true
                             } else {
-                                label.text = "Must enter a file path!"
+                                result = if (!filePath.text.endsWith('\\')) {
+                                    "${filePath.text}\\${fileName.text}"
+                                } else {
+                                    "${filePath.text}${fileName.text}"
+                                }
+                                whenFinished(this@FindFileView)
                             }
-                            label.isVisible = true
                         } else {
-                            result = if (!filePath.text.endsWith('\\')) {
-                                "${filePath.text}\\${fileName.text}"
+                            if (fileName.text == null || filePath.text == null) {
+                                if (fileName.text == null) {
+                                    label.text = "Must enter a file name!"
+                                } else {
+                                    label.text = "Must enter a file path!"
+                                }
+                                label.isVisible = true
                             } else {
-                                "${filePath.text}${fileName.text}"
+                                result = if (!filePath.text.endsWith('\\')) {
+                                    "${filePath.text}\\${fileName.text}"
+                                } else {
+                                    "${filePath.text}${fileName.text}"
+                                }
+                                whenFinished(this@FindFileView)
                             }
-                            whenFinished(this@FindFileView)
                         }
                     }
                 }
@@ -289,10 +305,14 @@ class FolderFindFileView(whenFinished: FindFileView.() -> Unit = {}) : FindFileV
     }
 }
 
-class ExportTextView(val text: String = "Export text to Clipboard") : View("Bingo > Export text") {
+class ExportTextView(
+    private val text: String = "Export text to Clipboard",
+    val whenFinished: ExportTextView.() -> Unit,
+    private val additionalText: String = ""
+) : View("Bingo > Export text") {
 
-    private lateinit var toggleGroup: ToggleGroup
-    private lateinit var spinner: Spinner<Int>
+    lateinit var toggleGroup: ToggleGroup
+    lateinit var spinner: Spinner<Int>
 
     override val root: Parent = borderpane {
         center {
@@ -304,6 +324,11 @@ class ExportTextView(val text: String = "Export text to Clipboard") : View("Bing
                     toggleGroup = togglegroup {
                         radiobutton("Export all cards") {
                             isSelected = true
+                            runInsideLoop(5) {
+                                if(this@ExportTextView::spinner.isInitialized) {
+                                    spinner.isDisable = isSelected
+                                }
+                            }
                         }
                         radiobutton("Export a single card")
                         alignment = Pos.CENTER_LEFT
@@ -330,32 +355,13 @@ class ExportTextView(val text: String = "Export text to Clipboard") : View("Bing
                 button("< Back") {
                     addHoverEffect()
                     action {
-                        this@ExportTextView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        this@ExportTextView.replaceWith(curView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
                     }
                 }
                 button("Next >") {
                     addHoverEffect()
                     action {
-                        if ((toggleGroup.selectedToggle as? RadioButton)?.text!!.contains("all")) {
-                            val selection = StringSelection(generateString(currentGame))
-                            val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
-                            clipboard.setContents(selection, selection)
-                        } else {
-                            val selection = StringSelection(generateString(currentGame[spinner.value]))
-                            val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
-                            clipboard.setContents(selection, selection)
-                        }
-                        ExportCompleted(action = {
-                            this@ExportTextView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
-                        }).apply {
-                            val exportCompleted = this
-                            openModal(escapeClosesWindow = false)!!.apply {
-                                setOnCloseRequest {
-                                    exportCompleted.action()
-                                    close()
-                                }
-                            }
-                        }
+                        whenFinished()
                     }
                 }
                 paddingBottom = 30.0
@@ -364,23 +370,37 @@ class ExportTextView(val text: String = "Export text to Clipboard") : View("Bing
                 addClass(Styles.defaultBackground)
             }
         }
+        top {
+            hbox {
+                label(additionalText) {
+                    addClass(Styles.regularLabel)
+                }
+                paddingTop = 30.0
+                alignment = Pos.CENTER
+            }
+        }
         addClass(Styles.defaultBackground)
     }
 }
 
-class ExportCompleted(
+open class ExportCompleted(
     eTitle: String = "Exporting",
-    private val message: String = "Exporting has been completed!",
-    val action: ExportCompleted.() -> Unit = {}
+    val message: String = "Exporting has been completed!",
+    val whenDone: ExportCompleted.() -> Unit = {}
 ) :
     View("Bingo > $eTitle") {
     override val root = borderpane {
         center {
-            label(message) {
-                addClass(Styles.titleLabel)
-                style(append = true) {
-                    textFill = c(Appearance.GREEN.darkTextFill)
+            hbox {
+                label(message) {
+                    addClass(Styles.titleLabel)
+                    style(append = true) {
+                        textFill = c(Appearance.GREEN.darkTextFill)
+                    }
                 }
+                alignment = Pos.CENTER
+                paddingLeft = 30.0
+                paddingRight = 30.0
             }
         }
         bottom {
@@ -389,7 +409,7 @@ class ExportCompleted(
                     addHoverEffectAppearance(Appearance.GREEN)
                     action {
                         close()
-                        action()
+                        whenDone()
                     }
                     style {
                         textFill = c(Appearance.GREEN.lightTextFill)
@@ -403,6 +423,106 @@ class ExportCompleted(
                         backgroundColor += c(Appearance.GREEN.themeColor)
                     }
                 }
+                paddingBottom = 30.0
+                alignment = Pos.CENTER
+            }
+        }
+        style {
+            backgroundColor += c(Appearance.GREEN.themeBackgroundColor)
+        }
+    }
+}
+
+private var curTitle = ""
+private var curMes = ""
+private var curWhenDone: ExportCompleted.() -> Unit = {}
+private lateinit var curFile: File
+
+class ExportLocationCompleted(
+    eTitle: String = "Exporting",
+    message: String = "Exporting has been completed!",
+    whenDone: ExportCompleted.() -> Unit = {},
+    val file: File
+) : ExportCompleted(eTitle, message, whenDone) {
+
+    init {
+        curTitle = eTitle
+        curMes = message
+        curWhenDone = whenDone
+        curFile = file
+    }
+
+    constructor() : this(curTitle, curMes, curWhenDone, curFile)
+
+    override val root = borderpane {
+        center {
+            hbox {
+                label(message) {
+                    addClass(Styles.titleLabel)
+                    style(append = true) {
+                        textFill = c(Appearance.GREEN.darkTextFill)
+                    }
+                }
+                alignment = Pos.CENTER
+                paddingLeft = 30.0
+                paddingRight = 30.0
+            }
+        }
+        bottom {
+            hbox {
+                button("Open file") {
+                    addHoverEffectAppearance(Appearance.GREEN)
+                    action {
+                        Desktop.getDesktop().open(file)
+                    }
+                    style {
+                        textFill = c(Appearance.GREEN.lightTextFill)
+                        padding = box(1.px, 12.px)
+                        borderWidth += box(1.px, 3.px)
+                        borderRadius += box(0.px)
+                        backgroundRadius += box(0.px)
+                        borderColor += box(Color.TRANSPARENT)
+                        fontFamily = "dubai"
+                        fontSize = Styles.sizeOfText
+                        backgroundColor += c(Appearance.GREEN.themeColor)
+                    }
+                }
+                button("Open location") {
+                    addHoverEffectAppearance(Appearance.GREEN)
+                    action {
+                        Runtime.getRuntime().exec("explorer.exe /select,${file.absolutePath}");
+                    }
+                    style {
+                        textFill = c(Appearance.GREEN.lightTextFill)
+                        padding = box(1.px, 12.px)
+                        borderWidth += box(1.px, 3.px)
+                        borderRadius += box(0.px)
+                        backgroundRadius += box(0.px)
+                        borderColor += box(Color.TRANSPARENT)
+                        fontFamily = "dubai"
+                        fontSize = Styles.sizeOfText
+                        backgroundColor += c(Appearance.GREEN.themeColor)
+                    }
+                }
+                button("Next >") {
+                    addHoverEffectAppearance(Appearance.GREEN)
+                    action {
+                        close()
+                        whenDone()
+                    }
+                    style {
+                        textFill = c(Appearance.GREEN.lightTextFill)
+                        padding = box(1.px, 12.px)
+                        borderWidth += box(1.px, 3.px)
+                        borderRadius += box(0.px)
+                        backgroundRadius += box(0.px)
+                        borderColor += box(Color.TRANSPARENT)
+                        fontFamily = "dubai"
+                        fontSize = Styles.sizeOfText
+                        backgroundColor += c(Appearance.GREEN.themeColor)
+                    }
+                }
+                spacing = 30.0
                 paddingBottom = 30.0
                 alignment = Pos.CENTER
             }

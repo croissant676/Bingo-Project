@@ -13,6 +13,7 @@ class BingoTile(val value: Int) {
 
 data class BingoCard(val numbers: List<List<BingoTile>>, val randomSeed: Long = 0, val cardNumber: Int) {
 
+    @Suppress("MemberVisibilityCanBePrivate")
     var isFinished = -1
         private set
     private val eventLogger = EventLogger(cardNumber)
