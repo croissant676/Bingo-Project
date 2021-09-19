@@ -508,7 +508,7 @@ fun generateCardView(card: BingoCard): CardView {
 }
 
 fun outputCardsZip(type: Int) {
-    bulkImgTypes = when (type) {
+    bulkImgType = when (type) {
         0 -> "jpg"
         1 -> "png"
         2 -> "gif"
@@ -518,12 +518,12 @@ fun outputCardsZip(type: Int) {
 }
 
 fun outputCardsFolder(type: Int) {
-    bulkImgTypes = when (type) {
+    bulkImgType = when (type) {
         0 -> "jpg"
         1 -> "png"
         2 -> "gif"
         else -> throw IllegalStateException("no")
     }
     isFolder = true
-
+    generateImagesInFile()
 }

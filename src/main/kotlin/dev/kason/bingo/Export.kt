@@ -8,6 +8,7 @@ import java.awt.Toolkit
 import java.awt.datatransfer.*
 import java.awt.image.BufferedImage
 import java.io.File
+import javax.imageio.ImageIO
 import kotlin.concurrent.thread
 
 
@@ -16,18 +17,19 @@ internal fun generateImages(): List<BufferedImage> {
 }
 
 lateinit var resultFile: File
-lateinit var bulkImgTypes: String
+lateinit var bulkImgType: String
 
 var isFolder = true
 
 fun pdfUI() {
     val view = FindFileView("game.pdf")
+    curView = EditingCardView
     typeOfFile = 0
     EditingCardView.replaceWith(view, ViewTransition.Slide(0.5.seconds))
     view.whenFinished = {
         checkFileAndRun {
             replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
-            FormattingView.action = {
+            FormattingView.whenFinished = {
                 thread {
                     generateDoc()
                     runLater {
@@ -79,7 +81,7 @@ fun exportTXTText() {
             }, "File Location: $resultFile"), ViewTransition.Slide(0.5.seconds))
         }
     }).also {
-        curView = it
+        curView = EditingCardView
     }, ViewTransition.Slide(0.5.seconds))
 }
 
@@ -113,7 +115,7 @@ fun exportOtherText() {
             }, "File Location: $resultFile"), ViewTransition.Slide(0.5.seconds))
         }
     }, implementExtensionCheck = false).also {
-        curView = it
+        curView = EditingCardView
     }, ViewTransition.Slide(0.5.seconds))
 }
 
@@ -160,7 +162,7 @@ fun wordUI() {
     view.whenFinished = {
         checkFileAndRun {
             replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
-            FormattingView.action = {
+            FormattingView.whenFinished = {
                 thread {
                     generateDoc()
                     runLater {
@@ -191,16 +193,16 @@ fun exportImageCB() {
     ExportAsClipBoardView.action = {
         curView = ExportAsClipBoardView
         replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
-        FormattingView.action = {
-            val image = generateViewRes(format = number, startingIndex = value - 1)
+        FormattingView.whenFinished = {
+            val image = generateImage(format = number, startingIndex = value - 1)
             thread {
                 val trans = TransferableImage(image)
                 val c = Toolkit.getDefaultToolkit().systemClipboard
                 c.setContents(trans) { _, _ -> }
                 runLater {
-                    ExportCompleted(whenDone = {
+                    ExportCompleted(eTitle = "Finished Exporting Image into Clipboard", whenDone = {
                         FormattingView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
-                    }).apply {
+                    }, message = "Finished exporting image into clipboard!").apply {
                         val exportCompleted = this
                         openModal(escapeClosesWindow = false)!!.apply {
                             setOnCloseRequest {
@@ -217,7 +219,7 @@ fun exportImageCB() {
 
 private class TransferableImage(val i: BufferedImage) : Transferable {
 
-    override fun getTransferData(flavor: DataFlavor): Any? {
+    override fun getTransferData(flavor: DataFlavor): Any {
         if (flavor == DataFlavor.imageFlavor) {
             return i
         } else {
@@ -243,13 +245,59 @@ private class TransferableImage(val i: BufferedImage) : Transferable {
 }
 
 fun generateImagesInFile() {
-    val view = FolderFindFileView()
-    typeOfFile = 0
-    EditingCardView.replaceWith(view, ViewTransition.Slide(0.5.seconds))
-    view.whenFinished = {
-        println("sdf")
-
+    val view = FolderFindFileView {
+        resultFile = File(result)
+        if (!resultFile.isDirectory) {
+            label.text = "$resultFile must be a directory in order to be used."
+            label.isVisible = true
+        } else if (resultFile.listFiles()!!.isNotEmpty()) {
+            label.text = "$resultFile must be empty in order to be used."
+            label.isVisible = true
+        } else {
+            replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
+            FormattingView.whenFinished = {
+                val resultFilePath = resultFile.path + '\\'
+                val view = LoadingView()
+                replaceWith(view, ViewTransition.Fade(0.5.seconds))
+                thread {
+                    for (index in currentGame.indices step number) {
+                        var image: BufferedImage? = null
+                        runLater {
+                            image = generateImage(currentGame, number, index)
+                        }
+                        while (image == null) {
+                            Thread.sleep(10)
+                        }
+                        image!!
+                        val path = if (number == 1) {
+                            "${resultFilePath}BingoCard_$index.$bulkImgType"
+                        } else {
+                            "${resultFilePath}BingoCard_${index + 1}-${(index + number).coerceAtMost(currentGame.size)}.$bulkImgType"
+                        }
+                        ImageIO.write(image, bulkImgType, File(path))
+                    }
+                    runLater {
+                        ExportLocationCompletedWithoutRunner(
+                            eTitle = "Finished Exporting Image", whenDone = {
+                                view.replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
+                            }, message = "Finished exporting image into folder!", file = resultFile
+                        ).apply {
+                            val exportCompleted = this
+                            openModal(escapeClosesWindow = false)!!.apply {
+                                setOnCloseRequest {
+                                    exportCompleted.whenDone()
+                                    close()
+                                }
+                            }
+                        }
+                    }
+                }
+                // C:\Users\crois\Downloads\OutputFolder
+            }
+        }
     }
+    curView = EditingCardView
+    EditingCardView.replaceWith(view, ViewTransition.Slide(0.5.seconds))
 }
 
 fun generateString(game: BingoGame): String {

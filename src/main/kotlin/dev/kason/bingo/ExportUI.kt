@@ -2,7 +2,10 @@ package dev.kason.bingo
 
 import javafx.geometry.Pos
 import javafx.scene.Parent
-import javafx.scene.control.*
+import javafx.scene.control.Label
+import javafx.scene.control.Spinner
+import javafx.scene.control.TextField
+import javafx.scene.control.ToggleGroup
 import javafx.scene.paint.Color
 import tornadofx.*
 import java.awt.Desktop
@@ -74,7 +77,7 @@ open class FindFileView(var string: String, var whenFinished: FindFileView.() ->
     private lateinit var fileName: TextField
 
     var result: String = ""
-        private set
+        protected set
 
     lateinit var label: Label
 
@@ -195,9 +198,9 @@ open class FindFileView(var string: String, var whenFinished: FindFileView.() ->
                                 label.isVisible = true
                             } else {
                                 result = if (!filePath.text.endsWith('\\')) {
-                                    "${filePath.text}\\${fileName.text}"
+                                    "${filePath.text}\\"
                                 } else {
-                                    "${filePath.text}${fileName.text}"
+                                    filePath.text
                                 }
                                 whenFinished(this@FindFileView)
                             }
@@ -222,7 +225,7 @@ class FolderFindFileView(whenFinished: FindFileView.() -> Unit = {}) : FindFileV
         FileView.showFileTextField = false
         center {
             vbox {
-                label("Input the location of the file.") {
+                label("Input the location of the files.") {
                     addClass(Styles.titleLabel)
                 }
                 vbox {
@@ -280,7 +283,7 @@ class FolderFindFileView(whenFinished: FindFileView.() -> Unit = {}) : FindFileV
                 button("< Back") {
                     addHoverEffect()
                     action {
-                        replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        replaceWith(curView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
                     }
                 }
                 button("Select file from system") {
@@ -292,7 +295,12 @@ class FolderFindFileView(whenFinished: FindFileView.() -> Unit = {}) : FindFileV
                 button("Proceed to next step >") {
                     addHoverEffect()
                     action {
-
+                        result = if (filePath.text.endsWith('\\')) {
+                            filePath.text + '\\'
+                        } else {
+                            filePath.text
+                        }
+                        whenFinished(this@FolderFindFileView)
                     }
                 }
                 alignment = Pos.CENTER
@@ -384,7 +392,7 @@ class ExportTextView(
 }
 
 open class ExportCompleted(
-    eTitle: String = "Exporting",
+    val eTitle: String = "Exporting",
     val message: String = "Exporting has been completed!",
     val whenDone: ExportCompleted.() -> Unit = {}
 ) :
@@ -442,7 +450,7 @@ class ExportLocationCompleted(
     eTitle: String = "Exporting",
     message: String = "Exporting has been completed!",
     whenDone: ExportCompleted.() -> Unit = {},
-    val file: File
+    val file: File = File("C://")
 ) : ExportCompleted(eTitle, message, whenDone) {
 
     init {
@@ -452,7 +460,7 @@ class ExportLocationCompleted(
         curFile = file
     }
 
-    constructor() : this(curTitle, curMes, curWhenDone, curFile)
+    constructor() : this(eTitle = curTitle, message = curMes, whenDone = curWhenDone, file = curFile)
 
     override val root = borderpane {
         center {
@@ -533,3 +541,80 @@ class ExportLocationCompleted(
     }
 }
 
+class ExportLocationCompletedWithoutRunner constructor(
+    eTitle: String = "Exporting",
+    message: String = "Exporting has been completed!",
+    whenDone: ExportCompleted.() -> Unit = {},
+    private val file: File
+) : ExportCompleted(eTitle, message, whenDone) {
+
+    init {
+        curTitle = eTitle
+        curMes = message
+        curWhenDone = whenDone
+        curFile = file
+    }
+
+    constructor() : this(eTitle = curTitle, message = curMes, whenDone = curWhenDone, file = curFile)
+
+    override val root = borderpane {
+        center {
+            hbox {
+                label(message) {
+                    addClass(Styles.titleLabel)
+                    style(append = true) {
+                        textFill = c(Appearance.GREEN.darkTextFill)
+                    }
+                }
+                alignment = Pos.CENTER
+                paddingLeft = 30.0
+                paddingRight = 30.0
+            }
+        }
+        bottom {
+            hbox {
+                button("Open location") {
+                    addHoverEffectAppearance(Appearance.GREEN)
+                    action {
+                        Runtime.getRuntime().exec("explorer.exe /select,${file.absolutePath}")
+                    }
+                    style {
+                        textFill = c(Appearance.GREEN.lightTextFill)
+                        padding = box(1.px, 12.px)
+                        borderWidth += box(1.px, 3.px)
+                        borderRadius += box(0.px)
+                        backgroundRadius += box(0.px)
+                        borderColor += box(Color.TRANSPARENT)
+                        fontFamily = "dubai"
+                        fontSize = Styles.sizeOfText
+                        backgroundColor += c(Appearance.GREEN.themeColor)
+                    }
+                }
+                button("Next >") {
+                    addHoverEffectAppearance(Appearance.GREEN)
+                    action {
+                        close()
+                        whenDone()
+                    }
+                    style {
+                        textFill = c(Appearance.GREEN.lightTextFill)
+                        padding = box(1.px, 12.px)
+                        borderWidth += box(1.px, 3.px)
+                        borderRadius += box(0.px)
+                        backgroundRadius += box(0.px)
+                        borderColor += box(Color.TRANSPARENT)
+                        fontFamily = "dubai"
+                        fontSize = Styles.sizeOfText
+                        backgroundColor += c(Appearance.GREEN.themeColor)
+                    }
+                }
+                spacing = 30.0
+                paddingBottom = 30.0
+                alignment = Pos.CENTER
+            }
+        }
+        style {
+            backgroundColor += c(Appearance.GREEN.themeBackgroundColor)
+        }
+    }
+}

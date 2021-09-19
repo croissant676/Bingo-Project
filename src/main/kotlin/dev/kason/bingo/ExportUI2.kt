@@ -5,8 +5,6 @@ import javafx.geometry.Pos
 import javafx.scene.control.ToggleGroup
 import javafx.scene.layout.Pane
 import tornadofx.*
-import java.lang.Error
-import java.lang.Exception
 
 object FormattingView : View("Bingo > Export > Format") {
 
@@ -17,7 +15,7 @@ object FormattingView : View("Bingo > Export > Format") {
     var number = 4
         private set
 
-    var action: FormattingView.() -> Unit = {}
+    var whenFinished: FormattingView.() -> Unit = {}
 
     private const val optWidth = 436.8
     private const val optHeight = 577.6
@@ -79,7 +77,7 @@ object FormattingView : View("Bingo > Export > Format") {
         }
         right {
             node = vbox {
-                imageview(SwingFXUtils.toFXImage(generateViewRes(format = number, startingIndex = 0), null)).apply {
+                imageview(SwingFXUtils.toFXImage(generateImage(format = number, startingIndex = 0), null)).apply {
                     isPreserveRatio = true
                     fitWidth = optWidth
                     fitHeight = optHeight
@@ -102,7 +100,7 @@ object FormattingView : View("Bingo > Export > Format") {
                 button("Next >") {
                     addHoverEffect()
                     action {
-                        this@FormattingView.action()
+                        this@FormattingView.whenFinished()
                     }
                 }
                 paddingBottom = 30.0
@@ -118,7 +116,7 @@ object FormattingView : View("Bingo > Export > Format") {
     private fun refresh() {
         val newNode = Pane().apply {
             vbox {
-                imageview(SwingFXUtils.toFXImage(generateViewRes(format = number, startingIndex = 0), null)).apply {
+                imageview(SwingFXUtils.toFXImage(generateImage(format = number, startingIndex = 0), null)).apply {
                     isPreserveRatio = true
                     fitWidth = optWidth
                     fitHeight = optHeight

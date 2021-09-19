@@ -12,7 +12,6 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.text.TextAlignment
 import tornadofx.*
-import java.awt.SystemColor.control
 import java.awt.image.BufferedImage
 
 
@@ -138,7 +137,7 @@ val dimensions = mapOf(
     16 to (4 to 4)
 )
 
-fun generateViewRes(bingoGame: BingoGame = currentGame, format: Int, startingIndex: Int): BufferedImage {
+fun generateImage(bingoGame: BingoGame = currentGame, format: Int, startingIndex: Int): BufferedImage {
     if (format == 1) {
         return generateImageForCard(bingoGame[startingIndex])
     }
@@ -146,7 +145,7 @@ fun generateViewRes(bingoGame: BingoGame = currentGame, format: Int, startingInd
     val gridPane = GridPane()
     val dimension = dimensions[format]!!
     if (format + startingIndex > bingoGame.size) {
-        val shouldCompl = bingoGame.lastIndex - startingIndex
+        val shouldCompl = bingoGame.size - startingIndex
         if (shouldCompl == 0) {
             return BufferedImage(dimension.first * 546, dimension.second * 722, BufferedImage.TYPE_INT_RGB)
         }
@@ -473,7 +472,7 @@ fun generateViewRes(bingoGame: BingoGame = currentGame, format: Int, startingInd
     }
     val scene = Scene(gridPane)
     val writableImage = scene.snapshot(WritableImage(dimension.first * 546, dimension.second * 722))
-    return SwingFXUtils.fromFXImage(writableImage, BufferedImage(dimension.first * 546, dimension.second * 722, BufferedImage.TYPE_INT_RGB))
+    return SwingFXUtils.fromFXImage(writableImage!!, BufferedImage(dimension.first * 546, dimension.second * 722, BufferedImage.TYPE_INT_RGB))
 }
 
 val dimensionList = dimensions.values.toList()

@@ -4,7 +4,6 @@ import javafx.geometry.Pos
 import javafx.scene.control.Alert
 import javafx.scene.effect.Reflection
 import javafx.scene.image.Image
-import javafx.scene.image.WritableImage
 import tornadofx.*
 
 var isCurrentlyLoading = true
@@ -25,6 +24,8 @@ var immediateView: View? = null
 fun runImmediately(view: View) {
     immediateView = view
 }
+
+private var isFirst = true
 
 @Suppress("MemberVisibilityCanBePrivate")
 class LoadingView : View("Bingo Project > Loading") {
@@ -47,35 +48,30 @@ class LoadingView : View("Bingo Project > Loading") {
     }
 
     override fun onDock() {
-        try {
-            val uri = javaClass.classLoader.getResource("bingo.png")!!
-            val image = Image(uri.toExternalForm())
-            addStageIcon(image)
-        } catch (e: Exception) {
-            alert(
-                Alert.AlertType.WARNING, "Resource does not exist.", "Cannot gather resource: \"bingo.png\" inside of resources folder:\n" +
-                        "Windows will not have an image."
-            )
+        if(isFirst){
+            try {
+                val uri = javaClass.classLoader.getResource("bingo.png")!!
+                val image = Image(uri.toExternalForm())
+                addStageIcon(image)
+            } catch (e: Exception) {
+                alert(
+                    Alert.AlertType.WARNING, "Resource does not exist.", "Cannot gather resource: \"bingo.png\" inside of resources folder:\n" +
+                            "Windows will not have an image."
+                )
+            }
         }
         isCurrentlyLoading = true
         currentLoadingView = this
-        if (immediateView != null) {
+        if (immediateView != null && isFirst) {
             setViewFromLoading(immediateView!!)
         }
-        if (currentState == BingoState.LOADING) {
-            moveToNextState() // Bingo Menu
+        if(isFirst) {
             setViewFromLoading(BingoMenu)
+            isFirst = false
         }
     }
 
     override fun onUndock() {
         isCurrentlyLoading = false
-    }
-}
-
-object TestView : View("Bingo > Test Imaging") {
-    override val root = vbox {
-        val image = WritableImage(1000, 1000)
-        imageview(image)
     }
 }
