@@ -4,15 +4,16 @@ package dev.kason.bingo
 
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
-import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Parent
+import javafx.scene.control.ToggleGroup
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 import javafx.scene.control.skin.TextFieldSkin
 import javafx.scene.paint.Color
 import tornadofx.*
 import java.io.File
+import java.time.LocalDateTime
 
 
 object BingoMenu : View("Bingo > Menu") {
@@ -33,6 +34,10 @@ object BingoMenu : View("Bingo > Menu") {
                     }
                     useMaxSize = true
                 }
+                label("Created by Kason Gu") {
+                    paddingTop = 30.0
+                    addClass(Styles.regularLabel)
+                }
 //                button("Settings") {
 //                    addClass(Styles.button)
 //                    addHoverEffect()
@@ -42,15 +47,6 @@ object BingoMenu : View("Bingo > Menu") {
 //                        replaceWith(SettingsView, ViewTransition.Fade(0.5.seconds))
 //                    }
 //                }
-                button("How to use") {
-                    addClass(Styles.button)
-                    addHoverEffect()
-                    action {
-                        currentState = BingoState.HOW_TO_USE
-                        replaceWith(HowToUseView, ViewTransition.Fade(0.5.seconds))
-                    }
-                    useMaxSize = true
-                }
                 spacing = 10.0
                 maxWidth = 250.0
                 alignment = Pos.CENTER
@@ -86,7 +82,7 @@ object BingoMenu : View("Bingo > Menu") {
             addClass(Styles.defaultBackground)
         }
         top {
-            hbox { // Dino Game!!!!!!!!!
+            hbox {
                 button("Play dino game!") {
                     style {
                         textFill = Styles.lightTextColor
@@ -245,59 +241,145 @@ object MinorSettings : View("Bingo > Settings") {
 
 object CreationMenuView : View("Bingo > Create Bingo Game") {
 
+    private var days = 1
+    private lateinit var toggleGroup: ToggleGroup
+
+    override val root = borderpane {
+        center {
+            vbox {
+                hbox {
+                    label("Input the number of days to play the game:") {
+                        addClass(Styles.regularLabel)
+                    }
+                    spinner(0, 5, 5, 1, false) {
+                        isEditable = true
+                        valueProperty().addListener { _, _, newValue ->
+                            days = newValue
+                        }
+                        editor.textProperty().addListener { _, oldValue, newValue ->
+                            if (newValue.length > 5) {
+                                editor.text = oldValue
+                            } else if (!newValue.matches("\\d*".toRegex())) {
+                                editor.text = newValue.replace("[^\\d]".toRegex(), "")
+                            }
+                        }
+                    }
+                    paddingBottom = 30.0
+                    alignment = Pos.CENTER
+                    spacing = 30.0
+                }
+                label("Extra draws should be:") {
+                    addClass(Styles.regularLabel)
+                }
+                toggleGroup = togglegroup()
+                vbox {
+                    radiobutton("be spread out.", toggleGroup) {
+                        isSelected = true
+                    }
+                    radiobutton("pushed towards the front.", toggleGroup) { }
+                    radiobutton("pushed towards the back.", toggleGroup) { }
+                    alignment = Pos.CENTER_LEFT
+                    paddingLeft = 400.0
+                }
+                paddingBottom = 30.0
+                alignment = Pos.CENTER
+                spacing = 30.0
+            }
+        }
+        bottom {
+            hbox {
+                button("< Back") {
+                    addClass(Styles.button)
+                    addHoverEffect()
+                    action {
+                        currentState = BingoState.MENU
+                        replaceWith(BingoMenu, ViewTransition.Fade(0.5.seconds))
+                    }
+                }
+                button("Select dates") {
+                    addHoverEffect()
+                    action {
+                        replaceWith(CreationMenuView2, ViewTransition.Fade(0.5.seconds))
+                    }
+                }
+                button("Next > ") {
+                    addClass(Styles.button)
+                    addHoverEffect()
+                    action {
+                        replaceWith(CreationMenu2, ViewTransition.Fade(0.5.seconds))
+                    }
+                }
+                paddingBottom = 30.0
+                alignment = Pos.CENTER
+                spacing = 30.0
+            }
+        }
+        addClass(Styles.defaultBackground)
+    }
+}
+
+object CreationMenuView2 : View("Bingo > Create Bingo Game") {
+
     private var dayProperty = SimpleIntegerProperty(0)
 
-    override val root = vbox {
-        label {
-            addClass("")
-        }
-
-        hbox {
-
-            label("Input the number of days to play the game:") {
-                addClass(Styles.regularLabel)
-            }
-            spinner<Number>(0, 100, 5, 1, false, dayProperty, true) {
-                addClass(Styles.defaultSpinner)
-                onKeyTyped = EventHandler {
-                    this.promptTextProperty().set("Hello")
-                }
-            }
-            label("Or choose the day you want it to end.") {
-                addClass(Styles.regularLabel)
-            }
-            datepicker {
-                addClass(Styles.defaultPicker)
-                editor.skin = TextFieldSkin(editor).apply {
-                    scaleX = 0.7
-                    scaleY = 0.7
-                }
-            }
-        }
-        hbox {
-            button("< Back") {
-                addClass(Styles.button)
-                addHoverEffect()
-                action {
-                    assert(currentState == BingoState.CREATION_MENU) {
-                        "State not linked"
+    override val root = borderpane {
+        center {
+            val time = LocalDateTime.now()
+            hbox {
+                vbox {
+                    label("Select the starting date of this bingo game.") {
+                        addClass(Styles.regularLabel)
                     }
-                    currentState = BingoState.MENU
-                    replaceWith(BingoMenu, ViewTransition.Fade(0.5.seconds))
-                }
-            }
-            button("Next > ") {
-                addClass(Styles.button)
-                addHoverEffect()
-                action {
-                    assert(currentState == BingoState.CREATION_MENU) {
-                        "State not linked"
+                    datepicker {
+                        addClass(Styles.defaultPicker)
+                        editor.skin = TextFieldSkin(editor).apply {
+                            scaleX = 0.7
+                            scaleY = 0.7
+                        }
+                        editor.text = "${time.month}/${time.dayOfMonth}/${time.year}"
                     }
-                    replaceWith(CreationMenu2, ViewTransition.Fade(0.5.seconds))
                 }
+                vbox {
+                    label("Select the end date for this bingo game.") {
+                        addClass(Styles.regularLabel)
+                    }
+                    datepicker {
+                        addClass(Styles.defaultPicker)
+                        editor.skin = TextFieldSkin(editor).apply {
+                            scaleX = 0.7
+                            scaleY = 0.7
+                        }
+                        val newTime = time.plusDays(10)
+                        editor.text = "${newTime.month}/${newTime.dayOfMonth}/${newTime.year}"
+                    }
+                }
+                alignment = Pos.CENTER
             }
-            alignment = Pos.CENTER
-            spacing = 10.0
+        }
+        bottom {
+            hbox {
+                button("< Back") {
+                    addClass(Styles.button)
+                    addHoverEffect()
+                    action {
+                        assert(currentState == BingoState.CREATION_MENU) {
+                            "State not linked"
+                        }
+                        currentState = BingoState.MENU
+                        replaceWith(CreationMenuView, ViewTransition.Fade(0.5.seconds))
+                    }
+                }
+                button("Next > ") {
+                    addClass(Styles.button)
+                    addHoverEffect()
+                    action {
+                        replaceWith(CreationMenu2, ViewTransition.Fade(0.5.seconds))
+                    }
+                }
+                alignment = Pos.CENTER
+                spacing = 30.0
+                paddingBottom = 30.0
+            }
         }
         addClass(Styles.defaultBackground)
     }
@@ -321,7 +403,8 @@ object CreationMenu2 : View("Bingo > Create Bingo Game") {
                 assert(currentState == BingoState.CREATION_MENU) {
                     "State not linked"
                 }
-                replaceWith(FileView, ViewTransition.Fade(0.5.seconds))
+                generateNumbers(1, 100)
+                replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
             }
         }
         alignment = Pos.CENTER

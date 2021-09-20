@@ -178,19 +178,19 @@ object EditingCardView : View("Bingo > Cards") {
                             item("as JPG (.jpg)") {
                                 accelerator = KeyCodeCombination(KeyCode.K, KeyCombination.ALT_DOWN)
                                 action {
-                                    outputCardsFolder(0)
+                                    outputCardsZip(0)
                                 }
                             }
                             item("as PNG (.png)") {
                                 accelerator = KeyCodeCombination(KeyCode.P, KeyCombination.ALT_DOWN)
                                 action {
-                                    outputCardsFolder(1)
+                                    outputCardsZip(1)
                                 }
                             }
                             item("as GIP (.gif)") {
                                 accelerator = KeyCodeCombination(KeyCode.F, KeyCombination.ALT_DOWN)
                                 action {
-                                    outputCardsFolder(2)
+                                    outputCardsZip(2)
                                 }
                             }
                         }
@@ -515,6 +515,7 @@ fun outputCardsZip(type: Int) {
         else -> throw IllegalStateException("no")
     }
     isFolder = false
+    generateImagesInZip()
 }
 
 fun outputCardsFolder(type: Int) {

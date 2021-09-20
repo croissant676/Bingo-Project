@@ -1,13 +1,28 @@
 package dev.kason.bingo
 
+import com.itextpdf.text.Document
+import com.itextpdf.text.Image
+import com.itextpdf.text.Rectangle
+import com.itextpdf.text.pdf.PdfWriter
 import javafx.scene.control.RadioButton
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage
+import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage
+import org.docx4j.wml.Drawing
+import org.docx4j.wml.ObjectFactory
+import org.docx4j.wml.P
+import org.docx4j.wml.R
 import tornadofx.ViewTransition
 import tornadofx.runLater
 import tornadofx.seconds
 import java.awt.Toolkit
 import java.awt.datatransfer.*
 import java.awt.image.BufferedImage
+import java.io.BufferedOutputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import javax.imageio.ImageIO
 import kotlin.concurrent.thread
 
@@ -28,14 +43,34 @@ fun pdfUI() {
     EditingCardView.replaceWith(view, ViewTransition.Slide(0.5.seconds))
     view.whenFinished = {
         checkFileAndRun {
+            curView = this
             replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
             FormattingView.whenFinished = {
+                val loadingView = LoadingView()
+                replaceWith(loadingView)
                 thread {
-                    generateDoc()
+                    val doc = Document(Rectangle(610.0F, 787.0F))
+                    PdfWriter.getInstance(doc, FileOutputStream(resultFile))
+                    doc.open()
+                    for (index in currentGame.indices step number) {
+                        var image: BufferedImage? = null
+                        runLater {
+                            image = generateImage(currentGame, number, index)
+                        }
+                        while (image == null) {
+                            Thread.sleep(10)
+                        }
+                        val stream = ByteArrayOutputStream()
+                        ImageIO.write(image, "png", stream)
+                        val pdfImage = Image.getInstance(stream.toByteArray())!!
+                        pdfImage.scaleToFit(546.0F, 722.0F)
+                        doc.add(pdfImage)
+                    }
+                    doc.close()
                     runLater {
-                        ExportCompleted(whenDone = {
-                            FormattingView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
-                        }).apply {
+                        ExportLocationCompleted(eTitle = "Exporting to PDF", whenDone = {
+                            loadingView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
+                        }, message = "Finished Exporting to PDF", file = resultFile).apply {
                             val exportCompleted = this
                             openModal(escapeClosesWindow = false)!!.apply {
                                 setOnCloseRequest {
@@ -54,13 +89,11 @@ fun pdfUI() {
 fun exportTXTText() {
     EditingCardView.replaceWith(FindFileView(string = "game.txt", whenFinished = {
         checkFileAndRun {
+            curView = this
             replaceWith(ExportTextView("Export text to file", {
                 thread(start = true, name = "Text Runner", priority = 9) {
-                    val text =
-                        if ((toggleGroup.selectedToggle as RadioButton).text == "Export all cards") generateString(
-                            currentGame
-                        )
-                        else generateString(currentGame[spinner.value - 1])
+                    val text = if ((toggleGroup.selectedToggle as RadioButton).text == "Export all cards") generateString(currentGame)
+                    else generateString(currentGame[spinner.value - 1])
                     val fileWriter = resultFile.bufferedWriter()
                     fileWriter.write(text)
                     fileWriter.close()
@@ -88,6 +121,7 @@ fun exportTXTText() {
 fun exportOtherText() {
     EditingCardView.replaceWith(FindFileView(string = "game", whenFinished = {
         checkFileAndRun {
+            curView = this
             replaceWith(ExportTextView("Export text to file", {
                 thread(start = true, name = "Text Runner", priority = 9) {
                     val text =
@@ -155,20 +189,51 @@ fun FindFileView.checkFileAndRun(action: FindFileView.() -> Unit) {
     }
 }
 
+// Size of the image on disk
+internal const val pathHint = 188416
+
 fun wordUI() {
     val view = FindFileView("game.docx")
     typeOfFile = 1
     EditingCardView.replaceWith(view, ViewTransition.Slide(0.5.seconds))
     view.whenFinished = {
         checkFileAndRun {
+            curView = this
             replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
             FormattingView.whenFinished = {
+                val loadingView = LoadingView()
+                replaceWith(loadingView, ViewTransition.Fade(0.5.seconds))
                 thread {
-                    generateDoc()
+                    val wordPackage = WordprocessingMLPackage.createPackage()
+                    val mainDocumentPart = wordPackage.mainDocumentPart
+                    for (index in currentGame.indices step number) {
+                        val stream = ByteArrayOutputStream()
+                        var image: BufferedImage? = null
+                        runLater {
+                            image = generateImage(currentGame, number, index)
+                        }
+                        while (image == null) {
+                            Thread.sleep(10)
+                        }
+                        ImageIO.write(image!!, "png", stream)
+                        val fileContent = stream.toByteArray()
+                        val imagePart = BinaryPartAbstractImage
+                            .createImagePart(wordPackage, fileContent)
+                        val inline = imagePart.createImageInline("File Name Hint", "Alt Text", 1, 2, false)
+                        val factory = ObjectFactory()
+                        val p: P = factory.createP()
+                        val r: R = factory.createR()
+                        val drawing: Drawing = factory.createDrawing()
+                        p.content.add(r)
+                        r.content.add(drawing)
+                        drawing.anchorOrInline.add(inline)
+                        mainDocumentPart.content.add(p)
+                    }
+                    wordPackage.save(resultFile)
                     runLater {
-                        ExportCompleted(whenDone = {
-                            FormattingView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
-                        }).apply {
+                        ExportLocationCompleted(whenDone = {
+                            loadingView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
+                        }, file = resultFile).apply {
                             val exportCompleted = this
                             openModal(escapeClosesWindow = false)!!.apply {
                                 setOnCloseRequest {
@@ -182,10 +247,6 @@ fun wordUI() {
             }
         }
     }
-}
-
-private fun generateDoc() {
-
 }
 
 fun exportImageCB() {
@@ -254,6 +315,7 @@ fun generateImagesInFile() {
             label.text = "$resultFile must be empty in order to be used."
             label.isVisible = true
         } else {
+            curView = this
             replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
             FormattingView.whenFinished = {
                 val resultFilePath = resultFile.path + '\\'
@@ -299,6 +361,63 @@ fun generateImagesInFile() {
     curView = EditingCardView
     EditingCardView.replaceWith(view, ViewTransition.Slide(0.5.seconds))
 }
+
+fun generateImagesInZip() {
+    val view = FindFileView (string = "game.zip", implementExtensionCheck = true, whenFinished = {
+        checkFileAndRun {
+            curView = this
+            replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
+            FormattingView.whenFinished = {
+                val view = LoadingView()
+                replaceWith(view, ViewTransition.Fade(0.5.seconds))
+                thread {
+                    val bufferedOutputStream = BufferedOutputStream(FileOutputStream(resultFile))
+                    val zipOutputStream = ZipOutputStream(bufferedOutputStream)
+                    for (index in currentGame.indices step number) {
+                        var image: BufferedImage? = null
+                        runLater {
+                            image = generateImage(currentGame, number, index)
+                        }
+                        while (image == null) {
+                            Thread.sleep(10)
+                        }
+                        zipOutputStream.putNextEntry(
+                            ZipEntry(
+                                if (number == 1) {
+                                    "BingoCard_$index.$bulkImgType"
+                                } else {
+                                    "BingoCard_${index + 1}-${(index + number).coerceAtMost(currentGame.size)}.$bulkImgType"
+                                }
+                            )
+                        )
+                        ImageIO.write(image!!, "png", zipOutputStream)
+                        zipOutputStream.closeEntry()
+                    }
+                    zipOutputStream.close()
+                    runLater {
+                        ExportLocationCompletedWithoutRunner(
+                            eTitle = "Finished Exporting Images", whenDone = {
+                                view.replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
+                            }, message = "Finished exporting image into zip!", file = resultFile
+                        ).apply {
+                            val exportCompleted = this
+                            openModal(escapeClosesWindow = false)!!.apply {
+                                setOnCloseRequest {
+                                    exportCompleted.whenDone()
+                                    close()
+                                }
+                            }
+                        }
+                    }
+                }
+                // C:\Users\crois\Downloads\OutputFolder
+            }
+        }
+    })
+    curView = EditingCardView
+    EditingCardView.replaceWith(view, ViewTransition.Slide(0.5.seconds))
+}
+
 
 fun generateString(game: BingoGame): String {
     val stringBuffer = StringBuffer("Bingo Game\n\n")

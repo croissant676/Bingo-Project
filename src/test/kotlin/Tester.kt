@@ -1,11 +1,21 @@
-import com.sun.security.auth.module.NTSystem
-import tornadofx.*
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage
+import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage
+import org.docx4j.wml.Drawing
+import org.docx4j.wml.ObjectFactory
+import org.docx4j.wml.P
+import org.docx4j.wml.R
+import tornadofx.c
+import java.io.BufferedOutputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.nio.file.Files
+import java.util.zip.ZipOutputStream
+import javax.imageio.ImageIO
 import javafx.scene.paint.Color as JFXColor
 import java.awt.Color as SwingColor
 
+
 fun main() {
-    val ntSystem = NTSystem()
-    println(ntSystem.name)
 }
 
 private fun generate() {

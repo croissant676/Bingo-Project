@@ -94,6 +94,7 @@ object FormattingView : View("Bingo > Export > Format") {
                 button("< Back") {
                     addHoverEffect()
                     action {
+                        curView = EditingCardView
                         replaceWith(curView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
                     }
                 }

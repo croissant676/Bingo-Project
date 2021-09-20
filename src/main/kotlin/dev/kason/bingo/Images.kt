@@ -141,7 +141,6 @@ fun generateImage(bingoGame: BingoGame = currentGame, format: Int, startingIndex
     if (format == 1) {
         return generateImageForCard(bingoGame[startingIndex])
     }
-    println("Format: $format, startingIndex: $startingIndex")
     val gridPane = GridPane()
     val dimension = dimensions[format]!!
     if (format + startingIndex > bingoGame.size) {
