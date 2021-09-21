@@ -16,10 +16,6 @@ data class BingoCard(val numbers: List<List<BingoTile>>, val randomSeed: Long = 
     @Suppress("MemberVisibilityCanBePrivate")
     var isFinished = -1
         private set
-    private val eventLogger = EventLogger(cardNumber)
-    val totalNumbers = arrayListOf<BingoTile>()
-    val remainingNumbers = arrayListOf<BingoTile>()
-
     operator fun get(row: Int) = numbers[row]
 
     operator fun invoke(number: Int, relation: Int = (number - 1) / 15) {
@@ -29,9 +25,19 @@ data class BingoCard(val numbers: List<List<BingoTile>>, val randomSeed: Long = 
             if (list[value].value == number) {
                 val tile = list[value]
                 tile.crossedOff = true
-                eventLogger += ev(number.toByte(), value.toByte())
             }
         }
+    }
+
+    fun reset() {
+        for (list in numbers) {
+            for (tile in list) {
+                if (tile.value != -1) {
+                    tile.crossedOff = false
+                }
+            }
+        }
+        isFinished = -1
     }
 
     fun values(): Array<Array<Int>> {

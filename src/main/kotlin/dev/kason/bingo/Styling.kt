@@ -6,6 +6,7 @@ import javafx.scene.text.FontWeight
 import tornadofx.*
 
 fun registerTheme(theme: Appearance) {
+    currentAppearance = theme
     with(Styles.Companion) {
         themeColor = c(theme.themeColor)
         secondaryThemeColor = c(theme.secondaryThemeColor)
@@ -329,6 +330,7 @@ class Styles : Stylesheet() {
             fontFamily = "dubai"
             fontSize = sizeOfText
             accentColor = themeColor
+            textFill = darkTextFill
         }
         radioButton {
             accentColor = darkTextFill
@@ -357,6 +359,7 @@ class Styles : Stylesheet() {
                     backgroundColor += darkTextFill
                 }
             }
+            textFill = darkTextFill
         }
         scrollPane {
             scrollBar {
@@ -367,6 +370,15 @@ class Styles : Stylesheet() {
                     backgroundColor += c(Appearance.MONO.themeColor)
                     backgroundRadius += box(123.px)
                 }
+            }
+        }
+
+        textArea {
+            borderWidth += box(1.px)
+            backgroundColor += themeBackgroundColor
+            borderColor += box(themeColor)
+            and(hover) {
+                borderWidth += box(3.px)
             }
         }
     }

@@ -4,7 +4,10 @@ package dev.kason.bingo
 
 import javafx.geometry.Pos
 import javafx.scene.Parent
-import javafx.scene.control.*
+import javafx.scene.control.Button
+import javafx.scene.control.ContentDisplay
+import javafx.scene.control.Label
+import javafx.scene.control.Spinner
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
@@ -20,7 +23,7 @@ import kotlin.math.roundToInt
 
 lateinit var curView: View
 
-var currentGame: BingoGame = generateNumbers()
+var currentGame: BingoGame = numbers()
 var currentlyDisplayedCard: CardView = generateCardView(currentGame.first())
 
 val f = Font("dubai", 100.0)
@@ -238,25 +241,25 @@ object EditingCardView : View("Bingo > Cards") {
                     item("How to play bingo") {
                         accelerator = KeyCodeCombination(KeyCode.H, KeyCombination.SHIFT_DOWN)
                         action {
-                            replaceWith(HowToPlay, ViewTransition.Slide(0.5.seconds))
+                            replaceWith(HowToPlay, ViewTransition.Fade(0.5.seconds))
                         }
                     }
                     item("How to export game") {
                         accelerator = KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN)
                         action {
-                            replaceWith(HowToExport, ViewTransition.Slide(0.5.seconds))
+                            replaceWith(HowToExport, ViewTransition.Fade(0.5.seconds))
                         }
                     }
                     item("How to use statistics") {
                         accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN)
                         action {
-                            replaceWith(HowToStatistics, ViewTransition.Slide(0.5.seconds))
+                            replaceWith(HowToStatistics, ViewTransition.Fade(0.5.seconds))
                         }
                     }
 //                    item("Search for help") {
 //                        accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN)
 //                        action {
-//                            replaceWith(SearchView, ViewTransition.Slide(0.5.seconds))
+//                            replaceWith(SearchView, ViewTransition.Fade(0.5.seconds))
 //                        }
 //                    }
                 }
@@ -314,7 +317,7 @@ object EditingCardView : View("Bingo > Cards") {
                                 fontSize = 25.px
                             }
                         }
-                        spinner = spinner(1, currentGame.size) {
+                        spinner = spinner(1, currentGame.size, amountToStepBy = 1, enableScroll = true) {
                             isEditable = true
                             valueProperty().addListener { _, _, newValue ->
                                 EditingCardView.value = newValue
@@ -372,8 +375,20 @@ object EditingCardView : View("Bingo > Cards") {
                             alignment = Pos.CENTER
                             addClass(Styles.defaultBackground)
                         }
-                        button("Play Button") {
-                            addHoverEffect()
+                        hbox {
+                            button("< Back") {
+                                addHoverEffect()
+                                action {
+                                    replaceWith(BingoMenu, ViewTransition.Fade(0.5.seconds))
+                                }
+                            }
+                            button("Play Button") {
+                                addHoverEffect()
+                            }
+                            alignment = Pos.CENTER
+                            addClass(Styles.defaultBackground)
+                            spacing = 20.0
+                            paddingVertical = 30.0
                         }
                         addClass(Styles.defaultBackground)
                         alignment = Pos.CENTER

@@ -40,11 +40,11 @@ fun pdfUI() {
     val view = FindFileView("game.pdf")
     curView = EditingCardView
     typeOfFile = 0
-    EditingCardView.replaceWith(view, ViewTransition.Slide(0.5.seconds))
+    EditingCardView.replaceWith(view, ViewTransition.Fade(0.5.seconds))
     view.whenFinished = {
         checkFileAndRun {
             curView = this
-            replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
+            replaceWith(FormattingView, ViewTransition.Fade(0.5.seconds))
             FormattingView.whenFinished = {
                 val loadingView = LoadingView()
                 replaceWith(loadingView)
@@ -69,7 +69,7 @@ fun pdfUI() {
                     doc.close()
                     runLater {
                         ExportLocationCompleted(eTitle = "Exporting to PDF", whenDone = {
-                            loadingView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
+                            loadingView.replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
                         }, message = "Finished Exporting to PDF", file = resultFile).apply {
                             val exportCompleted = this
                             openModal(escapeClosesWindow = false)!!.apply {
@@ -99,7 +99,7 @@ fun exportTXTText() {
                     fileWriter.close()
                     runLater {
                         ExportLocationCompleted("Exporting to file", whenDone = {
-                            this@ExportTextView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
+                            this@ExportTextView.replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
                         }, message = "Finished exporting to file!", file = resultFile).apply {
                             val exportCompleted = this
                             openModal(escapeClosesWindow = false)!!.apply {
@@ -111,11 +111,11 @@ fun exportTXTText() {
                         }
                     }
                 }
-            }, "File Location: $resultFile"), ViewTransition.Slide(0.5.seconds))
+            }, "File Location: $resultFile"), ViewTransition.Fade(0.5.seconds))
         }
     }).also {
         curView = EditingCardView
-    }, ViewTransition.Slide(0.5.seconds))
+    }, ViewTransition.Fade(0.5.seconds))
 }
 
 fun exportOtherText() {
@@ -134,7 +134,7 @@ fun exportOtherText() {
                     fileWriter.close()
                     runLater {
                         ExportLocationCompleted("Exporting to file", whenDone = {
-                            this@ExportTextView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
+                            this@ExportTextView.replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
                         }, message = "Finished exporting to file!", file = resultFile).apply {
                             val exportCompleted = this
                             openModal(escapeClosesWindow = false)!!.apply {
@@ -146,11 +146,11 @@ fun exportOtherText() {
                         }
                     }
                 }
-            }, "File Location: $resultFile"), ViewTransition.Slide(0.5.seconds))
+            }, "File Location: $resultFile"), ViewTransition.Fade(0.5.seconds))
         }
     }, implementExtensionCheck = false).also {
         curView = EditingCardView
-    }, ViewTransition.Slide(0.5.seconds))
+    }, ViewTransition.Fade(0.5.seconds))
 }
 
 fun exportCBText() {
@@ -165,7 +165,7 @@ fun exportCBText() {
             clipboard.setContents(selection, selection)
         }
         ExportCompleted("Exporting to clipboard", whenDone = {
-            this@ExportTextView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
+            this@ExportTextView.replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
         }, message = "Finished exporting to clipboard!").apply {
             val exportCompleted = this
             openModal(escapeClosesWindow = false)!!.apply {
@@ -175,7 +175,7 @@ fun exportCBText() {
                 }
             }
         }
-    }), ViewTransition.Slide(0.5.seconds))
+    }), ViewTransition.Fade(0.5.seconds))
 }
 
 fun FindFileView.checkFileAndRun(action: FindFileView.() -> Unit) {
@@ -195,11 +195,11 @@ internal const val pathHint = 188416
 fun wordUI() {
     val view = FindFileView("game.docx")
     typeOfFile = 1
-    EditingCardView.replaceWith(view, ViewTransition.Slide(0.5.seconds))
+    EditingCardView.replaceWith(view, ViewTransition.Fade(0.5.seconds))
     view.whenFinished = {
         checkFileAndRun {
             curView = this
-            replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
+            replaceWith(FormattingView, ViewTransition.Fade(0.5.seconds))
             FormattingView.whenFinished = {
                 val loadingView = LoadingView()
                 replaceWith(loadingView, ViewTransition.Fade(0.5.seconds))
@@ -207,6 +207,7 @@ fun wordUI() {
                     val wordPackage = WordprocessingMLPackage.createPackage()
                     val mainDocumentPart = wordPackage.mainDocumentPart
                     for (index in currentGame.indices step number) {
+                        println("$index:$number")
                         val stream = ByteArrayOutputStream()
                         var image: BufferedImage? = null
                         runLater {
@@ -219,7 +220,7 @@ fun wordUI() {
                         val fileContent = stream.toByteArray()
                         val imagePart = BinaryPartAbstractImage
                             .createImagePart(wordPackage, fileContent)
-                        val inline = imagePart.createImageInline("File Name Hint", "Alt Text", 1, 2, false)
+                        val inline = imagePart.createImageInline("Bingo Project", "Alternate Text :)", 1, 2, false)
                         val factory = ObjectFactory()
                         val p: P = factory.createP()
                         val r: R = factory.createR()
@@ -232,7 +233,7 @@ fun wordUI() {
                     wordPackage.save(resultFile)
                     runLater {
                         ExportLocationCompleted(whenDone = {
-                            loadingView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
+                            loadingView.replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
                         }, file = resultFile).apply {
                             val exportCompleted = this
                             openModal(escapeClosesWindow = false)!!.apply {
@@ -250,10 +251,10 @@ fun wordUI() {
 }
 
 fun exportImageCB() {
-    EditingCardView.replaceWith(ExportAsClipBoardView, ViewTransition.Slide(0.5.seconds))
+    EditingCardView.replaceWith(ExportAsClipBoardView, ViewTransition.Fade(0.5.seconds))
     ExportAsClipBoardView.action = {
         curView = ExportAsClipBoardView
-        replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
+        replaceWith(FormattingView, ViewTransition.Fade(0.5.seconds))
         FormattingView.whenFinished = {
             val image = generateImage(format = number, startingIndex = value - 1)
             thread {
@@ -262,7 +263,7 @@ fun exportImageCB() {
                 c.setContents(trans) { _, _ -> }
                 runLater {
                     ExportCompleted(eTitle = "Finished Exporting Image into Clipboard", whenDone = {
-                        FormattingView.replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds))
+                        FormattingView.replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
                     }, message = "Finished exporting image into clipboard!").apply {
                         val exportCompleted = this
                         openModal(escapeClosesWindow = false)!!.apply {
@@ -316,7 +317,7 @@ fun generateImagesInFile() {
             label.isVisible = true
         } else {
             curView = this
-            replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
+            replaceWith(FormattingView, ViewTransition.Fade(0.5.seconds))
             FormattingView.whenFinished = {
                 val resultFilePath = resultFile.path + '\\'
                 val view = LoadingView()
@@ -359,14 +360,14 @@ fun generateImagesInFile() {
         }
     }
     curView = EditingCardView
-    EditingCardView.replaceWith(view, ViewTransition.Slide(0.5.seconds))
+    EditingCardView.replaceWith(view, ViewTransition.Fade(0.5.seconds))
 }
 
 fun generateImagesInZip() {
     val view = FindFileView (string = "game.zip", implementExtensionCheck = true, whenFinished = {
         checkFileAndRun {
             curView = this
-            replaceWith(FormattingView, ViewTransition.Slide(0.5.seconds))
+            replaceWith(FormattingView, ViewTransition.Fade(0.5.seconds))
             FormattingView.whenFinished = {
                 val view = LoadingView()
                 replaceWith(view, ViewTransition.Fade(0.5.seconds))
@@ -415,7 +416,7 @@ fun generateImagesInZip() {
         }
     })
     curView = EditingCardView
-    EditingCardView.replaceWith(view, ViewTransition.Slide(0.5.seconds))
+    EditingCardView.replaceWith(view, ViewTransition.Fade(0.5.seconds))
 }
 
 
@@ -455,4 +456,18 @@ fun generateString(card: BingoCard): String {
         builder.append("|\n+- -+- -+- -+- -+- -+\n")
     }
     return builder.toString()
+}
+
+fun generateExportExtras(file: File) {
+    assert(file.isDirectory) {
+        "$file is not a directory!"
+    }
+    val firstFile = File("${file.absolutePath}\\balls.log")
+    val secondFile = File("${file.absolutePath}\\winners.log")
+    if(!firstFile.exists()) {
+        firstFile.createNewFile()
+    }
+    if(!secondFile.exists()) {
+        secondFile.createNewFile()
+    }
 }

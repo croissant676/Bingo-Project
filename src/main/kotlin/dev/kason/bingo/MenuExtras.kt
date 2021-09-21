@@ -39,7 +39,7 @@ object HowToPlay : View("Bingo > How to play bingo") {
                 button("< Back") {
                     addHoverEffect()
                     action {
-                        replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
                     }
                 }
                 alignment = Pos.CENTER
@@ -85,7 +85,7 @@ object HowToStatistics : View("Bingo > How to use statistics") {
                 button("< Back") {
                     addHoverEffect()
                     action {
-                        replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
                     }
                 }
                 paddingBottom = 30.0
@@ -116,6 +116,9 @@ object HowToExport : View("Bingo > How to export") {
                 ) {
                     addClass(Styles.regularLabel)
                 }
+                label("This will create 2 additional files: \"winners.log\"") {
+                    addClass(Styles.regularLabel)
+                }
                 alignment = Pos.CENTER
                 spacing = 20.0
                 addClass(Styles.defaultBackground)
@@ -126,7 +129,7 @@ object HowToExport : View("Bingo > How to export") {
                 button("< Back") {
                     addHoverEffect()
                     action {
-                        replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
                     }
                 }
                 paddingBottom = 30.0
@@ -157,7 +160,7 @@ object SearchView : View("Bingo > Help") {
                 button("< Back") {
                     addHoverEffect()
                     action {
-                        replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
                     }
                 }
                 button("Search!") {

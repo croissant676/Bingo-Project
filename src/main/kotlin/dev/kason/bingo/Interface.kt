@@ -6,13 +6,13 @@ import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
 import javafx.scene.Parent
-import javafx.scene.control.ToggleGroup
-import javafx.scene.control.TreeItem
-import javafx.scene.control.TreeView
+import javafx.scene.control.*
 import javafx.scene.control.skin.TextFieldSkin
 import javafx.scene.paint.Color
 import tornadofx.*
+import java.awt.Desktop
 import java.io.File
+import java.net.URI
 import java.time.LocalDateTime
 
 
@@ -34,19 +34,25 @@ object BingoMenu : View("Bingo > Menu") {
                     }
                     useMaxSize = true
                 }
+                button("Appearances") {
+                    addHoverEffect()
+                    action {
+                        replaceWith(MinorSettings, ViewTransition.Fade(0.5.seconds))
+                    }
+                    useMaxSize = true
+                }
+                button("How to use") {
+                    addClass(Styles.button)
+                    addHoverEffect()
+                    useMaxSize = true
+                    action {
+                        replaceWith(HowToUseView, ViewTransition.Fade(0.5.seconds))
+                    }
+                }
                 label("Created by Kason Gu") {
                     paddingTop = 30.0
                     addClass(Styles.regularLabel)
                 }
-//                button("Settings") {
-//                    addClass(Styles.button)
-//                    addHoverEffect()
-//                    useMaxSize = true
-//                    action {
-//                        currentState = BingoState.SETTINGS
-//                        replaceWith(SettingsView, ViewTransition.Fade(0.5.seconds))
-//                    }
-//                }
                 spacing = 10.0
                 maxWidth = 250.0
                 alignment = Pos.CENTER
@@ -58,9 +64,8 @@ object BingoMenu : View("Bingo > Menu") {
             hbox {
                 hbox {
                     alignment = Pos.BOTTOM_LEFT
-                    button("Appearances") {
+                    button("Hidden page???") {
                         style {
-//                        Styles.button reference
                             textFill = Styles.lightTextColor // Make it invisible
                             backgroundColor += Styles.themeBackgroundColor
                             padding = box(1.px, 12.px)
@@ -73,7 +78,7 @@ object BingoMenu : View("Bingo > Menu") {
                         }
                         addHoverEffectLight() // Just for this case
                         action {
-                            replaceWith(MinorSettings, ViewTransition.Fade(0.5.seconds))
+                            replaceWith(SettingsView, ViewTransition.Fade(0.5.seconds))
                         }
                     }
                     addClass(Styles.defaultBackground)
@@ -83,7 +88,7 @@ object BingoMenu : View("Bingo > Menu") {
         }
         top {
             hbox {
-                button("Play dino game!") {
+                button("Secret Easter egg :)") {
                     style {
                         textFill = Styles.lightTextColor
                         backgroundColor += Styles.themeBackgroundColor
@@ -96,6 +101,9 @@ object BingoMenu : View("Bingo > Menu") {
                         fontSize = Styles.sizeOfText
                     }
                     addHoverEffectLight()
+                    action {
+                        Desktop.getDesktop().browse(URI("https://www.youtube.com/watch?v=dQw4w9WgXcQ"));
+                    }
                 }
                 addClass(Styles.defaultBackground)
             }
@@ -387,29 +395,47 @@ object CreationMenuView2 : View("Bingo > Create Bingo Game") {
 
 object CreationMenu2 : View("Bingo > Create Bingo Game") {
 
-    override val root = hbox {
-        button("< Back") {
-            addHoverEffect()
-            action {
-                assert(currentState == BingoState.CREATION_MENU) {
-                    "State not linked"
+    private lateinit var spinner: Spinner<Int>
+
+    override val root = borderpane {
+        center {
+            hbox {
+                spinner = spinner(-100000, 100000, 0, enableScroll = true) {
+                    isEditable = true
+                    editor.textProperty().addListener { _, oldValue, newValue ->
+                        if (newValue.length > 7) {
+                            editor.text = oldValue
+                        } else if (!newValue.matches("[+-]?[0-9][0-9]*".toRegex())) {
+                            editor.text = oldValue
+                        }
+                    }
                 }
-                replaceWith(CreationMenuView, ViewTransition.Fade(0.5.seconds))
             }
         }
-        button("Next > ") {
-            addHoverEffect()
-            action {
-                assert(currentState == BingoState.CREATION_MENU) {
-                    "State not linked"
+        bottom {
+            hbox {
+                button("< Back") {
+                    addHoverEffect()
+                    action {
+                        assert(currentState == BingoState.CREATION_MENU) {
+                            "State not linked"
+                        }
+                        replaceWith(CreationMenuView, ViewTransition.Fade(0.5.seconds))
+                    }
                 }
-                generateNumbers(1, 100)
-                replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
+                button("Next > ") {
+                    addHoverEffect()
+                    action {
+                        numbers(spinner.value.toLong(), 100)
+                        createSimulation()
+                        replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
+                    }
+                }
+                alignment = Pos.CENTER
+                addClass(Styles.defaultBackground)
+                spacing = 20.0
             }
         }
-        alignment = Pos.CENTER
-        addClass(Styles.defaultBackground)
-        spacing = 20.0
     }
 }
 
@@ -489,7 +515,7 @@ object FileView : View("Bingo > Find File") {
 //                        }
 //                        isVisible = false
 //                    }
-                    button("Proceed to next step >") {
+                    button("Next >") {
                         addHoverEffect()
                         action {
                             val result = tview.selectedValue
@@ -619,10 +645,12 @@ object HowToUseView : View("Bingo > How To Use") {
         label("How to use") {
             addClass(Styles.titleLabel)
         }
-        label("First do stuff:") {
+        label("Press \"Create Bingo Game\" to create a game. From there, input the number of days,\n" +
+                "the number of winners, the seed, and the number of card. This will generate a game for you.") {
             addClass(Styles.regularLabel)
         }
-        label("Next do more stuff") {
+        label("Once the game is created, you can export by using the \"Export\" option. In addition to \n" +
+                "exporting the regular files, this will create 2 text files, where the balls and winners are stored.") {
             addClass(Styles.regularLabel)
         }
         button("< Back") {

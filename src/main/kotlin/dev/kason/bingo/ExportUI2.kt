@@ -95,7 +95,7 @@ object FormattingView : View("Bingo > Export > Format") {
                     addHoverEffect()
                     action {
                         curView = EditingCardView
-                        replaceWith(curView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        replaceWith(curView, ViewTransition.Fade(0.5.seconds))
                     }
                 }
                 button("Next >") {
@@ -179,7 +179,7 @@ object ExportAsClipBoardView : View("Bingo > Export As Clipboard") {
                 button("< Back") {
                     addHoverEffect()
                     action {
-                        replaceWith(EditingCardView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
                     }
                 }
                 button("Next > ") {

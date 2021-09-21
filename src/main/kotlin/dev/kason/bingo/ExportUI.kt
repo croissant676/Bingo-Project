@@ -22,7 +22,7 @@ object WrapperFileView : View("Bingo > Wrapper Transition File") {
     init {
         replaceWith(FindFileView("string.pdf", whenFinished = {
             println("Wrapper completed!")
-        }), ViewTransition.Slide(0.5.seconds))
+        }), ViewTransition.Fade(0.5.seconds))
     }
 }
 
@@ -158,7 +158,7 @@ open class FindFileView(var string: String, var whenFinished: FindFileView.() ->
                 button("< Back") {
                     addHoverEffect()
                     action {
-                        replaceWith(curView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        replaceWith(curView, ViewTransition.Fade(0.5.seconds))
                     }
                 }
                 button("Select file from system") {
@@ -283,7 +283,7 @@ class FolderFindFileView(whenFinished: FindFileView.() -> Unit = {}) : FindFileV
                 button("< Back") {
                     addHoverEffect()
                     action {
-                        replaceWith(curView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        replaceWith(curView, ViewTransition.Fade(0.5.seconds))
                     }
                 }
                 button("Select file from system") {
@@ -343,7 +343,7 @@ class ExportTextView(
                     }
                     paddingLeft = 300.0
                 }
-                spinner = spinner(1, currentGame.size) {
+                spinner = spinner(1, currentGame.size, enableScroll = true) {
                     isEditable = true
                     editor.textProperty().addListener { _, oldValue, newValue ->
                         if (newValue.length > 7) {
@@ -363,7 +363,7 @@ class ExportTextView(
                 button("< Back") {
                     addHoverEffect()
                     action {
-                        this@ExportTextView.replaceWith(curView, ViewTransition.Slide(0.5.seconds, ViewTransition.Direction.RIGHT))
+                        this@ExportTextView.replaceWith(curView, ViewTransition.Fade(0.5.seconds))
                     }
                 }
                 button("Next >") {

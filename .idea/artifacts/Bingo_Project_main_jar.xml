@@ -29,6 +29,10 @@
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.4.32/ef50bfa2c0491a11dcc35d9822edbfd6170e1ea2/kotlin-stdlib-common-1.4.32.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bctsp-jdk14/1.38/4821122f8390d15f4b5ee652621e2a2bb1f1bf16/bctsp-jdk14-1.38.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-base/14/956a9be2db3fe917ebfc24c2d04ab0cb5d6714c7/javafx-base-14-win.jar" path-in-jar="/" />
+      <element id="library" level="project" name="Gradle: org.openjfx:javafx-swing:win:14" />
+      <element id="library" level="project" name="Gradle: org.docx4j:docx4j:3.3.5" />
+      <element id="library" level="project" name="Gradle: org.javassist:javassist:3.25.0-GA" />
+      <element id="library" level="project" name="Gradle: javax.json:javax.json-api:1.1.2" />
     </root>
   </artifact>
 </component>

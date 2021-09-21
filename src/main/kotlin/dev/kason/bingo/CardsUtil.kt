@@ -5,7 +5,7 @@ import kotlin.random.Random
 
 var currentRound: Int = 1
 
-fun generateNumbers(seed: Long = 0, count: Int = 1): BingoGame {
+fun numbers(seed: Long = 0, count: Int = 1): BingoGame {
     val arrayList = ArrayList<BingoCard>(count)
     val random = Random(seed)
     repeat(count) {
