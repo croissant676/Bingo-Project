@@ -1,6 +1,9 @@
 package dev.kason.bingo
 
+import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
+import javafx.scene.Parent
 import javafx.scene.control.TextField
 import tornadofx.*
 
@@ -116,7 +119,11 @@ object HowToExport : View("Bingo > How to export") {
                 ) {
                     addClass(Styles.regularLabel)
                 }
-                label("This will create 2 additional files: \"winners.log\"") {
+                label(
+                    "This will create 2 additional files: \"winners.log\" and \"balls.log\"." +
+                            "\n\"winners.log\" contains the winners, while \"balls.log\" contains the balls that " +
+                            "\nare drawn, and when they are drawn."
+                ) {
                     addClass(Styles.regularLabel)
                 }
                 alignment = Pos.CENTER
@@ -217,3 +224,34 @@ private fun generateSearchResults(string: String): List<SearchResult> {
 }
 
 internal data class SearchResult(val name: String, val action: () -> Unit)
+
+object DateView : View("Bingo > View Dates") {
+
+    override val root: Parent = borderpane {
+        center {
+            hbox {
+                tableview(balls.mapIndexed { index, ball ->
+                    DrawObject(ball, ballsDates[index])
+                }.asObservable())
+            }
+        }
+        bottom {
+            hbox {
+                button("< Back") {
+                    addHoverEffect()
+                }
+                paddingBottom = 30.0
+            }
+        }
+    }
+}
+
+class DrawObject(number: Int, time: String) {
+    val number: Int by SimpleIntegerProperty(number)
+    val time: String by SimpleStringProperty(time)
+}
+
+class WinnerObject(cardNum: Int, round: Int) {
+    val cardNum: Int by SimpleIntegerProperty(cardNum)
+    val round: Int by SimpleIntegerProperty(round)
+}

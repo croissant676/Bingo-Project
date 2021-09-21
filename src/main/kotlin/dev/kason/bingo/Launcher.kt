@@ -18,7 +18,7 @@ const val maxCardsSmooth = 10000
 
 class BingoApp : App(LoadingView::class, Styles::class) {
     init {
-        numbers(12332, 100)
+        createGame(12332, 100)
     }
 
     override fun start(stage: Stage) {

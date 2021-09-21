@@ -198,9 +198,9 @@ open class FindFileView(var string: String, var whenFinished: FindFileView.() ->
                                 label.isVisible = true
                             } else {
                                 result = if (!filePath.text.endsWith('\\')) {
-                                    "${filePath.text}\\"
+                                    "${filePath.text}\\${fileName.text}"
                                 } else {
-                                    filePath.text
+                                    "${filePath.text}${fileName.text}"
                                 }
                                 whenFinished(this@FindFileView)
                             }

@@ -138,7 +138,7 @@ class Styles : Stylesheet() {
                 opacity = 0.0
             }
         }
-        defaultSpinner {
+        spinner {
             incrementArrowButton {
                 backgroundColor += themeColor
                 and(hover) {
@@ -372,7 +372,6 @@ class Styles : Stylesheet() {
                 }
             }
         }
-
         textArea {
             borderWidth += box(1.px)
             backgroundColor += themeBackgroundColor

@@ -119,7 +119,7 @@ fun exportTXTText() {
 }
 
 fun exportOtherText() {
-    EditingCardView.replaceWith(FindFileView(string = "game", whenFinished = {
+    EditingCardView.replaceWith(FindFileView(string = "game.any", whenFinished = {
         checkFileAndRun {
             curView = this
             replaceWith(ExportTextView("Export text to file", {

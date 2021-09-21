@@ -2,9 +2,11 @@ package dev.kason.bingo
 
 import javafx.embed.swing.SwingFXUtils
 import javafx.geometry.Pos
+import javafx.scene.Parent
 import javafx.scene.control.ToggleGroup
 import javafx.scene.layout.Pane
 import tornadofx.*
+import java.io.File
 
 object FormattingView : View("Bingo > Export > Format") {
 
@@ -194,5 +196,70 @@ object ExportAsClipBoardView : View("Bingo > Export As Clipboard") {
             }
         }
         addClass(Styles.defaultBackground)
+    }
+}
+
+fun askForExtra(currentView: View = curView, newView: View, folder: File, whenDone: ExportExtraFiles.() -> Unit = {}) {
+    currentView.replaceWith(ExportExtraFiles, ViewTransition.Fade(0.5.seconds))
+    ExportExtraFiles.currentView = currentView
+    ExportExtraFiles.newView = newView
+    ExportExtraFiles.whenDone = {
+        replaceWith(newView, ViewTransition.Fade(0.5.seconds))
+        whenDone()
+        assert(folder.isDirectory)
+        val newFile = File("${folder.absolutePath}\\winners.log")
+        val otherFile = File("${folder.absolutePath}\\balls.log")
+        newFile.createNewFile()
+        otherFile.createNewFile()
+        // Store the value
+        val writer1 = newFile.bufferedWriter()
+        val writer2 = otherFile.bufferedWriter()
+        writer2.write("""
+            Bingo Balls
+            
+            +=========================+
+            Seed: ${currentGame.seed}
+            Number of balls: $numberOfRoundsTotal
+            +=========================+
+        """.trimIndent())
+        for(index in 0 until numberOfRoundsTotal) {
+            val string = ballsDates[index]
+            val number = balls[index].toString()
+            writer2.write(string + " ".repeat(40 - string.length))
+            writer2.write("| ")
+            writer2.write(number + " ".repeat(7 - number.length))
+            writer2.write("| ")
+            writer2.write(index)
+            writer2.newLine()
+        }
+        writer1.write("""
+            Bingo Winners
+            
+            +=========================+
+            Seed: ${currentGame.seed}
+            Number of winners: $numberOfWinners
+            Number of balls: $numberOfRoundsTotal
+            +=========================+
+        """.trimIndent())
+        for(index in 0 until numberOfWinners){
+            val number = cardFinished[index]
+        }
+    }
+}
+
+object ExportExtraFiles : View("Export Extra Files") {
+    var currentView: View = curView
+    lateinit var newView: View
+    var whenDone: ExportExtraFiles.() -> Unit = {}
+    var fileName: String = "game.txt"
+    override val root: Parent = borderpane {
+        center {
+
+        }
+        bottom {
+            hbox {
+
+            }
+        }
     }
 }

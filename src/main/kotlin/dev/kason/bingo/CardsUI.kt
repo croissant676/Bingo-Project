@@ -23,7 +23,7 @@ import kotlin.math.roundToInt
 
 lateinit var curView: View
 
-var currentGame: BingoGame = numbers()
+var currentGame: BingoGame = createGame()
 var currentlyDisplayedCard: CardView = generateCardView(currentGame.first())
 
 val f = Font("dubai", 100.0)
@@ -345,6 +345,7 @@ object EditingCardView : View("Bingo > Cards") {
                                 runNumber()
                             }
                         }
+                        EditingCardView
                         vbox {
                             drawnBallsLabel = label("Drawn balls:") {
                                 addClass(Styles.regularLabel)
@@ -376,14 +377,10 @@ object EditingCardView : View("Bingo > Cards") {
                             addClass(Styles.defaultBackground)
                         }
                         hbox {
-                            button("< Back") {
+                            // Back button ruins everything
+                            button("Show dates") {
                                 addHoverEffect()
-                                action {
-                                    replaceWith(BingoMenu, ViewTransition.Fade(0.5.seconds))
-                                }
-                            }
-                            button("Play Button") {
-                                addHoverEffect()
+
                             }
                             alignment = Pos.CENTER
                             addClass(Styles.defaultBackground)

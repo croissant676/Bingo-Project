@@ -4,6 +4,7 @@ package dev.kason.bingo
 
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
+import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.*
@@ -109,7 +110,7 @@ object BingoMenu : View("Bingo > Menu") {
             }
         }
         addClass(Styles.defaultBackground)
-        minHeight = 700.0
+        minHeight = 767.0
         minWidth = 1000.0
     }
 }
@@ -249,8 +250,8 @@ object MinorSettings : View("Bingo > Settings") {
 
 object CreationMenuView : View("Bingo > Create Bingo Game") {
 
-    private var days = 1
-    private lateinit var toggleGroup: ToggleGroup
+    lateinit var toggleGroup: ToggleGroup
+    private lateinit var daysSpinner: Spinner<Int>
 
     override val root = borderpane {
         center {
@@ -259,11 +260,15 @@ object CreationMenuView : View("Bingo > Create Bingo Game") {
                     label("Input the number of days to play the game:") {
                         addClass(Styles.regularLabel)
                     }
-                    spinner(0, 5, 5, 1, false) {
-                        isEditable = true
-                        valueProperty().addListener { _, _, newValue ->
-                            days = newValue
+                    daysSpinner = spinner(1, 100, 5, 1, false) {
+                        onScroll = EventHandler {
+                            if(it.deltaY < 0) {
+                                decrement()
+                            } else {
+                                increment()
+                            }
                         }
+                        isEditable = true
                         editor.textProperty().addListener { _, oldValue, newValue ->
                             if (newValue.length > 5) {
                                 editor.text = oldValue
@@ -314,6 +319,7 @@ object CreationMenuView : View("Bingo > Create Bingo Game") {
                     addClass(Styles.button)
                     addHoverEffect()
                     action {
+                        days = daysSpinner.value
                         replaceWith(CreationMenu2, ViewTransition.Fade(0.5.seconds))
                     }
                 }
@@ -396,20 +402,66 @@ object CreationMenuView2 : View("Bingo > Create Bingo Game") {
 object CreationMenu2 : View("Bingo > Create Bingo Game") {
 
     private lateinit var spinner: Spinner<Int>
+    private lateinit var numCards: Spinner<Int>
+    private lateinit var winners: Spinner<Int>
 
     override val root = borderpane {
         center {
-            hbox {
-                spinner = spinner(-100000, 100000, 0, enableScroll = true) {
-                    isEditable = true
-                    editor.textProperty().addListener { _, oldValue, newValue ->
-                        if (newValue.length > 7) {
-                            editor.text = oldValue
-                        } else if (!newValue.matches("[+-]?[0-9][0-9]*".toRegex())) {
-                            editor.text = oldValue
+            vbox {
+                vbox {
+                    label("Seed:") {
+                        addClass(Styles.regularLabel)
+                    }
+                    spinner = spinner(-100000, 100000, 0, enableScroll = true) {
+                        isEditable = true
+                        editor.textProperty().addListener { _, oldValue, newValue ->
+                            if (newValue.length > 7) {
+                                editor.text = oldValue
+                            } else if (!newValue.matches("[+-]?[0-9][0-9]*".toRegex())) {
+                                editor.text = oldValue
+                            }
                         }
                     }
+                    alignment = Pos.CENTER
+                    addClass(Styles.defaultBackground)
                 }
+                vbox {
+                    label("Number of cards:") {
+                        addClass(Styles.regularLabel)
+                    }
+                    numCards = spinner(1, 10000, 1, enableScroll = true) {
+                        isEditable = true
+                        editor.textProperty().addListener { _, oldValue, newValue ->
+                            if (newValue.length > 7) {
+                                editor.text = oldValue
+                            } else if (!newValue.matches("[+-]?[0-9][0-9]*".toRegex())) {
+                                editor.text = oldValue
+                            }
+                        }
+                    }
+                    spacing = 30.0
+                    alignment = Pos.CENTER
+                    addClass(Styles.defaultBackground)
+                }
+                vbox {
+                    label("Number of winners:") {
+                        addClass(Styles.regularLabel)
+                    }
+                    winners = spinner(1, 10000, 1, enableScroll = true) {
+                        isEditable = true
+                        editor.textProperty().addListener { _, oldValue, newValue ->
+                            if (newValue.length > 7) {
+                                editor.text = oldValue
+                            } else if (!newValue.matches("[+-]?[0-9][0-9]*".toRegex())) {
+                                editor.text = oldValue
+                            }
+                        }
+                    }
+                    alignment = Pos.CENTER
+                    addClass(Styles.defaultBackground)
+                }
+                alignment = Pos.CENTER
+                addClass(Styles.defaultBackground)
             }
         }
         bottom {
@@ -426,11 +478,18 @@ object CreationMenu2 : View("Bingo > Create Bingo Game") {
                 button("Next > ") {
                     addHoverEffect()
                     action {
-                        numbers(spinner.value.toLong(), 100)
-                        createSimulation()
-                        replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
+                        if (winners.value > numCards.value) {
+                            alert(Alert.AlertType.WARNING, "Number of winners cannot be more than the number of cards!", title = "Winners > Cards!")
+                        } else {
+                            val game = createGame(spinner.value.toLong(), numCards.value)
+                            numberOfWinners = winners.value
+                            game.desiredNumberOfWinners = numberOfWinners
+                            createSimulation()
+                            replaceWith(EditingCardView, ViewTransition.Fade(0.5.seconds))
+                        }
                     }
                 }
+                paddingBottom = 30.0
                 alignment = Pos.CENTER
                 addClass(Styles.defaultBackground)
                 spacing = 20.0
@@ -660,6 +719,7 @@ object HowToUseView : View("Bingo > How To Use") {
                 replaceWith(BingoMenu, ViewTransition.Fade(0.5.seconds))
             }
         }
+        spacing = 20.0
         alignment = Pos.CENTER
         addClass(Styles.defaultBackground)
     }
