@@ -199,66 +199,149 @@ object ExportAsClipBoardView : View("Bingo > Export As Clipboard") {
     }
 }
 
-fun askForExtra(currentView: View = curView, newView: View, folder: File, whenDone: ExportExtraFiles.() -> Unit = {}) {
-    currentView.replaceWith(ExportExtraFiles, ViewTransition.Fade(0.5.seconds))
-    ExportExtraFiles.currentView = currentView
-    ExportExtraFiles.newView = newView
-    ExportExtraFiles.whenDone = {
-        replaceWith(newView, ViewTransition.Fade(0.5.seconds))
-        whenDone()
-        assert(folder.isDirectory)
-        val newFile = File("${folder.absolutePath}\\winners.log")
-        val otherFile = File("${folder.absolutePath}\\balls.log")
-        newFile.createNewFile()
-        otherFile.createNewFile()
-        // Store the value
-        val writer1 = newFile.bufferedWriter()
-        val writer2 = otherFile.bufferedWriter()
-        writer2.write("""
-            Bingo Balls
+fun askForExtra(currentView: View = curView, newView: View?, folder: File, whenDone: ExportExtraFiles.() -> Unit = {}) {
+    val exportExtraFiles = ExportExtraFiles()
+    exportExtraFiles.openModal()
+    exportExtraFiles.currentView = currentView
+    if (newView != null) {
+        exportExtraFiles.newView = newView
+    }
+    exportExtraFiles.whenDone = {
+        if (!isCompleted) {
+            if (newView != null) {
+                currentView.replaceWith(newView, ViewTransition.Fade(0.5.seconds))
+            }
+            close()
+            whenDone()
+        } else {
+            assert(folder.isDirectory)
+            println("yes")
+            val newFile = File("${folder.absolutePath}\\winners.log")
+            val otherFile = File("${folder.absolutePath}\\balls.log")
+            newFile.createNewFile()
+            otherFile.createNewFile()
+            // Store the value
+            val writer1 = newFile.bufferedWriter()
+            val writer2 = otherFile.bufferedWriter()
+            writer2.write(
+                """
+                  ____    _                             _               _   _       
+                 |  _ \  (_)                           | |             | | | |      
+                 | |_) |  _   _ __     __ _    ___     | |__     __ _  | | | |  ___ 
+                 |  _ <  | | | '_ \   / _` |  / _ \    | '_ \   / _` | | | | | / __|
+                 | |_) | | | | | | | | (_| | | (_) |   | |_) | | (_| | | | | | \__ \
+                 |____/  |_| |_| |_|  \__, |  \___/    |_.__/   \__,_| |_| |_| |___/
+                                       __/ |                                        
+                                      |___/  
+
+            By Kason Gu
             
             +=========================+
             Seed: ${currentGame.seed}
             Number of balls: $numberOfRoundsTotal
             +=========================+
-        """.trimIndent())
-        for(index in 0 until numberOfRoundsTotal) {
-            val string = ballsDates[index]
-            val number = balls[index].toString()
-            writer2.write(string + " ".repeat(40 - string.length))
-            writer2.write("| ")
-            writer2.write(number + " ".repeat(7 - number.length))
-            writer2.write("| ")
-            writer2.write(index)
-            writer2.newLine()
-        }
-        writer1.write("""
-            Bingo Winners
+            
+            Time           | Value  | Ball Number
+            ---------------+--------+------------
+            
+        """.trimIndent()
+            )
+            for (index in 0 until numberOfRoundsTotal) {
+                val string = ballsDates[index]
+                val number = balls[index].toString()
+                writer2.write(string + " ".repeat(15 - string.length))
+                writer2.write("| ")
+                writer2.write(number + " ".repeat(7 - number.length))
+                writer2.write("| ")
+                writer2.write((index + 1).toString())
+                writer2.newLine()
+            }
+            writer1.write(
+                """
+                 ____    _                                        _
+                |  _ \  (_)                                      (_)
+                | |_) |  _   _ __     __ _    ___     __      __  _   _ __    _ __     ___   _ __   ___
+                |  _ <  | | | '_ \   / _` |  / _ \    \ \ /\ / / | | | '_ \  | '_ \   / _ \ | '__| / __|
+                | |_) | | | | | | | | (_| | | (_) |    \ V  V /  | | | | | | | | | | |  __/ | |    \__ \
+                |____/  |_| |_| |_|  \__, |  \___/      \_/\_/   |_| |_| |_| |_| |_|  \___| |_|    |___/
+                                      __/ |
+                                     |___/
+            
+            By Kason Gu
             
             +=========================+
             Seed: ${currentGame.seed}
             Number of winners: $numberOfWinners
             Number of balls: $numberOfRoundsTotal
             +=========================+
-        """.trimIndent())
-        for(index in 0 until numberOfWinners){
-            val number = cardFinished[index]
+            
+            Round #   | Place | Card Number | Time
+            ----------+-------+-------------+------------
+            
+        """.trimIndent()
+            )
+            for (index in 0 until numberOfWinners) {
+                val number = sortedFinished[index]
+                writer1.write(number.toString() + " ".repeat(10 - number.toString().length))
+                writer1.write("| ")
+                writer1.write((index + 1).toString() + " ".repeat(6 - index.toString().length))
+                writer1.write("| ")
+                val cardNum = cardFinished.indexOf(number) + 1
+                writer1.write(cardNum.toString() + " ".repeat(12 - cardNum.toString().length))
+                writer1.write("| ")
+                writer1.write(ballsDates[index])
+                writer1.newLine()
+            }
+            writer2.close()
+            writer1.close()
+            if (newView != null) {
+                currentView.replaceWith(newView, ViewTransition.Fade(0.5.seconds))
+            }
+            close()
+            whenDone()
         }
     }
 }
 
-object ExportExtraFiles : View("Export Extra Files") {
+class ExportExtraFiles : View("Export Extra Files") {
     var currentView: View = curView
     lateinit var newView: View
     var whenDone: ExportExtraFiles.() -> Unit = {}
-    var fileName: String = "game.txt"
+    var isCompleted = true
     override val root: Parent = borderpane {
         center {
-
+            hbox {
+                label(
+                    "Do you want to add the extra files \"winners.log\"\n" +
+                            " and \"balls.log\"?"
+                ) {
+                    addClass(Styles.regularLabel)
+                }
+                paddingAll = 20
+                alignment = Pos.CENTER
+                addClass(Styles.defaultBackground)
+            }
         }
         bottom {
             hbox {
-
+                button("Yes") {
+                    addHoverEffect()
+                    action {
+                        isCompleted = true
+                        whenDone()
+                    }
+                }
+                button("No") {
+                    addHoverEffect()
+                    action {
+                        isCompleted = false
+                        whenDone()
+                    }
+                }
+                alignment = Pos.CENTER
+                paddingBottom = 30.0
+                addClass(Styles.defaultBackground)
+                spacing = 20.0
             }
         }
     }

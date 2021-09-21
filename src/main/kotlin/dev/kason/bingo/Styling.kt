@@ -170,7 +170,7 @@ class Styles : Stylesheet() {
                 borderRadius += box(0.px)
                 padding = box(3.px, 9.px)
                 fontFamily = "dubai"
-                fontSize = sizeOfText
+                fontSize = 25.px
                 textFill = darkTextFill
             }
             arrowButton {
@@ -230,6 +230,14 @@ class Styles : Stylesheet() {
                 fontFamily = "dubai"
                 backgroundColor += themeBackgroundColor
             }
+            backgroundColor += themeBackgroundColor
+            borderColor += box(darkTextFill)
+            borderWidth += box(0.px, 0.px, 2.px, 0.px)
+            fontFamily = "dubai"
+            fontSize = 25.px
+            accentColor = themeColor
+            textFill = darkTextFill
+            borderRadius += box(0.px)
         }
         defaultTreeView {
             backgroundColor += themeBackgroundColor
@@ -379,6 +387,26 @@ class Styles : Stylesheet() {
             and(hover) {
                 borderWidth += box(3.px)
             }
+        }
+        chart {
+            chartContent {
+                padding = box(30.px)
+            }
+            chartLegendSymbol {
+                backgroundRadius += box(0.px)
+            }
+            chartLegendItem {
+                textFill = darkTextFill
+            }
+            chartTitle {
+                fontSize = sizeOfTitle
+                textFill = darkTextFill
+            }
+            axisLabel {
+                fontSize = sizeOfText
+                textFill = darkTextFill
+            }
+            backgroundColor += themeBackgroundColor
         }
     }
 }

@@ -138,6 +138,7 @@ object EditingCardView : View("Bingo > Cards") {
 
     private var value: Int = 1
 
+    @Suppress("ConstantConditionIf")
     override val root: Parent = borderpane {
         top {
             menubar {
@@ -226,15 +227,18 @@ object EditingCardView : View("Bingo > Cards") {
                         }
                     }
                 }
-                menu("Analytics") {
-                    item("View Single Card") {
-                        accelerator = KeyCodeCombination(KeyCode.V, KeyCombination.SHIFT_DOWN)
-                    }
-                    item("View Game at instant") {
-                        accelerator = KeyCodeCombination(KeyCode.I, KeyCombination.SHIFT_DOWN)
-                    }
-                    item("View Game over time") {
-                        accelerator = KeyCodeCombination(KeyCode.T, KeyCombination.SHIFT_DOWN)
+                // I can change later to add it back
+                if (false) {
+                    menu("Analytics") {
+                        item("View Single Card") {
+                            accelerator = KeyCodeCombination(KeyCode.V, KeyCombination.SHIFT_DOWN)
+                        }
+                        item("View Game at instant") {
+                            accelerator = KeyCodeCombination(KeyCode.I, KeyCombination.SHIFT_DOWN)
+                        }
+                        item("View Game over time") {
+                            accelerator = KeyCodeCombination(KeyCode.T, KeyCombination.SHIFT_DOWN)
+                        }
                     }
                 }
                 menu("Help") {
@@ -250,10 +254,13 @@ object EditingCardView : View("Bingo > Cards") {
                             replaceWith(HowToExport, ViewTransition.Fade(0.5.seconds))
                         }
                     }
-                    item("How to use statistics") {
-                        accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN)
-                        action {
-                            replaceWith(HowToStatistics, ViewTransition.Fade(0.5.seconds))
+                    // I can change later to add it back
+                    if (false) {
+                        item("How to use statistics") {
+                            accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN)
+                            action {
+                                replaceWith(HowToStatistics, ViewTransition.Fade(0.5.seconds))
+                            }
                         }
                     }
 //                    item("Search for help") {

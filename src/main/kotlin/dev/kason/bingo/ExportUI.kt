@@ -77,7 +77,6 @@ open class FindFileView(var string: String, var whenFinished: FindFileView.() ->
     private lateinit var fileName: TextField
 
     var result: String = ""
-        protected set
 
     lateinit var label: Label
 
@@ -161,12 +160,12 @@ open class FindFileView(var string: String, var whenFinished: FindFileView.() ->
                         replaceWith(curView, ViewTransition.Fade(0.5.seconds))
                     }
                 }
-                button("Select file from system") {
-                    addHoverEffect()
-                    action {
-                        replaceWith(FileView, ViewTransition.Fade(0.5.seconds))
-                    }
-                }
+//                button("Select file from system") {
+//                    addHoverEffect()
+//                    action {
+//                        replaceWith(FileView, ViewTransition.Fade(0.5.seconds))
+//                    }
+//                }
                 button("Proceed to next step >") {
                     addHoverEffect()
                     action {
@@ -392,7 +391,7 @@ class ExportTextView(
 }
 
 open class ExportCompleted(
-    val eTitle: String = "Exporting",
+    val eTitle: String = "Finished Exporting",
     val message: String = "Exporting has been completed!",
     val whenDone: ExportCompleted.() -> Unit = {}
 ) :
@@ -447,7 +446,7 @@ private var curWhenDone: ExportCompleted.() -> Unit = {}
 private lateinit var curFile: File
 
 class ExportLocationCompleted(
-    eTitle: String = "Exporting",
+    eTitle: String = "Finished Exporting",
     message: String = "Exporting has been completed!",
     whenDone: ExportCompleted.() -> Unit = {},
     val file: File = File("C://")
@@ -542,7 +541,7 @@ class ExportLocationCompleted(
 }
 
 class ExportLocationCompletedWithoutRunner constructor(
-    eTitle: String = "Exporting",
+    eTitle: String = "Finished Exporting",
     message: String = "Exporting has been completed!",
     whenDone: ExportCompleted.() -> Unit = {},
     private val file: File

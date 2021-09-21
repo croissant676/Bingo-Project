@@ -2,6 +2,8 @@ package dev.kason.bingo
 
 import javafx.scene.Parent
 import javafx.scene.chart.NumberAxis
+import javafx.scene.chart.XYChart
+import javafx.scene.chart.XYChart.Series
 import tornadofx.*
 
 
@@ -33,7 +35,11 @@ class SingleCardStatistics(val card: BingoCard) : View("Bingo > View Card ${card
                 val xAxis = NumberAxis("Round", 0.0, 75.0, 25.0)
                 val yAxis = NumberAxis("Number Covered", 0.0, 25.0, 5.0)
                 linechart("Number of tiles covered", xAxis, yAxis) {
-
+                    val series = Series<Number, Number>()
+                    for(number in 0 until 75) {
+                        series.data.add(XYChart.Data(12, 24))
+                    }
+                    data.add(series)
                 }
                 spacing = 50.0
             }

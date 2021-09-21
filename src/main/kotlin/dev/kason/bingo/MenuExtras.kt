@@ -15,8 +15,8 @@ object HowToPlay : View("Bingo > How to play bingo") {
                     addClass(Styles.titleLabel)
                 }
                 label(
-                    "To play the game, press the \"Play Game\" button. This will" +
-                            "\nallow you to play the game"
+                    "To play the game, distribute cards, which can be exported." +
+                            "\nFor help about exporting, look at \"How to export\""
                 ) {
                     addClass(Styles.regularLabel)
                 }
@@ -29,6 +29,12 @@ object HowToPlay : View("Bingo > How to play bingo") {
                 label(
                     "When a card has 5 marked off tiles in a row, the card will" +
                             "\nhave won."
+                ) {
+                    addClass(Styles.regularLabel)
+                }
+                label(
+                    "To draw a ball (number), click the draw ball button or use the" +
+                            "\"balls.log\" file that is created."
                 ) {
                     addClass(Styles.regularLabel)
                 }

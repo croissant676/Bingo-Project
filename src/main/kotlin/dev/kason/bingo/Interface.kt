@@ -2,7 +2,6 @@
 
 package dev.kason.bingo
 
-import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.event.EventHandler
 import javafx.geometry.Pos
@@ -14,7 +13,9 @@ import tornadofx.*
 import java.awt.Desktop
 import java.io.File
 import java.net.URI
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.Period
 
 
 object BingoMenu : View("Bingo > Menu") {
@@ -334,39 +335,31 @@ object CreationMenuView : View("Bingo > Create Bingo Game") {
 
 object CreationMenuView2 : View("Bingo > Create Bingo Game") {
 
-    private var dayProperty = SimpleIntegerProperty(0)
+    private lateinit var datepicker: DatePicker
 
     override val root = borderpane {
         center {
             val time = LocalDateTime.now()
-            hbox {
-                vbox {
-                    label("Select the starting date of this bingo game.") {
-                        addClass(Styles.regularLabel)
-                    }
-                    datepicker {
-                        addClass(Styles.defaultPicker)
-                        editor.skin = TextFieldSkin(editor).apply {
-                            scaleX = 0.7
-                            scaleY = 0.7
-                        }
-                        editor.text = "${time.month}/${time.dayOfMonth}/${time.year}"
-                    }
-                }
+            vbox {
                 vbox {
                     label("Select the end date for this bingo game.") {
                         addClass(Styles.regularLabel)
                     }
-                    datepicker {
+                    datepicker = datepicker {
                         addClass(Styles.defaultPicker)
                         editor.skin = TextFieldSkin(editor).apply {
                             scaleX = 0.7
                             scaleY = 0.7
                         }
                         val newTime = time.plusDays(10)
-                        editor.text = "${newTime.month}/${newTime.dayOfMonth}/${newTime.year}"
+                        editor.text = "${newTime.monthValue}/${newTime.dayOfMonth + 1}/${newTime.year}"
                     }
+                    spacing = 30.0
+                    addClass(Styles.defaultBackground)
+                    alignment = Pos.CENTER
                 }
+                spacing = 30.0
+                addClass(Styles.defaultBackground)
                 alignment = Pos.CENTER
             }
         }
@@ -387,7 +380,20 @@ object CreationMenuView2 : View("Bingo > Create Bingo Game") {
                     addClass(Styles.button)
                     addHoverEffect()
                     action {
-                        replaceWith(CreationMenu2, ViewTransition.Fade(0.5.seconds))
+                        val string = datepicker.editor.text
+                        val localDate = LocalDate.of(
+                            string.substringAfterLast("/").toInt(),
+                            string.substringBefore("/").toInt(),
+                            string.substring(string.indexOf("/") + 1, string.lastIndexOf("/")).toInt()
+                        )
+                        val now = LocalDate.now()
+                        if (now.isAfter(localDate)) {
+                            alert(Alert.AlertType.ERROR, "Selected a date before the current time!")
+                        } else {
+                            val period = Period.between(localDate, now)
+                            days = period.days
+                            replaceWith(CreationMenu2, ViewTransition.Fade(0.5.seconds))
+                        }
                     }
                 }
                 alignment = Pos.CENTER
@@ -520,6 +526,7 @@ object FileView : View("Bingo > Find File") {
 
     @Suppress("SpellCheckingInspection")
     private lateinit var tview: TreeView<String>
+    lateinit var fileName: TextField
 
     override var root = borderpane {
         center {
@@ -528,14 +535,15 @@ object FileView : View("Bingo > Find File") {
                     addClass(Styles.titleLabel)
                 }
                 if (showFileTextField) {
-                    textfield(currentFFView.string) {
-                        isEditable = false
+                    fileName = textfield(currentFFView.string) {
+                        isEditable = true
                         stringProperty.value = "Hello"
                     }
+                } else {
+                    fileName = TextField("Irrelevant")
                 }
                 tview = treeview(startingItem) {
                     addClass(Styles.defaultTreeView)
-
                 }
                 addClass(Styles.defaultBackground)
                 alignment = Pos.CENTER
@@ -577,15 +585,36 @@ object FileView : View("Bingo > Find File") {
                     button("Next >") {
                         addHoverEffect()
                         action {
-                            val result = tview.selectedValue
-                            if (result == null) {
-                                // This section will never run
-                                called.label.text = "ur bad"
-                                called.label.isVisible = true
-                            } else {
-                                called.whenFinished(called)
+                            val value = tview.selectedValue
+                            called.apply {
+                                if (implementExtensionCheck) {
+                                    if (fileName.text == null || !fileName.text.endsWith(string.substringAfterLast('.'))) {
+                                        if (fileName.text == null) {
+                                            label.text = "Must enter a file name!"
+                                        } else if (!fileName.text.endsWith(string.substringAfterLast('.'))) {
+                                            label.text = "File extension must be \"${string.substringAfterLast('.')}\"!"
+                                        } else {
+                                            label.text = "Must enter a file path!"
+                                        }
+                                        fileName.text = label.text
+                                    } else {
+                                        result = value!! + "\\" + fileName.text
+                                        whenFinished(this)
+                                    }
+                                } else {
+                                    if (fileName.text == null) {
+                                        fileName.text = "Must enter a file path!"
+                                    } else {
+                                        result = value!! + "\\" + fileName.text
+                                        whenFinished(this)
+                                    }
+                                }
                             }
                         }
+                        spacing = 10.0
+                        addClass(Styles.defaultBackground)
+                        alignment = Pos.CENTER
+                        paddingBottom = 30.0
                     }
                 }
                 spacing = 10.0
@@ -611,7 +640,6 @@ object FileView : View("Bingo > Find File") {
                     }
                     tview = treeview(startingItem) {
                         addClass(Styles.defaultTreeView)
-
                     }
                     addClass(Styles.defaultBackground)
                     alignment = Pos.CENTER
@@ -643,25 +671,39 @@ object FileView : View("Bingo > Find File") {
                         }
                     }
                     vbox {
-//                    val label = label("You must select a file before continuing") {
-//                        addClass(Styles.regularLabel)
-//                        style {
-//                            textFill = c("ff4e6c")
-//                        }
-//                        isVisible = false
-//                    }
-                        button("Proceed to next step >") {
+                        button("Next >") {
                             addHoverEffect()
                             action {
-                                val result = tview.selectedValue
-                                if (result == null) {
-                                    // This section will never run
-//                                label.isVisible = true
-                                } else {
-                                    called.whenFinished(called)
+                                val value = tview.selectedValue
+                                called.apply {
+                                    if (implementExtensionCheck) {
+                                        if (fileName.text == null || !fileName.text.endsWith(string.substringAfterLast('.'))) {
+                                            if (fileName.text == null) {
+                                                label.text = "Must enter a file name!"
+                                            } else if (!fileName.text.endsWith(string.substringAfterLast('.'))) {
+                                                label.text = "File extension must be \"${string.substringAfterLast('.')}\"!"
+                                            } else {
+                                                label.text = "Must enter a file path!"
+                                            }
+                                            fileName.text = label.text
+                                        } else {
+                                            result = value!! + "\\" + fileName.text
+                                            whenFinished(this)
+                                        }
+                                    } else {
+                                        if (fileName.text == null) {
+                                            fileName.text = "Must enter a file path!"
+                                        } else {
+                                            result = value!! + "\\" + fileName.text
+                                            whenFinished(this)
+                                        }
+                                    }
                                 }
                             }
                         }
+                        spacing = 10.0
+                        addClass(Styles.defaultBackground)
+                        alignment = Pos.CENTER
                     }
                     spacing = 10.0
                     addClass(Styles.defaultBackground)
