@@ -18,6 +18,7 @@ import javafx.scene.text.Font
 import javafx.scene.text.TextAlignment
 import tornadofx.*
 import java.util.regex.Pattern
+import javafx.scene.control.TextField
 import kotlin.concurrent.thread
 import kotlin.math.roundToInt
 
@@ -59,6 +60,7 @@ class CardView(val card: BingoCard) : View("Bingo > Card: ") {
             label("I") {
                 font = f
                 style {
+
                     padding = box(x, x, x, 40.px)
                 }
             }

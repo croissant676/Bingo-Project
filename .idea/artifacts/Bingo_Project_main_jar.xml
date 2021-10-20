@@ -33,6 +33,7 @@
       <element id="library" level="project" name="Gradle: org.docx4j:docx4j:3.3.5" />
       <element id="library" level="project" name="Gradle: org.javassist:javassist:3.25.0-GA" />
       <element id="library" level="project" name="Gradle: javax.json:javax.json-api:1.1.2" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/bingo.png" />
     </root>
   </artifact>
 </component>

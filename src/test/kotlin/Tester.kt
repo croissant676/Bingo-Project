@@ -13,9 +13,11 @@ import java.util.zip.ZipOutputStream
 import javax.imageio.ImageIO
 import javafx.scene.paint.Color as JFXColor
 import java.awt.Color as SwingColor
+import javafx.scene.control.TextField
 
 
 fun main() {
+    val textfield: TextField
 }
 
 private fun generate() {
